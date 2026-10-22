@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T21:54:55.0749011Z",
+  "title": "Design System: Studio",
+  "extensions": {
+    "colorMeta": {
+      "surface": {
+        "role": "neutral",
+        "displayName": "Reading surface"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Moss ink"
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Secondary ink"
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Moss green"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Paper rule"
+      },
+      "warm": {
+        "role": "secondary",
+        "displayName": "Terracotta"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Ivory paper"
+      }
+    },
+    "typographyMeta": {
+      "body": {
+        "displayName": "DM Sans",
+        "purpose": "Interface and reading text."
+      },
+      "heading": {
+        "displayName": "Literata",
+        "purpose": "Serif headings."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "background .15s",
+        "purpose": "Button hover feedback; removed when reduced motion is requested."
+      },
+      {
+        "name": "timer-progress",
+        "value": "transform .4s linear",
+        "purpose": "Timer progress scale; removed when reduced motion is requested."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1500px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1100px"
+      },
+      {
+        "name": "single-column",
+        "value": "800px"
+      },
+      {
+        "name": "phone",
+        "value": "480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Moss action for the main next step.",
+      "html": "<button class=\"ds-primary\">Inizia a studiare</button>",
+      "css": ".ds-primary{font:500 15px/1.6 'DM Sans',sans-serif;padding:12px 20px;border:1px solid var(--green,#315c48);border-radius:6px;background:var(--green,#315c48);color:#fff;cursor:pointer;transition:background .15s}.ds-primary:hover{background:#244535}.ds-primary:focus-visible{outline:3px solid var(--warm,#9a4a30);outline-offset:4px}.ds-primary:disabled{opacity:.5;cursor:wait}"
+    },
+    {
+      "name": "Secondary button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet outlined secondary action.",
+      "html": "<button class=\"ds-secondary\">Passa alla verifica</button>",
+      "css": ".ds-secondary{font:500 15px/1.6 'DM Sans',sans-serif;padding:12px 20px;border:1px solid var(--green,#315c48);border-radius:6px;background:transparent;color:var(--green,#315c48);cursor:pointer;transition:background .15s}.ds-secondary:hover{background:#e8eedf}.ds-secondary:focus-visible{outline:3px solid var(--warm,#9a4a30);outline-offset:4px}"
+    },
+    {
+      "name": "Text field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Paper field with a quiet outline.",
+      "html": "<label class=\"ds-label\" for=\"ds-subject\">Materia</label><input class=\"ds-input\" id=\"ds-subject\" placeholder=\"Es. Biologia\">",
+      "css": ".ds-label{display:block;font:500 13px/1.6 'DM Sans',sans-serif;color:var(--ink,#243b32);margin:18px 0 8px}.ds-input{font:15px/1.6 'DM Sans',sans-serif;border:1px solid #bdc8bb;background:var(--white,#fffef9);padding:11px 13px;border-radius:6px;color:var(--ink,#243b32);caret-color:var(--green,#315c48)}.ds-input::placeholder{color:#697469}.ds-input:focus-visible{outline:3px solid var(--warm,#9a4a30);outline-offset:4px}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Reading-room rail links with moss selected state.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navigazione\"><a class=\"ds-active\" href=\"#focus\">Il tuo spazio</a><a href=\"#reviews\">Ripassi</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:8px;font:500 15px/1.6 'DM Sans',sans-serif}.ds-nav a{padding:10px 14px;text-decoration:none;border-radius:7px;color:var(--muted,#59665e)}.ds-nav a:hover{background:#dfe5d8}.ds-nav a.ds-active{background:var(--green,#315c48);color:white}.ds-nav a:focus-visible{outline:3px solid var(--warm,#9a4a30);outline-offset:4px}"
+    },
+    {
+      "name": "Work panel",
+      "kind": "card",
+      "refersTo": "workpanel",
+      "description": "Primary task surface, framed by a thin rule.",
+      "html": "<section class=\"ds-panel\"><h2>Prepara la tua sessione</h2><p>Un obiettivo chiaro. Il tempo per arrivarci.</p></section>",
+      "css": ".ds-panel{padding:30px;background:var(--white,#fffef9);border:1px solid var(--line,#d8ddd2);border-radius:12px;color:var(--ink,#243b32);font:15px/1.6 'DM Sans',sans-serif}.ds-panel h2{font-size:17px;font-weight:600;margin:0 0 20px}.ds-panel p{margin:0 0 18px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Quiet reading-room aesthetic",
+    "overview": "Operate mode. Quiet reading-room aesthetic: ivory paper, ink typography, moss green actions, terracotta emphasis. Spacious working canvas beside a narrow navigation rail. Main task dominates; secondary information uses ruled lists. Serif headings, sans-serif interface, tabular timer. No decorative illustrations. Responsive single column on small screens. Focus mode removes secondary navigation visually. Visible keyboard focus and reduced-motion support.",
+    "keyCharacteristics": [],
+    "rules": [],
+    "dos": [],
+    "donts": []
+  }
+}
