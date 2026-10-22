@@ -1,0 +1,5 @@
+node_modules/
+.qa-source/
+upgrade.cjs
+.DS_Store
+*.log

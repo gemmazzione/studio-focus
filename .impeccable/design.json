@@ -1,59 +1,79 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-22T21:54:55.0749011Z",
-  "title": "Design System: Studio",
+  "generatedAt": "2026-10-22T22:05:48.768Z",
+  "title": "Design System: Studio — Carbon & Copper",
   "extensions": {
     "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Carbon canvas"
+      },
       "surface": {
         "role": "neutral",
-        "displayName": "Reading surface"
+        "displayName": "Raised carbon"
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Deep carbon rail"
       },
       "ink": {
         "role": "neutral",
-        "displayName": "Moss ink"
+        "displayName": "Warm ivory text"
       },
       "secondary": {
         "role": "neutral",
-        "displayName": "Secondary ink"
+        "displayName": "Sage gray text"
       },
       "accent": {
         "role": "primary",
-        "displayName": "Moss green"
+        "displayName": "Soft copper"
+      },
+      "accentInk": {
+        "role": "neutral",
+        "displayName": "Copper action ink"
       },
       "line": {
         "role": "neutral",
-        "displayName": "Paper rule"
-      },
-      "warm": {
-        "role": "secondary",
-        "displayName": "Terracotta"
-      },
-      "paper": {
-        "role": "neutral",
-        "displayName": "Ivory paper"
+        "displayName": "Carbon rule"
       }
     },
     "typographyMeta": {
       "body": {
-        "displayName": "DM Sans",
-        "purpose": "Interface and reading text."
+        "displayName": "Manrope",
+        "purpose": "Interface and supporting copy."
       },
       "heading": {
-        "displayName": "Literata",
-        "purpose": "Serif headings."
+        "displayName": "Bricolage Grotesque",
+        "purpose": "Display headings, brand and functional timer."
       }
     },
-    "shadows": [],
+    "shadows": [
+      {
+        "name": "toast",
+        "value": "0 10px 30px #0004",
+        "purpose": "Transient confirmation above the canvas."
+      }
+    ],
     "motion": [
       {
-        "name": "button-state",
-        "value": "background .15s",
-        "purpose": "Button hover feedback; removed when reduced motion is requested."
+        "name": "kinetic-ribbon",
+        "value": "signal 4.8s ease-in-out infinite",
+        "purpose": "48 geometric strokes, -95ms offsets; six-second focus rhythm; freezes while paused or hidden."
       },
       {
-        "name": "timer-progress",
-        "value": "transform .4s linear",
-        "purpose": "Timer progress scale; removed when reduced motion is requested."
+        "name": "page-enter",
+        "value": "480ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "12px rise and 3px blur resolve from visible content."
+      },
+      {
+        "name": "completion",
+        "value": "1800ms, two iterations",
+        "purpose": "Copper inset edge marks completion."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Disable CSS motion and skip Web Animations."
       }
     ],
     "breakpoints": [
@@ -66,7 +86,11 @@
         "value": "1100px"
       },
       {
-        "name": "single-column",
+        "name": "stacked-workspace",
+        "value": "900px"
+      },
+      {
+        "name": "horizontal-navigation",
         "value": "800px"
       },
       {
@@ -80,46 +104,46 @@
       "name": "Primary button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Moss action for the main next step.",
+      "description": "Copper action with dark text.",
       "html": "<button class=\"ds-primary\">Inizia a studiare</button>",
-      "css": ".ds-primary{font:500 15px/1.6 'DM Sans',sans-serif;padding:12px 20px;border:1px solid var(--green,#315c48);border-radius:6px;background:var(--green,#315c48);color:#fff;cursor:pointer;transition:background .15s}.ds-primary:hover{background:#244535}.ds-primary:focus-visible{outline:3px solid var(--warm,#9a4a30);outline-offset:4px}.ds-primary:disabled{opacity:.5;cursor:wait}"
+      "css": ".ds-primary{font:500 15px/1.6 'Manrope',sans-serif;padding:12px 20px;border:1px solid var(--green,#efad87);border-radius:4px;background:var(--green,#efad87);color:#241e19;cursor:pointer;transition:background .15s}.ds-primary:hover{background:#f5bd9c}.ds-primary:focus-visible{outline:3px solid var(--warm,#efad87);outline-offset:4px}.ds-primary:disabled{opacity:.5;cursor:wait}"
     },
     {
       "name": "Secondary button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Quiet outlined secondary action.",
+      "description": "Outlined secondary action.",
       "html": "<button class=\"ds-secondary\">Passa alla verifica</button>",
-      "css": ".ds-secondary{font:500 15px/1.6 'DM Sans',sans-serif;padding:12px 20px;border:1px solid var(--green,#315c48);border-radius:6px;background:transparent;color:var(--green,#315c48);cursor:pointer;transition:background .15s}.ds-secondary:hover{background:#e8eedf}.ds-secondary:focus-visible{outline:3px solid var(--warm,#9a4a30);outline-offset:4px}"
+      "css": ".ds-secondary{font:500 15px/1.6 'Manrope',sans-serif;padding:12px 20px;border:1px solid var(--green,#efad87);border-radius:4px;background:transparent;color:var(--green,#efad87);cursor:pointer;transition:background .15s}.ds-secondary:hover{background:#303a2e}.ds-secondary:focus-visible{outline:3px solid var(--warm,#efad87);outline-offset:4px}"
     },
     {
       "name": "Text field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Paper field with a quiet outline.",
+      "description": "Carbon field with sage placeholder and copper focus.",
       "html": "<label class=\"ds-label\" for=\"ds-subject\">Materia</label><input class=\"ds-input\" id=\"ds-subject\" placeholder=\"Es. Biologia\">",
-      "css": ".ds-label{display:block;font:500 13px/1.6 'DM Sans',sans-serif;color:var(--ink,#243b32);margin:18px 0 8px}.ds-input{font:15px/1.6 'DM Sans',sans-serif;border:1px solid #bdc8bb;background:var(--white,#fffef9);padding:11px 13px;border-radius:6px;color:var(--ink,#243b32);caret-color:var(--green,#315c48)}.ds-input::placeholder{color:#697469}.ds-input:focus-visible{outline:3px solid var(--warm,#9a4a30);outline-offset:4px}"
+      "css": ".ds-label{display:block;font:500 13px/1.6 'Manrope',sans-serif;color:var(--ink,#f1f0e9);margin:18px 0 8px}.ds-input{font:15px/1.6 'Manrope',sans-serif;border:1px solid #4a534c;background:var(--white,#1c201e);padding:11px 13px;border-radius:4px;color:var(--ink,#f1f0e9);caret-color:var(--green,#efad87)}.ds-input::placeholder{color:#9aa59c}.ds-input:focus-visible{outline:3px solid var(--warm,#efad87);outline-offset:4px}"
     },
     {
       "name": "Navigation",
       "kind": "nav",
       "refersTo": "nav",
-      "description": "Reading-room rail links with moss selected state.",
+      "description": "Carbon rail with copper selected text.",
       "html": "<nav class=\"ds-nav\" aria-label=\"Navigazione\"><a class=\"ds-active\" href=\"#focus\">Il tuo spazio</a><a href=\"#reviews\">Ripassi</a></nav>",
-      "css": ".ds-nav{display:flex;flex-direction:column;gap:8px;font:500 15px/1.6 'DM Sans',sans-serif}.ds-nav a{padding:10px 14px;text-decoration:none;border-radius:7px;color:var(--muted,#59665e)}.ds-nav a:hover{background:#dfe5d8}.ds-nav a.ds-active{background:var(--green,#315c48);color:white}.ds-nav a:focus-visible{outline:3px solid var(--warm,#9a4a30);outline-offset:4px}"
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:8px;font:500 15px/1.6 'Manrope',sans-serif}.ds-nav a{padding:10px 14px;text-decoration:none;border-radius:4px;color:var(--muted,#adb5ae)}.ds-nav a:hover{background:#1d231e}.ds-nav a.ds-active{background:#282e28;color:#efad87}.ds-nav a:focus-visible{outline:3px solid var(--warm,#efad87);outline-offset:4px}"
     },
     {
       "name": "Work panel",
       "kind": "card",
       "refersTo": "workpanel",
-      "description": "Primary task surface, framed by a thin rule.",
+      "description": "Flat carbon primary task surface.",
       "html": "<section class=\"ds-panel\"><h2>Prepara la tua sessione</h2><p>Un obiettivo chiaro. Il tempo per arrivarci.</p></section>",
-      "css": ".ds-panel{padding:30px;background:var(--white,#fffef9);border:1px solid var(--line,#d8ddd2);border-radius:12px;color:var(--ink,#243b32);font:15px/1.6 'DM Sans',sans-serif}.ds-panel h2{font-size:17px;font-weight:600;margin:0 0 20px}.ds-panel p{margin:0 0 18px}"
+      "css": ".ds-panel{padding:30px;background:var(--white,#1c201e);border:0;border-radius:4px;color:var(--ink,#f1f0e9);font:15px/1.6 'Manrope',sans-serif}.ds-panel h2{font-size:14px;font-weight:600;margin:0 0 20px}.ds-panel p{margin:0 0 18px}"
     }
   ],
   "narrative": {
-    "northStar": "Quiet reading-room aesthetic",
-    "overview": "Operate mode. Quiet reading-room aesthetic: ivory paper, ink typography, moss green actions, terracotta emphasis. Spacious working canvas beside a narrow navigation rail. Main task dominates; secondary information uses ruled lists. Serif headings, sans-serif interface, tabular timer. No decorative illustrations. Responsive single column on small screens. Focus mode removes secondary navigation visually. Visible keyboard focus and reduced-motion support.",
+    "northStar": "Studio — Carbon & Copper",
+    "overview": "Operate mode. Redesign explicitly requested: premium graphics, animations and sound, preserving workflows and stored data. Dark surfaces suit evening PC study; copper isolates actions and elapsed time. Bricolage Grotesque is the display voice; Manrope keeps forms legible. No decorative gradients, glass or stock imagery.",
     "keyCharacteristics": [],
     "rules": [],
     "dos": [],
