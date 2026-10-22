@@ -226,9 +226,9 @@ function renderLists() {
   $("total-sessions").textContent = data.sessions.filter(
     (s) => !s.reviewId,
   ).length;
-  $("total-reviews").textContent = data.sessions.filter(
-    (s) => s.reviewId,
-  ).length + (data.study?.logs?.length || 0);
+  $("total-reviews").textContent =
+    data.sessions.filter((s) => s.reviewId).length +
+    (data.study?.logs?.length || 0);
   $("thought-list").innerHTML = data.thoughts
     .map(
       (t) =>
@@ -323,6 +323,9 @@ function route() {
       "settings",
       "method",
       "planning",
+      "today",
+      "week",
+      "attempts",
       "cards",
       "errors",
     ].includes(requested)

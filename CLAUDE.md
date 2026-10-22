@@ -10,6 +10,8 @@ Progetto web statico. Serve Node.js 18 o superiore. Non ci sono dipendenze da in
 
 ## File da modificare
 
+- `dist/agenda.js`, `dist/agenda-core.js`, `dist/agenda.css`: Oggi, programma settimanale, modifica dei piani, collegamenti delle domande, cronologia e bozze. `agenda-core.js` espone funzioni pure testate da `agenda-check.cjs`.
+
 - `dist/index.html`: struttura e testi italiani.
 - `dist/style.css`: layout di base, responsive e accessibilità.
 - `dist/premium.css`: identità carbone/rame e animazioni. Caricato dopo style.css.
@@ -21,6 +23,14 @@ Progetto web statico. Serve Node.js 18 o superiore. Non ci sono dipendenze da in
 - `extension/scheduler.js`: fasce settimanali, attraversamento della mezzanotte e composizione con le sessioni manuali.
 
 ## Nuove funzioni (v3)
+
+## Estensione v4
+
+`data.study.agendaEvents` contiene gli impegni manuali; `agendaOverrides` i giorni/orari e il completamento personale dei blocchi derivati. La coda delle domande usa ID comprensivi della scadenza per non trascinare gli spostamenti nei cicli di ripasso successivi. “Fatto” nell'agenda non certifica apprendimento né spunta un argomento del piano. La settimana usa date locali a mezzogiorno e parte dal lunedì.
+
+Le domande conservano examId e topicId; gli argomenti mantengono ID quando vengono rinominati. La rimozione di un argomento libera il collegamento senza eliminare la domanda. I nuovi log salvano subject/question/solution come snapshot. Gli import v3 restano supportati e gli export sono v4.
+
+Le bozze stanno in `data.study.drafts` e si scrivono senza evento studio:saved per evitare ricostruzioni dei moduli mentre si digita. `studio:before-restore` sospende la scrittura delle bozze prima della ricarica di un backup: NON rimuovere questa guardia, altrimenti pagehide sovrascrive i dati ripristinati. `studio:practice-open` e `studio:practice-graded` gestiscono bozze dei tentativi. `studio:features-rendered` notifica le viste collegate. I moduli dinamici devono conservare label e focus.
 
 I dati aggiuntivi sono in `data.study` dentro `studio.v1`: exams/cards/errors/schedules/logs/seenSessions. I backup v3 includono anche audio, con validazione prima del ripristino, unione per ID o sostituzione e copia pre-importazione in studio.pre-import. Il ripristino non riavvia sessioni vecchie e conserva l'ID dell'estensione del browser attuale.
 

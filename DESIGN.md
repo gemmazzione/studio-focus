@@ -46,5 +46,9 @@ Body 14px; supporting copy 12–13px; headings 15–18px; learning goals 22–25
 
 ## Extended study surfaces
 
+## Weekly program and daily queue
+
+Preserve Carbon & Copper. Weekly layout has seven dated columns at wide desktop, four/two intermediate, and a single column on small phones. Each day uses compact, ruled tasks with time and estimated duration. Today draws a unified actionable list from the same event data. Inline movement/editor forms replace modal dialogs. Personal commitments and generated study blocks are distinguished through wording, not extra color families. Attempt history has subject/type filters and expandable evidence. Draft status is quiet supporting text, hidden in immersive mode. Navigation remains scrollable at short viewport heights.
+
 Preserve Carbon & Copper. Navigation adds Piano esami, Domande and Ripasso errori. Two-column creation/list layouts stack at 1100px. Structured, scroll-bounded daily plans; explicit day/time controls; answer-first practice with revealed feedback. Backup preview and confirmation are inline. Immersive focus removes surrounding navigation and utility noise while keeping a visible exit and thought parking. Body text retains full contrast.
 style.css supplies existing layout and accessibility; premium.css replaces visual tokens and responsive composition. experience.js adds Web Audio and motion separately from study state. Code is formatted, framework-free and documented for Claude Code. Fonts load from Google Fonts with local fallbacks.

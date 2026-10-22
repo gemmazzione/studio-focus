@@ -1,12 +1,12 @@
 {
   "name": "studio-focus",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "private": true,
   "description": "App di studio indipendente da framework, modificabile con Claude Code o qualsiasi editor",
   "scripts": {
     "dev": "node preview.cjs",
     "start": "node preview.cjs",
-    "check": "node --check dist/app.js && node --check dist/features.js && node --check dist/experience.js && node --check extension/background.js && node --check extension/popup.js && node check.cjs && node audio-check.cjs && node features-check.cjs",
+    "check": "node --check dist/app.js && node --check dist/features.js && node --check dist/agenda.js && node --check dist/experience.js && node --check extension/background.js && node --check extension/popup.js && node check.cjs && node audio-check.cjs && node features-check.cjs && node agenda-check.cjs",
     "package:source": "node package-source.cjs"
   }
 }

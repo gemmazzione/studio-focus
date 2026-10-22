@@ -126,6 +126,7 @@
             `<div class="schedule-row"><label><input type="checkbox" data-schedule-toggle="${E(s.id)}" ${s.enabled ? "checked" : ""}>${s.days.map((d) => dayNames[d]).join(", ")} · ${s.start}–${s.end}${s.end < s.start ? " (+1 giorno)" : ""}</label><button class="text-button" data-schedule-delete="${E(s.id)}">Elimina fascia</button></div>`,
         )
         .join("") || '<p class="hint">Nessuna fascia programmata.</p>';
+    window.dispatchEvent(new CustomEvent("studio:features-rendered"));
   }
   function start(subject, goal, five = false, plannedMinutes = null) {
     if (data.active) {
@@ -226,11 +227,16 @@
       question = byId("card-question").value.trim(),
       solution = byId("card-solution").value.trim();
     if (!subject || !question || !solution) return;
+    const [examId, topicId] = (
+      document.getElementById("card-topic-link")?.value || ""
+    ).split(":");
     S.cards.push({
       id: uid(),
       subject,
       question,
       solution,
+      examId: examId || null,
+      topicId: topicId || null,
       due: Date.now(),
       interval: 1,
       count: 0,
@@ -268,6 +274,9 @@
       current = null;
       restorePracticeFocus(closed);
     };
+    window.dispatchEvent(
+      new CustomEvent("studio:practice-open", { detail: { kind, id } }),
+    );
     byId("practice-answer").focus();
     panel.scrollIntoView({
       block: "center",
@@ -351,6 +360,9 @@
         at: Date.now(),
         itemId: item.id,
         kind: current.kind,
+        subject: item.subject,
+        question: item.question,
+        solution: item.solution,
         answer,
         rating,
       });
@@ -376,6 +388,9 @@
       const completed = current;
       current = null;
       commit();
+      window.dispatchEvent(
+        new CustomEvent("studio:practice-graded", { detail: completed }),
+      );
       restorePracticeFocus(completed);
       notify(`Tentativo salvato. Prossimo ripasso: ${fmtDate(item.due)}.`);
     }
@@ -463,7 +478,7 @@
     } catch {}
     return {
       format: "studio.backup",
-      version: 3,
+      version: 4,
       exportedAt: new Date().toISOString(),
       data,
       sound,
@@ -519,11 +534,20 @@
       for (const x of incoming[key]) if (!map.has(x.id)) map.set(x.id, x);
       merged[key] = [...map.values()];
     }
-    for (const key of ["exams", "cards", "errors", "schedules", "logs"]) {
+    for (const key of [
+      "exams",
+      "cards",
+      "errors",
+      "schedules",
+      "logs",
+      "agendaEvents",
+      "agendaOverrides",
+    ]) {
       const map = new Map(old.study[key].map((x) => [x.id, x]));
       for (const x of incoming.study[key]) if (!map.has(x.id)) map.set(x.id, x);
       merged.study[key] = [...map.values()];
     }
+    merged.study.drafts = { ...incoming.study.drafts, ...old.study.drafts };
     merged.study.seenSessions = [
       ...new Set([...old.study.seenSessions, ...incoming.study.seenSessions]),
     ];
@@ -542,6 +566,7 @@
       if (audio !== null) localStorage.setItem("studio.sound.v1", audio);
       throw error;
     }
+    window.dispatchEvent(new CustomEvent("studio:before-restore"));
     location.hash = "progress";
     location.reload();
   }
@@ -627,6 +652,7 @@
       updateBlockStatus();
     }
   }, 30000);
+  window.StudyActions = { start, practice, refresh: renderFeatures };
   if (collectErrors()) save();
   renderFeatures();
   route();

@@ -4,6 +4,14 @@ Uno spazio personale per obiettivi, focus, richiamo attivo e ripassi distribuiti
 
 ## Funzioni aggiunte
 
+## Oggi e programma settimanale (v4)
+
+Oggi unisce i blocchi dei piani, gli errori e i richiami in scadenza. La settimana mostra sette giorni da lunedì a domenica, con navigazione tra settimane, impegni personali, orari, spostamenti e segnalazione delle sovrapposizioni. “Fatto” completa un blocco nel programma personale; il completamento di un argomento d'esame resta una scelta esplicita nel piano. Gli orari dell'agenda non attivano da soli il blocco social.
+
+Puoi modificare un piano mantenendo identità e completamento degli argomenti, aggiungerli o rimuoverli e ridistribuire il lavoro restante. Le domande possono essere collegate a un argomento e avviate dal piano. La cronologia Tentativi include risposte e riferimenti: per i nuovi esercizi salva la soluzione al momento del tentativo; per quelli vecchi indica quando mostra il riferimento attuale.
+
+Bozze di moduli e risposte sono salvate localmente. Riapri la stessa domanda per ritrovare il tentativo non ancora valutato. I backup v4 comprendono programma, spostamenti, collegamenti e bozze; importano anche le versioni precedenti. Browser e origini diverse mantengono archivi separati.
+
 - Piano esami: data, argomenti con stima in minuti, giorni disponibili e piano giornaliero di studio e richiamo successivo. Avviso se il tempo non basta; completamento argomenti esplicito. Le durate dei ripassi sono suggerimenti pratici, modificabili tramite le stime del piano.
 - Domande: tentativo senza appunti, soluzione nascosta, autovalutazione e ripasso futuro.
 - Errori: raccolta di correzioni e risposte difficili, nuovi tentativi e stato risolto/da riprendere.

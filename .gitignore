@@ -2,6 +2,7 @@ node_modules/
 .qa-source/
 upgrade.cjs
 add-features.cjs
+add-agenda.cjs
 finish-features.cjs
 plan-button.cjs
 plan-reviews.cjs

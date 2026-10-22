@@ -1,0 +1,313 @@
+.agenda-summary {
+  border-bottom: 1px solid var(--line);
+  padding: 0 0 24px;
+  margin-bottom: 28px;
+}
+.agenda-summary strong {
+  font:
+    500 38px "Bricolage Grotesque",
+    sans-serif;
+  color: var(--green);
+  margin-right: 8px;
+}
+.agenda-summary span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.agenda-event {
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.agenda-event h3 {
+  font:
+    500 17px "Bricolage Grotesque",
+    sans-serif;
+  margin: 8px 0;
+}
+.agenda-event p {
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.agenda-event-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+.agenda-event-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: baseline;
+}
+.agenda-event-actions .text-button {
+  padding: 0;
+  font-size: 12px;
+}
+.agenda-event-actions .primary {
+  padding: 8px 18px;
+  min-height: 38px;
+  font-size: 12px;
+}
+.completion-label {
+  color: #c0d6b8;
+  font-size: 12px;
+}
+.event-done h3,
+.event-done p {
+  text-decoration: line-through;
+  text-decoration-color: #71826b;
+}
+.week-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.week-controls > div {
+  display: flex;
+  gap: 8px;
+}
+.week-controls button {
+  padding: 9px 12px;
+  font-size: 12px;
+}
+.week-controls h2 {
+  margin: 0;
+  font-size: 15px;
+}
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+.week-day {
+  padding: 14px 10px;
+  background: #1b201c;
+  min-height: 180px;
+  border-radius: 4px;
+}
+.week-day-heading {
+  min-height: 68px;
+}
+.week-day-heading h3 {
+  font:
+    500 15px/1.4 Manrope,
+    sans-serif;
+  margin: 0 0 5px;
+}
+.week-day-heading > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.is-today {
+  outline: 1px solid #9d7557;
+  outline-offset: -1px;
+}
+.is-today > .week-day-heading h3 {
+  color: var(--green);
+}
+.week-day .agenda-event {
+  padding: 14px 0;
+}
+.week-day .agenda-event h3 {
+  font-size: 14px;
+}
+.week-day .agenda-event p {
+  font-size: 12px;
+}
+.week-day .agenda-event-meta {
+  font-size: 12px;
+}
+.week-day .agenda-event-actions {
+  gap: 8px 12px;
+}
+.week-day > .text-button {
+  font-size: 12px;
+}
+.week-free {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0 24px;
+}
+.week-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 36px;
+  align-items: start;
+}
+.exam-editor {
+  margin: 0 0 32px;
+  max-width: 900px;
+  scroll-margin: 20px;
+}
+.edit-topic-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 0 20px;
+  border-top: 1px solid var(--line);
+  padding: 5px 0 20px;
+}
+.edit-topic-row .topic-check {
+  margin-top: 16px;
+}
+.edit-topic-row .text-button {
+  justify-self: end;
+}
+.editor-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+.history-filters {
+  display: flex;
+  gap: 20px;
+  max-width: 700px;
+  margin-bottom: 30px;
+}
+.history-filters label {
+  flex: 1;
+  margin-top: 0;
+}
+.history-filters select {
+  margin-top: 8px;
+}
+.attempt-grade {
+  font-size: 12px;
+  color: var(--green);
+}
+.card-link-label {
+  max-width: 430px;
+  margin: 15px 0 5px;
+}
+.card-link-label select {
+  display: block;
+  margin-top: 7px;
+  font-size: 12px;
+}
+.draft-status {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 12px 0 -10px;
+}
+.topic-quiz {
+  padding: 5px 0 14px;
+  margin-left: 26px;
+}
+.topic-quiz:hover {
+  color: var(--green);
+}
+.entry-top {
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+.entry-top h2 {
+  flex: 1;
+  min-width: 140px;
+}
+.entry-top .text-button {
+  padding-top: 0;
+}
+.immersive .draft-status {
+  display: none;
+}
+aside {
+  overflow-y: auto;
+}
+aside nav a {
+  padding: 7px 10px;
+}
+.aside-note {
+  margin: 20px 0 16px;
+}
+.aside-bottom {
+  font-size: 17px;
+  padding-top: 18px;
+}
+.aside-bottom small {
+  margin-top: 14px;
+}
+@media (max-width: 1350px) {
+  .week-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1000px) {
+  .week-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .week-edit-grid {
+    grid-template-columns: 1fr;
+  }
+  .week-controls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+@media (max-width: 800px) {
+  aside nav a {
+    padding: 10px 12px;
+  }
+  .week-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .draft-status {
+    margin-top: 12px;
+  }
+  .edit-topic-row {
+    grid-template-columns: minmax(0, 1fr) 100px;
+  }
+  .editor-actions {
+    flex-wrap: wrap;
+  }
+  .week-controls h2 {
+    font-size: 14px;
+  }
+  .week-day-heading {
+    min-height: 50px;
+  }
+  .history-filters {
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+@media (max-width: 480px) {
+  .week-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .week-day {
+    padding: 18px;
+  }
+  .week-day-heading {
+    min-height: 0;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .week-day .agenda-event h3 {
+    font-size: 17px;
+  }
+  .week-day .agenda-event p {
+    font-size: 13px;
+  }
+  .week-day .agenda-event-actions {
+    gap: 18px;
+  }
+  .edit-topic-row {
+    display: block;
+  }
+  .edit-topic-row .text-button {
+    padding-top: 10px;
+  }
+  .agenda-summary span {
+    display: block;
+  }
+  .week-controls > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

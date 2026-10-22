@@ -47,7 +47,7 @@
   function validateBackup(raw) {
     const d =
       raw?.format === "studio.backup"
-        ? raw.version === 3
+        ? [3, 4].includes(raw.version)
           ? raw.data
           : fail()
         : raw;
@@ -117,6 +117,8 @@
         due: num(c.due),
         interval: num(c.interval, 180),
         count: num(c.count || 0, 100000),
+        examId: c.examId ? id(c.examId) : null,
+        topicId: c.topicId ? id(c.topicId) : null,
       })),
       errors: arr(s.errors || [], (e) => ({
         id: id(e.id),
@@ -137,8 +139,53 @@
         kind: ["card", "error"].includes(l.kind) ? l.kind : fail(),
         answer: str(l.answer),
         rating: grade(l.rating),
+        subject: l.subject == null ? null : str(l.subject, 80),
+        question: l.question == null ? null : str(l.question, 1000),
+        solution: l.solution == null ? null : str(l.solution),
       })),
       seenSessions: arr(s.seenSessions || [], id),
+      agendaEvents: arr(
+        s.agendaEvents || [],
+        (e) => ({
+          id: id(e.id),
+          subject: str(e.subject, 80),
+          title: str(e.title, 220),
+          date: day(e.date),
+          time:
+            e.time === ""
+              ? ""
+              : /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(str(e.time, 5))
+                ? e.time
+                : fail(),
+          minutes: num(e.minutes, 480),
+          type: ["study", "break", "commitment"].includes(e.type)
+            ? e.type
+            : fail(),
+          done: !!e.done,
+        }),
+        2000,
+      ),
+      agendaOverrides: arr(
+        s.agendaOverrides || [],
+        (e) => ({
+          id: id(e.id),
+          date: day(e.date),
+          time:
+            e.time === ""
+              ? ""
+              : /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(str(e.time, 5))
+                ? e.time
+                : fail(),
+          done: !!e.done,
+        }),
+        10000,
+      ),
+      drafts: Object.fromEntries(
+        Object.entries(s.drafts || {}).map(([key, value]) => {
+          if (!/^[a-zA-Z0-9:_-]{1,200}$/.test(key)) fail();
+          return [key, typeof value === "boolean" ? value : str(value, 20000)];
+        }),
+      ),
     };
     for (const list of [
       sessions,
@@ -149,6 +196,8 @@
       study.errors,
       study.schedules,
       study.logs,
+      study.agendaEvents,
+      study.agendaOverrides,
     ])
       if (new Set(list.map((x) => x.id)).size !== list.length) fail();
     let sound = null;
