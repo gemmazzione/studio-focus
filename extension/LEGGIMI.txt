@@ -1,0 +1,11 @@
+STUDIO — ESTENSIONE PER CHROME ED EDGE
+
+1. Estrai questo ZIP in una cartella permanente.
+2. Apri chrome://extensions oppure edge://extensions.
+3. Attiva Modalità sviluppatore.
+4. Seleziona Carica estensione non pacchettizzata e scegli questa cartella.
+5. Copia l'ID dell'estensione nella sezione Blocco social dell'app Studio.
+6. Premi Verifica collegamento. Avvia una sessione e prova ad aprire un sito bloccato.
+
+Il permesso di accesso ai siti permette di bloccare i domini che scegli. L'estensione non invia dati a server esterni. Funziona solo in questo browser e può essere disattivata. Le pagine già caricate possono continuare a mostrare contenuti: ricaricale per verificare il blocco. Non blocca le app del PC o il telefono.
+Se metti in pausa, la protezione viene mantenuta con una scadenza di sicurezza; l'app aperta la rinnova. Se chiudi l'app, il blocco termina all'orario impostato. In caso di necessità, usa Sblocca i siti nel pulsante dell'estensione.

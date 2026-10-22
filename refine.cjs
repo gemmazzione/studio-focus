@@ -1,0 +1,1 @@
+const fs=require('fs');const p='dist/app.js';let s=fs.readFileSync(p,'utf8');s=s.replace("$('time-fill').style.width=`${Math.min(100,elapsed(a)/a.total*100)}%`", "$('time-fill').style.transform=`scaleX(${Math.min(1,elapsed(a)/a.total)})`");fs.writeFileSync(p,s);
