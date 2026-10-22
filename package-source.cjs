@@ -10,14 +10,18 @@ const files = [
   "preview.cjs",
   "check.cjs",
   "audio-check.cjs",
+  "features-check.cjs",
   "package-source.cjs",
   "dist/index.html",
   "dist/style.css",
   "dist/premium.css",
   "dist/app.js",
   "dist/experience.js",
+  "dist/features.js",
+  "dist/features.css",
+  "dist/study-core.js",
   "dist/studio-extension.zip",
-  ...fs.readdirSync("extension").map((f) => "extension/" + f),
+  ...fs.readdirSync("extension").filter(f => !['worker.js','popup-v2.js'].includes(f)).map((f) => "extension/" + f),
 ];
 const crcTable = Array.from({ length: 256 }, (_, n) => {
   for (let k = 0; k < 8; k++) n = n & 1 ? 0xedb88320 ^ (n >>> 1) : n >>> 1;

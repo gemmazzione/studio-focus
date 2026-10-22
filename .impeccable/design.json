@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-22T22:05:48.768Z",
+  "generatedAt": "2026-10-22T22:22:08.008Z",
   "title": "Design System: Studio — Carbon & Copper",
   "extensions": {
     "colorMeta": {
@@ -97,7 +97,13 @@
         "name": "phone",
         "value": "480px"
       }
-    ]
+    ],
+    "studySurfaces": {
+      "source": "dist/features.css",
+      "layout": "Two-column creation/list layouts stack at 1100px. Structured, scroll-bounded daily plans; explicit day/time controls; answer-first practice with revealed feedback.",
+      "immersive": "Immersive focus removes surrounding navigation and utility noise while keeping a visible exit and thought parking.",
+      "backup": "Backup preview and confirmation are inline."
+    }
   },
   "components": [
     {
@@ -139,6 +145,27 @@
       "description": "Flat carbon primary task surface.",
       "html": "<section class=\"ds-panel\"><h2>Prepara la tua sessione</h2><p>Un obiettivo chiaro. Il tempo per arrivarci.</p></section>",
       "css": ".ds-panel{padding:30px;background:var(--white,#1c201e);border:0;border-radius:4px;color:var(--ink,#f1f0e9);font:15px/1.6 'Manrope',sans-serif}.ds-panel h2{font-size:14px;font-weight:600;margin:0 0 20px}.ds-panel p{margin:0 0 18px}"
+    },
+    {
+      "name": "Daily plan task",
+      "kind": "list-item",
+      "description": "Ruled daily task row with estimated minutes and a direct study action.",
+      "html": "<div class=\"ds-plan-task\"><span>Derivate<small>30 min</small></span><button class=\"ds-study-action\">Studia</button></div>",
+      "css": ".ds-plan-task{font:14px/1.6 'Manrope',sans-serif;color:var(--ink,#f1f0e9);display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid var(--line,#353c37)}.ds-plan-task small{display:block;color:var(--muted,#adb5ae)}.ds-study-action{font:500 12px/1.6 'Manrope',sans-serif;padding:7px 12px;border:1px solid #4a534c;border-radius:4px;background:transparent;color:var(--ink,#f1f0e9);cursor:pointer}.ds-study-action:hover{background:#303a2e}.ds-study-action:focus-visible{outline:3px solid var(--warm,#efad87);outline-offset:4px}"
+    },
+    {
+      "name": "Weekly day selector",
+      "kind": "input",
+      "description": "Wrapping weekday checkbox group shared by exam planning and weekly social schedules.",
+      "html": "<fieldset class=\"ds-days\"><legend>Giorni disponibili</legend><div><label><input type=\"checkbox\" checked>Lun</label><label><input type=\"checkbox\" checked>Mar</label><label><input type=\"checkbox\">Mer</label></div></fieldset>",
+      "css": ".ds-days{font:14px/1.6 'Manrope',sans-serif;color:var(--ink,#f1f0e9);border:0;padding:0;margin:20px 0}.ds-days legend{font-size:12px;margin-bottom:10px}.ds-days>div{display:flex;gap:8px;flex-wrap:wrap}.ds-days label{display:flex;gap:6px;align-items:center;padding:6px;background:#293027;border-radius:4px}.ds-days input{accent-color:var(--green,#efad87)}.ds-days label:hover{background:#303a2e}.ds-days input:focus-visible{outline:3px solid var(--warm,#efad87);outline-offset:4px}"
+    },
+    {
+      "name": "Practice feedback",
+      "kind": "panel",
+      "description": "Revealed reference answer followed by explicit self-assessment; the reference stays hidden until an attempt in the app.",
+      "html": "<section class=\"ds-practice\"><h3>Confronta la risposta</h3><p>La risposta di riferimento appare dopo il tuo tentativo.</p><div><button class=\"ds-study-action\">Da riprendere</button><button class=\"ds-study-action\">Qualche lacuna</button><button class=\"ds-study-action ds-study-easy\">Ricordo autonomo</button></div></section>",
+      "css": ".ds-practice{font:14px/1.6 'Manrope',sans-serif;color:var(--ink,#f1f0e9);padding:28px;background:#232b24;max-width:850px}.ds-practice h3{font-family:\"Bricolage Grotesque\",sans-serif}.ds-practice>div{display:flex;gap:12px;flex-wrap:wrap;margin:25px 0}.ds-study-action{font:500 12px/1.6 'Manrope',sans-serif;padding:7px 12px;border:1px solid #4a534c;border-radius:4px;background:transparent;color:var(--ink,#f1f0e9);cursor:pointer}.ds-study-action:hover{background:#303a2e}.ds-study-action:focus-visible{outline:3px solid var(--warm,#efad87);outline-offset:4px}.ds-study-easy{background:var(--green,#efad87);color:#241e19;border-color:var(--green,#efad87)}.ds-study-easy:hover{background:#f5bd9c}"
     }
   ],
   "narrative": {

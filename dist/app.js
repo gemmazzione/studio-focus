@@ -54,6 +54,7 @@ function notify(message) {
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(data));
+    window.dispatchEvent(new CustomEvent("studio:saved"));
   } catch {
     notify(
       "Spazio di archiviazione esaurito o non disponibile. Esporta i dati prima di chiudere.",
@@ -102,6 +103,9 @@ async function connect(silent = false) {
     const state = await ext({ type: "PING" });
     blockUntil = state.until || 0;
     connected = true;
+    window.dispatchEvent(
+      new CustomEvent("studio:connected", { detail: state }),
+    );
     $("connection-message").textContent =
       "Estensione collegata. Il blocco è pronto.";
     if (data.active) await syncBlock();
@@ -116,14 +120,11 @@ async function connect(silent = false) {
 }
 function updateBlockStatus() {
   const a = data.active;
-  const blocks =
-    connected &&
-    blockUntil > Date.now() &&
-    a &&
-    a.phase !== "recall" &&
-    (a.phase !== "break" || data.settings.blockBreak);
+  const blocks = connected && blockUntil > Date.now() && true;
   $("block-status").innerHTML = connected
-    ? "Estensione collegata · blocco pronto"
+    ? blockUntil > Date.now()
+      ? "Social bloccati · estensione collegata"
+      : "Estensione collegata · blocco pronto"
     : 'Blocco social non collegato · <a href="#settings">Configura</a>';
   $("phase-label").textContent = blocks
     ? "Social bloccati"
@@ -142,8 +143,8 @@ async function syncBlock() {
       a.phase === "recall" ||
       (a.phase === "break" && !data.settings.blockBreak)
     ) {
-      await ext({ type: "STOP" });
-      blockUntil = 0;
+      const result = await ext({ type: "STOP" });
+      blockUntil = result.until || 0;
       updateBlockStatus();
       return;
     }
@@ -227,7 +228,7 @@ function renderLists() {
   ).length;
   $("total-reviews").textContent = data.sessions.filter(
     (s) => s.reviewId,
-  ).length;
+  ).length + (data.study?.logs?.length || 0);
   $("thought-list").innerHTML = data.thoughts
     .map(
       (t) =>
@@ -298,7 +299,7 @@ function tick() {
 function toRecall() {
   const a = data.active;
   if (!a || a.phase !== "focus") return;
-  a.seconds = Math.round(elapsed(a) / 1000);
+  a.seconds = (a.accumulatedSeconds || 0) + Math.round(elapsed(a) / 1000);
   a.phase = "recall";
   a.running = false;
   save();
@@ -315,9 +316,16 @@ function endBreak() {
 }
 function route() {
   const requested = location.hash.slice(1) || "focus",
-    page = ["focus", "reviews", "progress", "settings", "method"].includes(
-      requested,
-    )
+    page = [
+      "focus",
+      "reviews",
+      "progress",
+      "settings",
+      "method",
+      "planning",
+      "cards",
+      "errors",
+    ].includes(requested)
       ? requested
       : "focus";
   document

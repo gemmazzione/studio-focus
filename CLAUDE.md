@@ -16,12 +16,25 @@ Progetto web statico. Serve Node.js 18 o superiore. Non ci sono dipendenze da in
 - `dist/app.js`: timer, sessioni, richiamo attivo, ripassi, dati locali e collegamento estensione.
 - `dist/experience.js`: Web Audio, volume, preferenze sonore e animazioni.
 - `extension/`: estensione Manifest V3 per Chrome ed Edge.
+- `dist/features.js` e `dist/features.css`: piani esame, domande, errori, avvio breve, modalità immersiva, importazione e fasce social.
+- `dist/study-core.js`: pianificazione, validazione dei backup e intervalli di ripasso; utilizzabile anche da Node per i test.
+- `extension/scheduler.js`: fasce settimanali, attraversamento della mezzanotte e composizione con le sessioni manuali.
+
+## Nuove funzioni (v3)
+
+I dati aggiuntivi sono in `data.study` dentro `studio.v1`: exams/cards/errors/schedules/logs/seenSessions. I backup v3 includono anche audio, con validazione prima del ripristino, unione per ID o sostituzione e copia pre-importazione in studio.pre-import. Il ripristino non riavvia sessioni vecchie e conserva l'ID dell'estensione del browser attuale.
+
+`studio:saved` collega il diario alla raccolta degli errori e aggiorna le viste. Non inviare questo evento in cicli senza guardia. Il completamento di un argomento d'esame è esplicito; il tempo del timer non prova l'apprendimento. Le sessioni pianificate rispettano i minuti previsti, con blocchi al massimo di 90 minuti. Il richiamo di domande è autovalutato e la soluzione resta nascosta fino a un tentativo.
+
+L'estensione 2.0 riceve SET_SCHEDULES oltre a PING/START/STOP. STOP rimuove soltanto il blocco manuale; gli orari salvati restano efficaci. SUSPEND è riservato alla pagina popup dell'estensione e sospende per 15 minuti. Riconciliazione serializzata, allarmi ai confini delle fasce e controllo periodico. Non promettere blocco quando il browser è chiuso o il PC sospeso.
 
 ## Regole di prodotto
 
 Conservare compatibilità con localStorage `studio.v1` e `studio.sound.v1`. Non cancellare i dati quando si cambia grafica. Mai dichiarare social bloccati senza conferma e scadenza dall'estensione. Non promettere blocco di app native o telefono. Audio sbloccato da un gesto utente; browser, scheda sospesa o chiusa possono impedire l'avviso. Rispettare prefers-reduced-motion, etichette, contrasto, focus tastiera e dimensioni mobili.
 
 Il protocollo estensione è PING, START {domains,until}, STOP. Non ampliare le origini autorizzate senza motivo. Se cambia dominio di hosting, aggiornare ALLOWED in background.js e externally_connectable in manifest.json.
+
+Il piano riserva, quando possibile, l'ultimo giorno disponibile ai ripassi. Ogni argomento ha un breve richiamo in un giorno successivo al termine dello studio; l'intervallo di un giorno e la durata del 10% (5–15 minuti) sono euristiche modificabili, non un protocollo scientificamente ottimale. Un avviso segnala i ripassi che non trovano spazio. I blocchi del piano non attestano completamento: spetta allo studente spuntare l'argomento.
 
 ## Verifica
 

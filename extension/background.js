@@ -1,18 +1,106 @@
+importScripts("scheduler.js");
 const ALLOWED = "https://studio-focus-sam-221026.samurugge02.chatgpt.site";
 let queue = Promise.resolve();
-async function stop() {
-  const rules = await chrome.declarativeNetRequest.getDynamicRules();
+async function reconcile() {
+  const values = await chrome.storage.local.get(null);
+  if (values.until && values.manualUntil === undefined) {
+    values.manualUntil = values.until;
+    const previous = await chrome.declarativeNetRequest.getDynamicRules();
+    values.manualDomains = previous.flatMap(
+      (r) => r.condition?.requestDomains || [],
+    );
+    await chrome.storage.local.set({
+      manualUntil: values.manualUntil,
+      manualDomains: values.manualDomains,
+    });
+  }
+  const state = StudioScheduler.state(values);
+  const previous = await chrome.declarativeNetRequest.getDynamicRules();
+  const addRules = state.domains.map((domain, i) => ({
+    id: i + 1,
+    priority: 1,
+    action: { type: "block" },
+    condition: {
+      requestDomains: [domain],
+      resourceTypes: [
+        "main_frame",
+        "sub_frame",
+        "xmlhttprequest",
+        "websocket",
+        "media",
+        "script",
+      ],
+    },
+  }));
   await chrome.declarativeNetRequest.updateDynamicRules({
-    removeRuleIds: rules.map((r) => r.id),
+    removeRuleIds: previous.map((r) => r.id),
+    addRules,
   });
-  await chrome.storage.local.remove("until");
+  await chrome.storage.local.set({ until: state.until });
   await chrome.alarms.clear("end");
-  await chrome.action.setBadgeText({ text: "" });
+  if (state.next) await chrome.alarms.create("end", { when: state.next });
+  await chrome.action.setBadgeText({
+    text: state.domains.length ? "ON" : state.suspended ? "15m" : "",
+  });
+  await chrome.action.setBadgeBackgroundColor({ color: "#ad7654" });
+  return {
+    ok: true,
+    until: state.until,
+    scheduled: state.scheduled,
+    suspended: state.suspended,
+    version: 2,
+  };
 }
-async function expire() {
-  const { until } = await chrome.storage.local.get("until");
-  if (!until || until <= Date.now()) await stop();
-  else await chrome.alarms.create("end", { when: until });
+async function handle(message) {
+  if (message.type === "PING") return reconcile();
+  if (message.type === "STOP") {
+    await chrome.storage.local.set({ manualUntil: 0, manualDomains: [] });
+    return reconcile();
+  }
+  if (message.type === "SUSPEND") {
+    await chrome.storage.local.set({
+      manualUntil: 0,
+      manualDomains: [],
+      suspendUntil: Date.now() + 15 * 60000,
+    });
+    return reconcile();
+  }
+  if (message.type === "SET_SCHEDULES") {
+    if (
+      !StudioScheduler.validSchedules(message.schedules) ||
+      !StudioScheduler.validDomains(message.domains)
+    )
+      throw Error("Orari o domini non validi");
+    await chrome.storage.local.set({
+      schedules: message.schedules,
+      scheduleDomains: [...new Set(message.domains)],
+    });
+    return reconcile();
+  }
+  if (message.type === "START") {
+    const until = Number(message.until);
+    if (
+      !Number.isFinite(until) ||
+      until <= Date.now() ||
+      until > Date.now() + 24 * 3600000 ||
+      !StudioScheduler.validDomains(message.domains)
+    )
+      throw Error("Dati del blocco non validi");
+    await chrome.storage.local.set({
+      manualUntil: until,
+      manualDomains: [...new Set(message.domains)],
+    });
+    return reconcile();
+  }
+  throw Error("Richiesta sconosciuta");
+}
+function enqueue(message, respond) {
+  queue = queue
+    .catch(() => {})
+    .then(() => handle(message))
+    .then(respond)
+    .catch((e) => respond({ ok: false, error: e.message }));
+  return true;
 }
 chrome.runtime.onMessageExternal.addListener((message, sender, respond) => {
   let origin;
@@ -26,75 +114,24 @@ chrome.runtime.onMessageExternal.addListener((message, sender, respond) => {
     !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
   )
     return false;
-  queue = queue
-    .catch(() => {})
-    .then(async () => {
-      if (message.type === "PING") {
-        await expire();
-        const state = await chrome.storage.local.get("until");
-        respond({ ok: true, until: state.until || 0 });
-        return;
-      }
-      if (message.type === "STOP") {
-        await stop();
-        respond({ ok: true });
-        return;
-      }
-      if (message.type !== "START") throw Error("Richiesta sconosciuta");
-      const until = Number(message.until),
-        domains = message.domains;
-      if (
-        !Number.isFinite(until) ||
-        until <= Date.now() ||
-        until > Date.now() + 24 * 3600000 ||
-        !Array.isArray(domains) ||
-        domains.length > 100 ||
-        !domains.every(
-          (s) =>
-            typeof s === "string" &&
-            /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,63}$/.test(s) &&
-            !s.endsWith("chatgpt.site"),
-        )
-      )
-        throw Error("Dati del blocco non validi");
-      const old = await chrome.declarativeNetRequest.getDynamicRules();
-      const rules = [...new Set(domains)].map((d, i) => ({
-        id: i + 1,
-        priority: 1,
-        action: { type: "block" },
-        condition: {
-          requestDomains: [d],
-          resourceTypes: [
-            "main_frame",
-            "sub_frame",
-            "xmlhttprequest",
-            "websocket",
-            "media",
-            "script",
-          ],
-        },
-      }));
-      await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds: old.map((r) => r.id),
-        addRules: rules,
-      });
-      await chrome.storage.local.set({ until });
-      await chrome.alarms.create("end", { when: until });
-      await chrome.action.setBadgeText({ text: "ON" });
-      await chrome.action.setBadgeBackgroundColor({ color: "#315c48" });
-      respond({ ok: true, until });
-    })
-    .catch((e) => respond({ ok: false, error: e.message }));
-  return true;
+  if (message.type === "SUSPEND") return false;
+  return enqueue(message, respond);
 });
-chrome.alarms.onAlarm.addListener((a) => {
-  if (a.name === "end") {
-    queue = queue.catch(() => {}).then(expire);
-  }
+chrome.runtime.onMessage.addListener((message, sender, respond) => {
+  if (sender.id !== chrome.runtime.id) return false;
+  return enqueue(message, respond);
 });
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (["end", "health"].includes(alarm.name))
+    queue = queue.catch(() => {}).then(reconcile);
+});
+async function boot() {
+  await chrome.alarms.create("health", { periodInMinutes: 1 });
+  return reconcile();
+}
 chrome.runtime.onStartup.addListener(() => {
-  queue = queue.catch(() => {}).then(expire);
+  queue = queue.catch(() => {}).then(boot);
 });
 chrome.runtime.onInstalled.addListener(() => {
-  queue = queue.catch(() => {}).then(expire);
+  queue = queue.catch(() => {}).then(boot);
 });

@@ -2,6 +2,18 @@
 
 Uno spazio personale per obiettivi, focus, richiamo attivo e ripassi distribuiti.
 
+## Funzioni aggiunte
+
+- Piano esami: data, argomenti con stima in minuti, giorni disponibili e piano giornaliero di studio e richiamo successivo. Avviso se il tempo non basta; completamento argomenti esplicito. Le durate dei ripassi sono suggerimenti pratici, modificabili tramite le stime del piano.
+- Domande: tentativo senza appunti, soluzione nascosta, autovalutazione e ripasso futuro.
+- Errori: raccolta di correzioni e risposte difficili, nuovi tentativi e stato risolto/da riprendere.
+- Avvio da 5 minuti con scelta di continuare per altri 25.
+- Modalità immersiva con uscita tramite pulsante o Esc.
+- Backup JSON completo, importazione con unione o sostituzione e ripristino della copia precedente. Compatibile anche con i vecchi export.
+- Fasce social settimanali, anche oltre mezzanotte, con estensione 2.0. Gli orari funzionano con la pagina chiusa, purché il browser sia aperto e il PC attivo.
+
+Per aggiornare un'estensione già installata, scarica lo ZIP dall'app, sostituisci i file nella stessa cartella e premi Ricarica in chrome://extensions o edge://extensions. Poi collega e invia gli orari dalla sezione Blocco social.
+
 ## Modificare con Claude Code
 
 Apri questa cartella in Claude Code, oppure apri un terminale qui ed esegui `claude`. Claude legge CLAUDE.md e può modificare tutti i sorgenti. Esempio: «Leggi CLAUDE.md, avvia l'app e modifica la schermata focus mantenendo i dati esistenti».

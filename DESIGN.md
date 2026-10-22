@@ -43,4 +43,8 @@ Flat lightly rounded inputs; copper primary action with dark text; outlined seco
 Body 14px; supporting copy 12–13px; headings 15–18px; learning goals 22–25px; page title 38–65px; functional timer 76–130px. Uppercase phase labels are 11px.
 
 ## Implementation
+
+## Extended study surfaces
+
+Preserve Carbon & Copper. Navigation adds Piano esami, Domande and Ripasso errori. Two-column creation/list layouts stack at 1100px. Structured, scroll-bounded daily plans; explicit day/time controls; answer-first practice with revealed feedback. Backup preview and confirmation are inline. Immersive focus removes surrounding navigation and utility noise while keeping a visible exit and thought parking. Body text retains full contrast.
 style.css supplies existing layout and accessibility; premium.css replaces visual tokens and responsive composition. experience.js adds Web Audio and motion separately from study state. Code is formatted, framework-free and documented for Claude Code. Fonts load from Google Fonts with local fallbacks.

@@ -139,8 +139,7 @@
       "timer-paused",
       !byId("session").hidden && byId("pause").textContent === "Riprendi",
     );
-    if (!byId("recall").hidden)
-      document.title = "Richiamo attivo · Studio";
+    if (!byId("recall").hidden) document.title = "Richiamo attivo · Studio";
     else if (byId("setup").hidden)
       document.title = `${byId("timer").textContent} · Studio`;
     else document.title = "Studio — una cosa alla volta";
@@ -160,6 +159,15 @@
       );
   }
   window.addEventListener("hashchange", enter);
+  window.addEventListener("studio:saved", () => {
+    queueMicrotask(() => {
+      document.title = !byId("recall").hidden
+        ? "Richiamo attivo · Studio"
+        : byId("setup").hidden
+          ? `${byId("timer").textContent} · Studio`
+          : "Studio — una cosa alla volta";
+    });
+  });
   document.addEventListener("visibilitychange", () => {
     document.body.classList.toggle("page-sleeping", document.hidden);
   });

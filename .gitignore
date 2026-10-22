@@ -1,5 +1,13 @@
 node_modules/
 .qa-source/
 upgrade.cjs
+add-features.cjs
+finish-features.cjs
+plan-button.cjs
+plan-reviews.cjs
+test-fixtures/
+update-extension.cjs
+extension/worker.js
+extension/popup-v2.js
 .DS_Store
 *.log

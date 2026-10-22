@@ -1,11 +1,21 @@
-STUDIO — ESTENSIONE PER CHROME ED EDGE
+STUDIO 2.0 — ESTENSIONE PER CHROME ED EDGE
 
-1. Estrai questo ZIP in una cartella permanente.
-2. Apri chrome://extensions oppure edge://extensions.
-3. Attiva Modalità sviluppatore.
-4. Seleziona Carica estensione non pacchettizzata e scegli questa cartella.
-5. Copia l'ID dell'estensione nella sezione Blocco social dell'app Studio.
-6. Premi Verifica collegamento. Avvia una sessione e prova ad aprire un sito bloccato.
+INSTALLAZIONE
+1. Estrai lo ZIP in una cartella permanente.
+2. Apri chrome://extensions o edge://extensions e attiva Modalità sviluppatore.
+3. Scegli Carica estensione non pacchettizzata e seleziona la cartella estratta.
+4. Copia l'ID nella sezione Blocco social dell'app e verifica il collegamento.
 
-Il permesso di accesso ai siti permette di bloccare i domini che scegli. L'estensione non invia dati a server esterni. Funziona solo in questo browser e può essere disattivata. Le pagine già caricate possono continuare a mostrare contenuti: ricaricale per verificare il blocco. Non blocca le app del PC o il telefono.
-Se metti in pausa, la protezione viene mantenuta con una scadenza di sicurezza; l'app aperta la rinnova. Se chiudi l'app, il blocco termina all'orario impostato. In caso di necessità, usa Sblocca i siti nel pulsante dell'estensione.
+AGGIORNAMENTO DA 1.0
+Sostituisci i file nella stessa cartella installata, mantenendo il percorso. Premi Ricarica nella pagina delle estensioni. Ricollega l'app e premi Invia orari.
+
+SESSIONI E FASCE SETTIMANALI
+La sessione blocca i domini fino alla scadenza prevista. Le fasce salvate funzionano anche chiudendo la pagina, con browser aperto e PC attivo. Il fuso orario è quello del PC. Se la fine è prima dell'inizio, la fascia termina il giorno successivo. Finire una sessione non cancella le fasce.
+
+Il pulsante dell'estensione permette di sospendere la protezione per 15 minuti. Dopo riprende se un orario o una sessione lo prevede. Per eliminare una fascia usa la sezione Blocco social dell'app e invia gli orari aggiornati.
+
+LIMITI
+Il blocco vale solo per questo browser: non blocca app Windows o telefono. Puoi aggirarlo disattivando l'estensione o cambiando browser. Le pagine già caricate possono mostrare contenuti finché non vengono ricaricate. Browser chiuso o PC sospeso impediscono il funzionamento puntuale.
+
+PRIVACY
+Il permesso sui siti serve a bloccare i domini scelti. Nessun dato di navigazione viene inviato a servizi esterni. Le regole e gli orari restano nella memoria locale dell'estensione. Soltanto il sito Studio e localhost possono inviare comandi.

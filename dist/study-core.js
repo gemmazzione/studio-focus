@@ -1,0 +1,280 @@
+(function (root) {
+  "use strict";
+  const fail = () => {
+    throw Error(
+      "Backup non valido o non compatibile. Nessun dato è stato modificato.",
+    );
+  };
+  const str = (v, max = 10000) =>
+    typeof v === "string" && v.length <= max ? v : fail();
+  const num = (v, max = 1e14) =>
+    typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= max
+      ? v
+      : fail();
+  const id = (v) => (/^[a-zA-Z0-9_-]{1,128}$/.test(str(v, 128)) ? v : fail());
+  const arr = (v, fn, max = 20000) =>
+    Array.isArray(v) && v.length <= max ? v.map(fn) : fail();
+  const grade = (v) => (["hard", "medium", "easy"].includes(v) ? v : fail());
+  const day = (v) =>
+    /^\d{4}-\d{2}-\d{2}$/.test(str(v, 10)) &&
+    !isNaN(new Date(v + "T12:00:00").getTime()) &&
+    localDay(new Date(v + "T12:00:00")) === v
+      ? v
+      : fail();
+  const domain = (v) =>
+    /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,63}$/.test(str(v, 253)) &&
+    !v.endsWith("chatgpt.site")
+      ? v
+      : fail();
+  function validateSchedule(s) {
+    const time = (v) =>
+      /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(str(v, 5)) ? v : fail();
+    const days = arr(
+      s.days,
+      (d) => (Number.isInteger(d) && d >= 0 && d <= 6 ? d : fail()),
+      7,
+    );
+    if (!days.length || s.start === s.end || typeof s.enabled !== "boolean")
+      fail();
+    return {
+      id: id(s.id),
+      days: [...new Set(days)],
+      start: time(s.start),
+      end: time(s.end),
+      enabled: s.enabled,
+    };
+  }
+  function validateBackup(raw) {
+    const d =
+      raw?.format === "studio.backup"
+        ? raw.version === 3
+          ? raw.data
+          : fail()
+        : raw;
+    if (!d || typeof d !== "object" || !d.settings) fail();
+    const sessions = arr(d.sessions, (s) => ({
+      id: id(s.id),
+      at: num(s.at),
+      subject: str(s.subject, 80),
+      goal: str(s.goal, 220),
+      answer: str(s.answer),
+      correction: str(s.correction || ""),
+      rating: grade(s.rating),
+      seconds: num(s.seconds, 604800),
+      reviewId: s.reviewId ? id(s.reviewId) : null,
+    }));
+    const reviews = arr(d.reviews, (r) => ({
+      id: id(r.id),
+      subject: str(r.subject, 80),
+      goal: str(r.goal, 220),
+      interval: num(r.interval, 180),
+      count: num(r.count || 0, 100000),
+      rating: grade(r.rating),
+      due: num(r.due),
+    }));
+    const thoughts = arr(d.thoughts, (t) => ({
+      id: id(t.id),
+      text: str(t.text, 300),
+    }));
+    const settings = {
+      domains: arr(d.settings.domains, domain, 100),
+      blockBreak: !!d.settings.blockBreak,
+      extensionId: "",
+    };
+    const s = d.study || {};
+    const study = {
+      exams: arr(
+        s.exams || [],
+        (e) => ({
+          id: id(e.id),
+          subject: str(e.subject, 80),
+          date: day(e.date),
+          minutes: num(e.minutes, 480),
+          days: arr(
+            e.days,
+            (v) => (Number.isInteger(v) && v >= 0 && v <= 6 ? v : fail()),
+            7,
+          ),
+          topics: arr(
+            e.topics,
+            (t) => ({
+              id: id(t.id),
+              text: str(t.text, 220),
+              minutes: num(t.minutes, 10000),
+              done: !!t.done,
+              doneAt: t.doneAt == null ? null : num(t.doneAt),
+            }),
+            1000,
+          ),
+        }),
+        100,
+      ),
+      cards: arr(s.cards || [], (c) => ({
+        id: id(c.id),
+        subject: str(c.subject, 80),
+        question: str(c.question, 1000),
+        solution: str(c.solution),
+        due: num(c.due),
+        interval: num(c.interval, 180),
+        count: num(c.count || 0, 100000),
+      })),
+      errors: arr(s.errors || [], (e) => ({
+        id: id(e.id),
+        sourceId: id(e.sourceId),
+        subject: str(e.subject, 80),
+        question: str(e.question, 1000),
+        solution: str(e.solution),
+        due: num(e.due),
+        interval: num(e.interval || 1, 180),
+        count: num(e.count || 0, 100000),
+        resolved: !!e.resolved,
+      })),
+      schedules: arr(s.schedules || [], validateSchedule, 30),
+      logs: arr(s.logs || [], (l) => ({
+        id: id(l.id),
+        at: num(l.at),
+        itemId: id(l.itemId),
+        kind: ["card", "error"].includes(l.kind) ? l.kind : fail(),
+        answer: str(l.answer),
+        rating: grade(l.rating),
+      })),
+      seenSessions: arr(s.seenSessions || [], id),
+    };
+    for (const list of [
+      sessions,
+      reviews,
+      thoughts,
+      study.exams,
+      study.cards,
+      study.errors,
+      study.schedules,
+      study.logs,
+    ])
+      if (new Set(list.map((x) => x.id)).size !== list.length) fail();
+    let sound = null;
+    if (raw?.sound) {
+      const p = raw.sound;
+      if (
+        typeof p.enabled !== "boolean" ||
+        !["bell", "pulse", "wood"].includes(p.kind)
+      )
+        fail();
+      sound = { enabled: p.enabled, kind: p.kind, volume: num(p.volume, 100) };
+    }
+    return {
+      data: { sessions, reviews, thoughts, settings, active: null, study },
+      sound,
+    };
+  }
+  function localDay(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+  function plan(exam, now = new Date()) {
+    const start = new Date(now);
+    start.setHours(12, 0, 0, 0);
+    const end = new Date(exam.date + "T12:00:00");
+    const dates = [];
+    for (
+      let d = new Date(start), i = 0;
+      d < end && i < 730;
+      d.setDate(d.getDate() + 1), i++
+    )
+      if (exam.days.includes(d.getDay())) dates.push(localDay(d));
+    const pending = exam.topics
+      .filter((t) => !t.done)
+      .map((t) => ({ ...t, left: t.minutes }));
+    const total = pending.reduce((n, t) => n + t.minutes, 0),
+      capacity = dates.length * exam.minutes;
+    const daily = Math.min(
+      exam.minutes,
+      Math.ceil(total / Math.max(1, dates.length - 1)),
+    );
+    const rows = [];
+    let index = 0;
+    for (const date of dates) {
+      let left = daily;
+      const tasks = [];
+      while (left > 0 && index < pending.length) {
+        const t = pending[index],
+          minutes = Math.min(left, t.left, 90);
+        if (minutes > 0)
+          tasks.push({ topicId: t.id, text: t.text, minutes, kind: "study" });
+        left -= minutes;
+        t.left -= minutes;
+        if (t.left <= 0) index++;
+      }
+      if (tasks.length) rows.push({ date, tasks });
+    }
+    let reviewMissed = 0;
+    for (const topic of exam.topics) {
+      const remainder = pending.find((t) => t.id === topic.id);
+      if (!topic.done && remainder?.left > 0) continue;
+      const studyDays = rows.filter((r) =>
+        r.tasks.some((t) => t.topicId === topic.id && t.kind === "study"),
+      );
+      const last = studyDays.length
+        ? studyDays[studyDays.length - 1].date
+        : localDay(new Date(topic.doneAt || now));
+      const earliest = new Date(last + "T12:00:00");
+      earliest.setDate(earliest.getDate() + 1);
+      const reviewMinutes = Math.min(
+        exam.minutes,
+        15,
+        Math.max(5, Math.ceil(topic.minutes * 0.1)),
+      );
+      const date = dates.find(
+        (date) =>
+          date >= localDay(earliest) &&
+          (rows
+            .find((r) => r.date === date)
+            ?.tasks.reduce((n, t) => n + t.minutes, 0) || 0) +
+            reviewMinutes <=
+            exam.minutes,
+      );
+      if (!date) {
+        reviewMissed++;
+        continue;
+      }
+      let row = rows.find((r) => r.date === date);
+      if (!row) {
+        row = { date, tasks: [] };
+        rows.push(row);
+      }
+      row.tasks.push({
+        topicId: topic.id,
+        text: topic.text,
+        minutes: reviewMinutes,
+        kind: "review",
+      });
+    }
+    rows.sort((a, b) => a.date.localeCompare(b.date));
+    return {
+      rows,
+      reviewMissed,
+      total,
+      capacity,
+      overflow: Math.max(0, total - capacity),
+      expired: end <= start,
+    };
+  }
+  function nextInterval(previous, rating) {
+    return rating === "hard"
+      ? 1
+      : Math.min(
+          180,
+          Math.max(
+            2,
+            Math.round((previous || 1) * (rating === "easy" ? 2.5 : 1.5)),
+          ),
+        );
+  }
+  const api = {
+    validateBackup,
+    validateSchedule,
+    plan,
+    localDay,
+    nextInterval,
+  };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.StudyCore = api;
+})(typeof globalThis !== "undefined" ? globalThis : this);

@@ -4,6 +4,7 @@ const fs = require("fs"),
 let rules = [],
   values = {},
   external,
+  internal,
   alarm;
 const chrome = {
   declarativeNetRequest: {
@@ -31,6 +32,8 @@ const chrome = {
     setBadgeBackgroundColor: async () => {},
   },
   runtime: {
+    id: "studio-test",
+    onMessage: { addListener: (f) => (internal = f) },
     onMessageExternal: { addListener: (f) => (external = f) },
     onStartup: { addListener: () => {} },
     onInstalled: { addListener: () => {} },
@@ -44,6 +47,8 @@ vm.runInNewContext(fs.readFileSync("extension/background.js", "utf8"), {
   Number,
   Array,
   Set,
+  StudioScheduler: require("./extension/scheduler.js"),
+  importScripts: () => {},
 });
 const send = (
   message,
@@ -80,12 +85,74 @@ const send = (
   assert.equal(rules.length, 2);
   assert((await send({ type: "STOP" })).ok);
   assert.equal(rules.length, 0);
+  const time = (at) => {
+    const d = new Date(at);
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  };
+  const scheduled = {
+    id: "test-schedule",
+    days: [0, 1, 2, 3, 4, 5, 6],
+    start: time(Date.now() - 60000),
+    end: time(Date.now() + 3600000),
+    enabled: true,
+  };
+  assert(
+    (
+      await send({
+        type: "SET_SCHEDULES",
+        schedules: [scheduled],
+        domains: ["instagram.com"],
+      })
+    ).ok,
+  );
+  assert.equal(rules.length, 1, "Active scheduled block applied");
+  assert((await send({ type: "STOP" })).ok);
+  assert.equal(
+    rules.length,
+    1,
+    "Ending manual focus preserves scheduled block",
+  );
+  assert(
+    !(
+      await send({
+        type: "SET_SCHEDULES",
+        schedules: [{ ...scheduled, start: "99:00" }],
+        domains: ["instagram.com"],
+      })
+    ).ok,
+  );
+  const suspend = await new Promise((resolve) =>
+    internal({ type: "SUSPEND" }, { id: "studio-test" }, resolve),
+  );
+  assert(suspend.ok);
+  assert.equal(rules.length, 0, "Popup suspension overrides all active blocks");
+  assert(
+    !(await send({ type: "SUSPEND" })).ok,
+    "Web page cannot invoke popup-only suspension",
+  );
+  values.suspendUntil = 0;
+  assert((await send({ type: "PING" })).ok);
+  assert.equal(rules.length, 1, "Schedule resumes after suspension");
+  assert(
+    (
+      await send({
+        type: "SET_SCHEDULES",
+        schedules: [],
+        domains: ["instagram.com"],
+      })
+    ).ok,
+  );
+  assert.equal(
+    rules.length,
+    0,
+    "Removing schedules clears scheduled protection",
+  );
   await send({
     type: "START",
     domains: ["instagram.com"],
     until: Date.now() + 60000,
   });
-  values.until = Date.now() - 1;
+  values.manualUntil = Date.now() - 1;
   assert((await send({ type: "PING" })).ok);
   assert.equal(rules.length, 0);
   console.log(

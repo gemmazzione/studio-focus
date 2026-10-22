@@ -1,0 +1,360 @@
+.feature-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.2fr);
+  gap: 40px;
+  align-items: start;
+}
+.feature-form {
+  background: var(--white);
+  padding: 26px;
+  border-radius: 4px;
+}
+.feature-form h2 {
+  font-size: 18px;
+}
+.feature-form > button {
+  margin-top: 20px;
+}
+.feature-form fieldset {
+  border: 0;
+  padding: 0;
+  margin: 20px 0;
+}
+.feature-form legend {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.day-picks {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.day-picks label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  padding: 6px;
+  background: #293027;
+  border-radius: 4px;
+}
+.day-picks input,
+.list-toolbar input,
+.topic-check input,
+.schedule-row input {
+  width: auto;
+  accent-color: var(--green);
+}
+.list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+.list-toolbar h2 {
+  margin: 0;
+}
+.list-toolbar label {
+  margin: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.exam-entry {
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+}
+.entry-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: baseline;
+}
+.entry-top h2 {
+  margin: 0;
+}
+.meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+.exam-entry .meta {
+  margin-top: 8px;
+}
+.exam-entry details {
+  margin: 20px 0;
+}
+summary {
+  cursor: pointer;
+}
+.topic-check {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+.topic-check span {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+.plan-days {
+  max-height: 520px;
+  overflow: auto;
+  padding-right: 8px;
+}
+.plan-day {
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.plan-day h3 {
+  font:
+    500 16px Manrope,
+    sans-serif;
+  margin: 0 0 10px;
+}
+.plan-task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 0;
+}
+.plan-task span {
+  overflow-wrap: anywhere;
+}
+.plan-task small {
+  display: block;
+  color: var(--muted);
+}
+.plan-task button {
+  padding: 7px 12px;
+  font-size: 12px;
+}
+.notice {
+  padding: 14px;
+  background: #392d22;
+  color: #f5cba9;
+  border-radius: 4px;
+  font-size: 13px;
+}
+.practice {
+  margin: 30px 0;
+  padding: 28px;
+  background: #232b24;
+  max-width: 850px;
+  scroll-margin: 25px;
+}
+.practice h3 {
+  font-family: "Bricolage Grotesque", sans-serif;
+}
+.practice textarea {
+  margin-bottom: 20px;
+}
+.practice-grades {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 25px 0;
+}
+.solution {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.practice #practice-close {
+  display: block;
+  margin-top: 15px;
+}
+.entry .text-button {
+  display: block;
+}
+.backup-section,
+.schedule-section {
+  border-top: 1px solid var(--line);
+  margin-top: 45px;
+  padding-top: 30px;
+}
+.schedule-section > p,
+.backup-section > p {
+  max-width: 75ch;
+  color: var(--muted);
+}
+.schedule-section .feature-form {
+  max-width: 700px;
+}
+.schedule-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+.schedule-row label {
+  margin: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.schedule-section #schedule-sync {
+  margin-top: 20px;
+}
+#schedule-status,
+#backup-message {
+  margin-top: 16px;
+  font-size: 13px;
+}
+#backup-preview {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--white);
+}
+#backup-preview button {
+  margin: 18px 10px 0 0;
+}
+#backup-file {
+  max-width: 700px;
+}
+#backup-mode {
+  max-width: 700px;
+  display: block;
+}
+.focus-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 14px 0;
+}
+.focus-tools .secondary {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.focus-tools .text-button {
+  padding: 0;
+}
+.focusing .focus-tools {
+  display: none;
+}
+#session-immersive {
+  padding-top: 0;
+  margin-top: 15px;
+}
+#exit-immersive {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  z-index: 20;
+  background: #202720;
+}
+.immersive aside,
+.immersive header,
+.immersive .heading,
+.immersive footer,
+.immersive .source-strip,
+.immersive .sound-panel,
+.immersive .daily,
+.immersive .focus-tools,
+.immersive #session-immersive {
+  display: none;
+}
+.immersive main {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding-top: 90px;
+}
+.immersive .workspace {
+  grid-template-columns: minmax(0, 1.8fr) minmax(240px, 1fr);
+}
+.immersive .right-column {
+  display: block;
+}
+.immersive .thoughts {
+  margin-top: 20px;
+}
+.immersive #page-focus {
+  display: block;
+}
+.immersive .page:not(#page-focus) {
+  display: none !important;
+}
+aside nav {
+  gap: 2px;
+}
+aside nav a {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+.aside-note {
+  margin-bottom: 22px;
+}
+nav span {
+  padding-left: 6px;
+}
+@media (max-height: 850px) and (min-width: 801px) {
+  .aside-bottom {
+    font-size: 16px;
+  }
+  .aside-note {
+    margin: 18px 0;
+  }
+  .aside-bottom small {
+    margin-top: 12px;
+  }
+  aside {
+    overflow-y: auto;
+  }
+  .aside-bottom {
+    padding-top: 22px;
+  }
+}
+@media (max-width: 1100px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+@media (max-width: 800px) {
+  .feature-form,
+  .practice {
+    padding: 22px;
+  }
+  .immersive main {
+    padding-top: 85px;
+  }
+  .immersive .workspace {
+    grid-template-columns: 1fr;
+  }
+  .immersive .thoughts {
+    margin-top: 0;
+  }
+  .aside-note {
+    display: none;
+  }
+  #exit-immersive {
+    font-size: 12px;
+    padding: 10px 12px;
+    right: 20px;
+  }
+  .focus-tools {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .topic-check {
+    flex-wrap: wrap;
+  }
+  .plan-days {
+    max-height: 450px;
+  }
+  .list-toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .schedule-row {
+    align-items: flex-start;
+  }
+  .schedule-row label {
+    flex-wrap: wrap;
+  }
+}

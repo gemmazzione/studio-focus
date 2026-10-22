@@ -7,6 +7,7 @@
     <title>Studio — spazio alla concentrazione</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="premium.css" />
+    <link rel="stylesheet" href="features.css" />
   </head>
   <body>
     <aside>
@@ -19,6 +20,10 @@
       <p class="aside-note">Un passo alla volta.<br />Una cosa alla volta.</p>
       <nav aria-label="Navigazione">
         <a href="#focus" data-page="focus">Il tuo spazio</a
+        ><a href="#planning" data-page="planning">Piano esami</a
+        ><a href="#cards" data-page="cards">Domande</a
+        ><a href="#errors" data-page="errors"
+          >Ripasso errori <span id="error-count">0</span></a
         ><a href="#reviews" data-page="reviews"
           >Ripassi <span id="due-count">0</span></a
         ><a href="#progress" data-page="progress">I tuoi progressi</a
@@ -72,6 +77,13 @@
               <h2 id="phase-title">Prepara la tua sessione</h2>
               <span id="phase-label">Focus</span>
             </div>
+            <div class="focus-tools">
+              <button type="button" id="five-minute" class="secondary">
+                Parti con 5 minuti</button
+              ><button type="button" id="immersive" class="text-button">
+                Modalità immersiva
+              </button>
+            </div>
             <form id="setup">
               <label for="subject">Materia</label
               ><input
@@ -90,6 +102,7 @@
                 <label
                   >Studio
                   <select id="duration">
+                    <option value="5">5 minuti · inizia piano</option>
                     <option value="25">25 minuti</option>
                     <option value="40" selected>40 minuti</option>
                     <option value="50">50 minuti</option>
@@ -115,6 +128,9 @@
               </p>
             </form>
             <div id="session" hidden>
+              <button type="button" id="session-immersive" class="text-button">
+                Entra in modalità immersiva
+              </button>
               <p id="session-subject" class="subject-text"></p>
               <h3 id="session-goal"></h3>
               <div id="timer" role="timer" aria-label="Tempo rimanente">
@@ -209,7 +225,10 @@
               <p id="audio-status" class="hint" role="status">
                 Suona a fine studio e a fine pausa.
               </p>
-                <p class="hint audio-note">Per sentirlo, lascia la pagina aperta e l’audio del browser attivo.</p>
+              <p class="hint audio-note">
+                Per sentirlo, lascia la pagina aperta e l’audio del browser
+                attivo.
+              </p>
             </section>
             <section class="daily">
               <h2>Oggi, con calma.</h2>
@@ -409,7 +428,12 @@
       <footer>Studio <span>Lascia spazio alla prossima idea.</span></footer>
     </main>
     <div id="toast" role="status" hidden></div>
+    <button id="exit-immersive" type="button" class="secondary" hidden>
+      Esci dalla modalità immersiva · Esc
+    </button>
+    <script src="study-core.js"></script>
     <script src="app.js"></script>
     <script src="experience.js"></script>
+    <script src="features.js"></script>
   </body>
 </html>
