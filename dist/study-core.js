@@ -319,8 +319,47 @@
           ),
         );
   }
+  // Unione per ID: gli elementi di old restano, da incoming arrivano solo quelli nuovi.
+  function mergeData(old, incoming) {
+    const merged = {
+      ...old,
+      active: null,
+      settings: {
+        ...old.settings,
+        ...incoming.settings,
+        extensionId: old.settings.extensionId,
+      },
+      study: {},
+    };
+    for (const key of ["sessions", "reviews", "thoughts"]) {
+      const map = new Map(old[key].map((x) => [x.id, x]));
+      for (const x of incoming[key]) if (!map.has(x.id)) map.set(x.id, x);
+      merged[key] = [...map.values()];
+    }
+    for (const key of [
+      "exams",
+      "cards",
+      "errors",
+      "schedules",
+      "logs",
+      "agendaEvents",
+      "agendaOverrides",
+    ]) {
+      const map = new Map(old.study[key].map((x) => [x.id, x]));
+      for (const x of incoming.study[key]) if (!map.has(x.id)) map.set(x.id, x);
+      merged.study[key] = [...map.values()];
+    }
+    merged.study.drafts = { ...incoming.study.drafts, ...old.study.drafts };
+    merged.study.seenSessions = [
+      ...new Set([...old.study.seenSessions, ...incoming.study.seenSessions]),
+    ];
+    if (merged.study.schedules.length > 30)
+      throw Error("L’unione supera il limite di 30 fasce orarie.");
+    return merged;
+  }
   const api = {
     validateBackup,
+    mergeData,
     validateSchedule,
     plan,
     localDay,

@@ -1,13 +1,17 @@
 # Pubblicazione automatica via FTP su AlterVista.
-# A ogni push su main: test, poi caricamento dei soli file cambiati di dist/.
+# A ogni push su main: test, creazione di dist/api/config.php, caricamento dei soli file cambiati di dist/.
 #
 # Configurazione (una volta sola) in GitHub → Settings → Secrets and variables → Actions:
 #   Secrets:   FTP_SERVER     es. ftp.nomesito.altervista.org
 #              FTP_USERNAME   utente FTP
 #              FTP_PASSWORD   password FTP
-#   Variables: FTP_SERVER_DIR cartella di destinazione, con "/" finale (es. /studiofocus/)
+#              DB_PASSWORD    facoltativo (su AlterVista la password del database è vuota)
+#   Variables: DB_NAME        nome del database MySQL (AlterVista: my_nomesito)
+#              DB_USER        utente del database (AlterVista: nomesito)
+#              DB_HOST        facoltativa, predefinita localhost
+#              FTP_SERVER_DIR cartella di destinazione, con "/" finale (es. /studiofocus/)
 #              FTP_PROTOCOL   facoltativa: ftps (predefinita, cifrato) oppure ftp
-# Senza i dati FTP il workflow salta la pubblicazione.
+# Senza i dati FTP il workflow salta la pubblicazione. Senza DB_NAME gli account restano disattivati.
 
 name: Pubblica sul sito
 
@@ -33,6 +37,34 @@ jobs:
 
       - name: Test
         run: npm run check
+
+      # config.php creato a ogni pubblicazione, mai salvato nel repository.
+      # Valori codificati in base64 per evitare problemi con i caratteri speciali.
+      - name: Configura il database
+        env:
+          DB_NAME: ${{ vars.DB_NAME }}
+          DB_USER: ${{ vars.DB_USER }}
+          DB_HOST: ${{ vars.DB_HOST }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          if [ -z "$DB_NAME" ]; then
+            echo "::warning::Account non configurati: imposta le variabili DB_NAME e DB_USER."
+            exit 0
+          fi
+          node -e '
+            const e = process.env;
+            const cfg = {
+              dsn: `mysql:host=${e.DB_HOST || "localhost"};dbname=${e.DB_NAME};charset=utf8mb4`,
+              db_user: e.DB_USER || "",
+              db_pass: e.DB_PASSWORD || "",
+              invite: "",
+              prefix: "stf_",
+            };
+            const b64 = Buffer.from(JSON.stringify(cfg)).toString("base64");
+            require("fs").writeFileSync("dist/api/config.php",
+              "<?php\nreturn json_decode(base64_decode(\"" + b64 + "\"), true);\n");
+          '
+          echo "config.php creato per il database $DB_NAME"
 
       - name: Pubblica via FTP
         env:

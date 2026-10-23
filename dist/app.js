@@ -328,6 +328,7 @@ function route() {
       "attempts",
       "cards",
       "errors",
+      "account",
     ].includes(requested)
       ? requested
       : "focus";

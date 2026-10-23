@@ -1,0 +1,11 @@
+.account-box {
+  max-width: 520px;
+}
+.account-box .actions {
+  margin-top: 22px;
+}
+#account-message {
+  margin: 16px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}

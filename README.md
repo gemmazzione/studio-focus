@@ -38,6 +38,8 @@ L'estensione inclusa blocca i domini scelti nel browser in cui è installata. Ve
 
 ## Dati e distribuzione
 
+Con un account (pagina Account, solo sul sito AlterVista) sessioni, piani, domande ed errori vengono salvati anche sul server e ritrovati su ogni dispositivo. Le modifiche partono da sole pochi secondi dopo; se due dispositivi cambiano dati nello stesso momento, gli elementi vengono uniti. Senza account resta tutto nel browser.
+
 Sessioni e risposte sono in localStorage. Sito online, localhost e browser diversi hanno archivi distinti. L'esportazione JSON è disponibile nei progressi. I font sono caricati da Google Fonts; in assenza di rete vengono usati i font di riserva.
 
 Online: https://samueleruggeri.altervista.org/studiofocus/ (copia su https://gemmazzione.github.io/studio-focus/). Ogni push su `main` esegue i test e aggiorna il sito tramite GitHub Actions (cartella `dist`). Il sito online e la versione locale hanno archivi dati separati: usa Esporta/Importa backup per spostare i dati.

@@ -57,3 +57,9 @@ Il sito principale è su AlterVista: https://samueleruggeri.altervista.org/studi
 ## Design
 
 App per studiare, non landing promozionale. Tema “Quaderno”: carta bianca, inchiostro blu-nero, penna blu (`--green`, nome storico) per azioni e avanzamento, penna rossa (`--warm`) solo per errori e scadenze. La quadrettatura con il margine rosso compare solo dove si scrive: pannello della sessione ed esercizi. Un solo font, Schibsted Grotesk. Tema scuro automatico con prefers-color-scheme. Titoli di pagina semplici (il nome della sezione), sottotitoli che dicono cosa fa la pagina: niente slogan, frasi motivazionali o titoli su due righe con parola colorata.
+
+## Account e sincronizzazione
+
+`dist/sync.js` aggiunge la pagina Account e sincronizza i dati con l'API PHP in `dist/api/` (stessa struttura di Scacchi da Zero, tabelle con prefisso `stf_` nel database condiviso my_samueleruggeri). Il server tiene per ogni utente un documento studio.backup v4 con numero di revisione; `progress.php` risponde 409 se un altro dispositivo ha salvato nel frattempo. In quel caso il client unisce con `StudyCore.mergeData` (unione per ID, vincono gli elementi locali) e reinvia. Non si sincronizzano sessione in corso, ID dell'estensione e bozze. Con una sessione attiva i dati in arrivo vengono rimandati alla fine della sessione. Lo stato della sincronizzazione è in localStorage `studio.sync.v1` (token, revisione, hash dell'ultimo invio).
+
+`dist/api/config.php` NON va nel repository: lo crea la Action dalle variabili DB_NAME e DB_USER (e dal secret facoltativo DB_PASSWORD). Prova locale con SQLite: `npm run dev:php` (http://localhost:5188). Con `npm run dev` o su GitHub Pages non c'è PHP e la pagina Account lo dice.

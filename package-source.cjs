@@ -24,6 +24,10 @@ const files = [
   "dist/agenda.css",
   "dist/features.css",
   "dist/study-core.js",
+  "dist/sync.js",
+  "dist/sync.css",
+  ...fs.readdirSync("dist/api").filter((f) => f !== "config.php").map((f) => "dist/api/" + f),
+  "scripts/serve-php.cjs",
   "dist/studio-extension.zip",
   ...fs.readdirSync("extension").filter(f => !['worker.js','popup-v2.js'].includes(f)).map((f) => "extension/" + f),
 ];

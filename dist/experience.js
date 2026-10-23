@@ -162,10 +162,10 @@
   window.addEventListener("studio:saved", () => {
     queueMicrotask(() => {
       document.title = !byId("recall").hidden
-        ? "Richiamo attivo · Studio"
+        ? "Verifica · Studio"
         : byId("setup").hidden
           ? `${byId("timer").textContent} · Studio`
-          : "Studio — una cosa alla volta";
+          : "Studio";
     });
   });
   document.addEventListener("visibilitychange", () => {

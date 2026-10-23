@@ -13,3 +13,5 @@ extension/popup-v2.js
 .DS_Store
 *.log
 .claude/
+dist/api/config.php
+.data/
