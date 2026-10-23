@@ -37,7 +37,7 @@
   const messages = {
     name_missing: "Dai un nome alla lobby.",
     goal_invalid: "L’obiettivo deve essere un numero di minuti tra 0 e 100.000.",
-    too_many_groups: "Puoi far parte al massimo di 10 lobby private.",
+    too_many_groups: "Puoi far parte al massimo di 10 lobby.",
     group_not_found: "Nessuna lobby con questo codice. Controlla di averlo copiato bene.",
     group_full: "La lobby è piena: al massimo 20 persone.",
     not_owner: "Solo chi ha creato la lobby può cambiare l’obiettivo.",
@@ -74,16 +74,17 @@
     return m.online ? '<span class="online-text">online</span>' : '<span class="meta">offline</span>';
   }
   function render() {
+    renderForms();
     const box = byId("group-body");
     // Non ricostruire i moduli mentre si scrive (aggiornamento periodico)
     if (box.contains(document.activeElement) && document.activeElement.matches("input")) return;
     if (status === "unavailable") {
       box.innerHTML =
-        '<p class="empty">Le lobby private funzionano solo sul sito <a href="https://samueleruggeri.altervista.org/studiofocus/#lobby">samueleruggeri.altervista.org/studiofocus</a>, con un account.</p>';
+        '<p class="empty">Le lobby funzionano solo sul sito <a href="https://samueleruggeri.altervista.org/studiofocus/#lobby">samueleruggeri.altervista.org/studiofocus</a>, con un account.</p>';
       return;
     }
     if (!token()) {
-      box.innerHTML = '<p class="empty">Per creare una lobby privata o entrarci serve un account. <a href="#account">Accedi o crea un account</a>.</p>';
+      box.innerHTML = '<p class="empty">Per creare una lobby o entrarci serve un account. <a href="#account">Accedi o crea un account</a>.</p>';
       return;
     }
     if (!groups) {
@@ -117,9 +118,18 @@
         }<button type="button" class="text-button" data-leave-group="${g.id}">Esci dalla lobby</button></div></article>`;
       })
       .join("");
-    box.innerHTML = `${list || '<p class="empty">Non sei in nessuna lobby privata. Creane una e manda il codice ai tuoi amici, oppure entra con il loro codice.</p>'}
-      <div class="group-forms"><form id="group-create" class="feature-form"><h3>Crea una lobby privata</h3><label for="group-name">Nome</label><input id="group-name" required maxlength="60" placeholder="Es. Maturità 5B"><label for="group-goal">Obiettivo di minuti a settimana (facoltativo)</label><input id="group-goal" type="number" min="0" max="100000" step="30" value="0"><button class="primary wide">Crea lobby</button></form>
-      <form id="group-join" class="feature-form"><h3>Entra con un codice</h3><label for="group-code">Codice d’invito</label><input id="group-code" required maxlength="12" autocomplete="off" spellcheck="false" placeholder="8 caratteri"><button class="secondary wide">Entra</button><p id="group-message" role="status" class="hint">${esc(status)}</p></form></div>`;
+    box.innerHTML = list || '<p class="empty">Non sei ancora in nessuna lobby. Creane una o entra con un codice qui sotto.</p>';
+  }
+  // I moduli stanno nella loro sezione e si disegnano una volta sola, così l'aggiornamento periodico non cancella quello che scrivi
+  function renderForms() {
+    const forms = byId("group-forms");
+    forms.closest("section").hidden = !token() || status === "unavailable";
+    if (byId("group-create")) {
+      byId("group-message").textContent = status;
+      return;
+    }
+    forms.innerHTML = `<div class="group-forms"><form id="group-create" class="feature-form"><h3>Crea una lobby</h3><label for="group-name">Nome</label><input id="group-name" required maxlength="60" placeholder="Es. Maturità 5B"><label for="group-goal">Obiettivo di minuti a settimana (facoltativo)</label><input id="group-goal" type="number" min="0" max="100000" step="30" value="0"><button class="primary wide">Crea lobby</button></form>
+      <form id="group-join" class="feature-form"><h3>Entra con un codice</h3><label for="group-code">Codice d’invito</label><input id="group-code" required maxlength="12" autocomplete="off" spellcheck="false" placeholder="8 caratteri"><button class="secondary wide">Entra</button></form></div><p id="group-message" role="status" class="hint">${esc(status)}</p>`;
   }
 
   async function act(body, done) {
@@ -138,7 +148,7 @@
       render();
     }
   }
-  byId("group-body").addEventListener("submit", (e) => {
+  byId("lobby-main").addEventListener("submit", (e) => {
     e.preventDefault();
     const f = e.target;
     if (f.id === "group-create")
@@ -187,7 +197,7 @@
     const list = others();
     byId("live-list").innerHTML = list.length
       ? list.map(([name, min]) => `<li><i class="live-dot" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(name)}"><b>${esc(name)}</b></a> <span>da ${min} min</span></li>`).join("")
-      : '<li class="hint">Nelle tue lobby private nessuno sta studiando in questo momento.</li>';
+      : '<li class="hint">Nelle tue lobby nessuno sta studiando in questo momento.</li>';
   }
   // Traguardi legati alle lobby private (letti da goals.js tramite data.study.flags)
   function rememberFlags() {

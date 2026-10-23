@@ -115,3 +115,7 @@ I "gruppi" sono diventati **lobby private** e stanno nella pagina Lobby (non pi�
 - `dist/layout.js` (caricato per ultimo) costruisce il menu Studia, Settimana, Progressi, Lobby, Impostazioni. Sposta il contenuto di Obiettivi dentro Progressi e quello di Account e app, Metodo, backup ed esportazione dentro Impostazioni (`#page-settings`), poi rimuove `page-goals`, `page-account`, `page-method`. I vecchi indirizzi `#goals`, `#account`, `#method` sono alias in `route()`. Gli script che controllano la pagina attiva devono usare i nomi nuovi (es. goals.js disegna su `#progress`).
 - Pagina Studia: suono e correzioni sono riquadri apribili; lo stato delle bozze è nascosto.
 - Tutorial dell'estensione in 6 passi (Impostazioni › Blocco siti), con testi diversi per Chrome ed Edge (`edge://extensions`). Il campo ID, il pulsante e il messaggio restano quelli di app.js, spostati nell'ultimo passo; con `studio:connected` il tutorial si chiude. Passo raggiunto in `studio.tutorial.v1`.
+
+## v13: niente lobby pubblica
+
+Tolta la lobby pubblica (richiesta dell'utente). La pagina Lobby ha due sezioni separate: "Le tue lobby" (`#group-body`, aggiornata ogni 30 s) e "Crea o entra in una lobby" (`#group-forms`, disegnata una volta sola perché l'aggiornamento non cancelli quello che si scrive). Profili visibili solo a chi è nella stessa lobby (`visible_ids` in social.php). Le azioni `lobby` e `visibility` di social.php restano solo per compatibilità e non sono più usate dall'app.

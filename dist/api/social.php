@@ -1,7 +1,7 @@
 <?php
 // Lobby e profili (header X-Auth-Token).
-// Nella lobby pubblica compare chi ci è entrato; il profilo è visibile a loro e ai compagni
-// delle stesse lobby private. Risposte e correzioni non escono mai.
+// Profili e stato online. Un profilo lo vede solo chi è nella stessa lobby (privata).
+// Risposte e correzioni non escono mai. Le azioni lobby e visibility restano per compatibilità.
 // GET  ?action=lobby&week=<inizio settimana ms>  -> {public, publicCount, users: [...]}
 // GET  ?action=profile&user=<nome>               -> {username, since, online, studyingFor, sessions, achievements}
 // POST {action: "ping", remaining, elapsed}      -> sono online (e sto studiando se remaining > 0)
@@ -32,11 +32,11 @@ function is_public(PDO $pdo, string $V, int $id): bool
     $s->execute([$id]);
     return (bool) ($s->fetch()['is_public'] ?? false);
 }
-/** ID degli utenti che posso vedere: pubblici, compagni di gruppo e me stesso. */
+/** ID degli utenti che posso vedere: chi è con me in una lobby, e me stesso. */
 function visible_ids(PDO $pdo, string $V, string $M, int $me): array
 {
     $ids = [$me => true];
-    foreach ($pdo->query("SELECT user_id FROM $V WHERE is_public = 1")->fetchAll() as $r) $ids[(int) $r['user_id']] = true;
+    // Solo i compagni delle stesse lobby (la lobby pubblica non esiste più)
     $s = $pdo->prepare("SELECT DISTINCT b.user_id FROM $M a JOIN $M b ON a.group_id = b.group_id WHERE a.user_id = ?");
     $s->execute([$me]);
     foreach ($s->fetchAll() as $r) $ids[(int) $r['user_id']] = true;
