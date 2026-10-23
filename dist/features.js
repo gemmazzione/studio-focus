@@ -30,29 +30,29 @@
   }
   page(
     "planning",
-    "Il prossimo esame.<br><em>Un passo al giorno.</em>",
-    "Distribuisci il lavoro sul tempo che hai davvero.",
-    `<div class="feature-grid"><form id="exam-form" class="feature-form"><h2>Prepara il piano</h2><label for="exam-subject">Materia dell’esame</label><input id="exam-subject" required maxlength="80" placeholder="Es. Matematica"><div class="duration-row"><label>Data dell’esame<input id="exam-date" type="date" required></label><label>Minuti al giorno<input id="exam-minutes" type="number" min="5" max="480" value="60" required></label></div><fieldset><legend>Giorni disponibili</legend><div class="day-picks">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" name="exam-day" value="${d}" ${d > 0 && d < 6 ? "checked" : ""}>${dayNames[d]}</label>`).join("")}</div></fieldset><label for="exam-topics">Argomenti e minuti stimati</label><textarea id="exam-topics" rows="5" required maxlength="20000" placeholder="Derivate | 90&#10;Integrali | 120&#10;Esercizi di riepilogo | 60"></textarea><p class="hint">Un argomento per riga. Dopo | indica i minuti; se li ometti usiamo 60. Il giorno dell’esame è escluso.</p><button class="primary wide">Crea il piano</button><p id="exam-message" role="status"></p></form><div id="exam-list"></div></div>`,
+    "Piano esami",
+    "Inserisci data e argomenti: l’app divide il lavoro sui giorni che hai a disposizione.",
+    `<div class="feature-grid"><form id="exam-form" class="feature-form"><h2>Nuovo piano</h2><label for="exam-subject">Materia dell’esame</label><input id="exam-subject" required maxlength="80" placeholder="Es. Matematica"><div class="duration-row"><label>Data dell’esame<input id="exam-date" type="date" required></label><label>Minuti al giorno<input id="exam-minutes" type="number" min="5" max="480" value="60" required></label></div><fieldset><legend>Giorni disponibili</legend><div class="day-picks">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" name="exam-day" value="${d}" ${d > 0 && d < 6 ? "checked" : ""}>${dayNames[d]}</label>`).join("")}</div></fieldset><label for="exam-topics">Argomenti e minuti stimati</label><textarea id="exam-topics" rows="5" required maxlength="20000" placeholder="Derivate | 90&#10;Integrali | 120&#10;Esercizi di riepilogo | 60"></textarea><p class="hint">Un argomento per riga. Dopo | indica i minuti; se li ometti usiamo 60. Il giorno dell’esame è escluso.</p><button class="primary wide">Crea il piano</button><p id="exam-message" role="status"></p></form><div id="exam-list"></div></div>`,
   );
   page(
     "cards",
-    "Prima di guardare.<br><em>Prova a ricordare.</em>",
-    "Domande tue, risposte a memoria e ripassi distribuiti.",
-    `<div class="feature-grid"><form id="card-form" class="feature-form"><h2>Una nuova domanda</h2><label for="card-subject">Materia della domanda</label><input id="card-subject" maxlength="80" required placeholder="Es. Biologia"><label for="card-question">Domanda</label><textarea id="card-question" rows="3" required maxlength="1000" placeholder="Come funziona la fotosintesi?"></textarea><label for="card-solution">Risposta di riferimento</label><textarea id="card-solution" rows="5" required maxlength="10000" placeholder="La soluzione da mostrare dopo il tuo tentativo…"></textarea><button class="primary wide">Salva domanda</button></form><div><div class="list-toolbar"><h2>Le tue domande</h2><label><input id="cards-due-only" type="checkbox">Solo da ripassare</label></div><div id="card-list"></div></div></div><section id="practice-card" class="practice" hidden></section>`,
+    "Domande",
+    "Scrivi domanda e risposta. Quando ti eserciti, la risposta resta nascosta finché non hai provato.",
+    `<div class="feature-grid"><form id="card-form" class="feature-form"><h2>Nuova domanda</h2><label for="card-subject">Materia della domanda</label><input id="card-subject" maxlength="80" required placeholder="Es. Biologia"><label for="card-question">Domanda</label><textarea id="card-question" rows="3" required maxlength="1000" placeholder="Come funziona la fotosintesi?"></textarea><label for="card-solution">Risposta di riferimento</label><textarea id="card-solution" rows="5" required maxlength="10000" placeholder="La soluzione da mostrare dopo il tuo tentativo…"></textarea><button class="primary wide">Salva domanda</button></form><div><div class="list-toolbar"><h2>Le tue domande</h2><label><input id="cards-due-only" type="checkbox">Solo da ripassare</label></div><div id="card-list"></div></div></div><section id="practice-card" class="practice" hidden></section>`,
   );
   page(
     "errors",
-    "Gli errori indicano<br><em>da dove ripartire.</em>",
-    "Qui arrivano correzioni delle sessioni e domande da riprendere.",
+    "Ripasso errori",
+    "Le correzioni scritte dopo le sessioni e le domande che hai segnato come difficili.",
     `<p class="hint">Una risposta difficile o una correzione crea un elemento. Dopo il tentativo confronta la soluzione e valuta il ricordo: nessuna correzione automatica.</p><div class="list-toolbar"><h2>Da riprovare</h2><label><input id="errors-all" type="checkbox">Mostra anche risolti</label></div><div id="error-list"></div><section id="practice-error" class="practice" hidden></section>`,
   );
   byId("page-settings").insertAdjacentHTML(
     "beforeend",
-    `<section class="schedule-section"><h2>Proteggi gli orari di studio</h2><p>Programma fasce settimanali nel fuso orario del PC. Se la fine è prima dell’inizio, la fascia termina il giorno dopo.</p><p class="hint">Richiede l’estensione Studio 2.0: <a href="studio-extension.zip" download>scarica l’aggiornamento</a>, sostituisci i file nella cartella installata e premi Ricarica nella pagina delle estensioni. Il browser deve essere aperto. Chiudere questa pagina non annulla gli orari.</p><form id="schedule-form" class="feature-form"><fieldset><legend>Giorni di inizio della fascia</legend><div class="day-picks">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" name="schedule-day" value="${d}" ${d > 0 && d < 6 ? "checked" : ""}>${dayNames[d]}</label>`).join("")}</div></fieldset><div class="duration-row"><label>Inizio<input id="schedule-start" type="time" value="09:00" required></label><label>Fine<input id="schedule-end" type="time" value="11:00" required></label></div><button class="primary" type="submit">Aggiungi fascia</button></form><div id="schedule-list"></div><button id="schedule-sync" class="secondary">Invia orari all’estensione</button><p id="schedule-status" role="status">Collega l’estensione per rendere effettivi gli orari.</p></section>`,
+    `<section class="schedule-section"><h2>Orari fissi</h2><p>Programma fasce settimanali nel fuso orario del PC. Se la fine è prima dell’inizio, la fascia termina il giorno dopo.</p><p class="hint">Richiede l’estensione Studio 2.0: <a href="studio-extension.zip" download>scarica l’aggiornamento</a>, sostituisci i file nella cartella installata e premi Ricarica nella pagina delle estensioni. Il browser deve essere aperto. Chiudere questa pagina non annulla gli orari.</p><form id="schedule-form" class="feature-form"><fieldset><legend>Giorni di inizio della fascia</legend><div class="day-picks">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" name="schedule-day" value="${d}" ${d > 0 && d < 6 ? "checked" : ""}>${dayNames[d]}</label>`).join("")}</div></fieldset><div class="duration-row"><label>Inizio<input id="schedule-start" type="time" value="09:00" required></label><label>Fine<input id="schedule-end" type="time" value="11:00" required></label></div><button class="primary" type="submit">Aggiungi fascia</button></form><div id="schedule-list"></div><button id="schedule-sync" class="secondary">Invia orari all’estensione</button><p id="schedule-status" role="status">Collega l’estensione per rendere effettivi gli orari.</p></section>`,
   );
   byId("page-progress").insertAdjacentHTML(
     "beforeend",
-    `<section class="backup-section"><h2>Porta con te il tuo studio</h2><p>Il backup comprende sessioni, piani, domande, errori, orari e preferenze audio. Il ripristino si può fare anche in un altro browser.</p><label for="backup-file">Importa un backup JSON</label><input id="backup-file" type="file" accept=".json,application/json"><div id="backup-preview" hidden><p id="backup-summary"></p><label for="backup-mode">Come importare</label><select id="backup-mode"><option value="merge">Unisci ai dati attuali (conserva gli elementi già presenti)</option><option value="replace">Sostituisci i dati attuali</option></select><button id="backup-confirm" class="primary">Conferma importazione</button><button id="backup-cancel" class="secondary">Annulla</button></div><p id="backup-message" role="status"></p><button id="backup-undo" class="secondary" hidden>Ripristina i dati precedenti all’importazione</button><p class="hint">Prima di importare salviamo una copia locale dei dati attuali. Una sessione in corso deve essere conclusa prima del ripristino. L’ID dell’estensione di questo browser viene mantenuto.</p></section>`,
+    `<section class="backup-section"><h2>Backup</h2><p>Il backup comprende sessioni, piani, domande, errori, orari e preferenze audio. Il ripristino si può fare anche in un altro browser.</p><label for="backup-file">Importa un backup JSON</label><input id="backup-file" type="file" accept=".json,application/json"><div id="backup-preview" hidden><p id="backup-summary"></p><label for="backup-mode">Come importare</label><select id="backup-mode"><option value="merge">Unisci ai dati attuali (conserva gli elementi già presenti)</option><option value="replace">Sostituisci i dati attuali</option></select><button id="backup-confirm" class="primary">Conferma importazione</button><button id="backup-cancel" class="secondary">Annulla</button></div><p id="backup-message" role="status"></p><button id="backup-undo" class="secondary" hidden>Ripristina i dati precedenti all’importazione</button><p class="hint">Prima di importare salviamo una copia locale dei dati attuali. Una sessione in corso deve essere conclusa prima del ripristino. L’ID dell’estensione di questo browser viene mantenuto.</p></section>`,
   );
   byId("exam-date").min = C.localDay(new Date());
   function commit() {
@@ -93,7 +93,7 @@
             return `<article class="exam-entry"><div class="entry-top"><h2>${E(e.subject)}</h2><button class="text-button" data-delete-exam="${E(e.id)}">Elimina piano</button></div><p class="meta">Esame ${E(fmtDate(new Date(e.date + "T12:00:00").getTime()))} · ${done}/${e.topics.length} argomenti completati</p>${p.overflow ? `<p class="notice">Mancano ${p.overflow} minuti rispetto alla disponibilità. Aumenta il tempo o riduci gli argomenti creando un nuovo piano.</p>` : ""}${p.reviewMissed && !p.expired ? `<p class="hint">${p.reviewMissed} ripassi non trovano spazio dopo lo studio prima dell’esame. Anticipa gli argomenti o rivedi la disponibilità.</p>` : ""}${p.expired ? '<p class="notice">La data è arrivata. Puoi continuare a segnare gli argomenti completati o creare un nuovo piano.</p>' : ""}<details><summary>Argomenti e completamento</summary>${e.topics.map((t) => `<label class="topic-check"><input type="checkbox" data-topic="${E(t.id)}" data-exam="${E(e.id)}" ${t.done ? "checked" : ""}>${E(t.text)} <span>${t.minutes} min stimati</span></label>`).join("")}</details><div class="plan-days">${p.rows.map((row) => `<div class="plan-day"><h3>${E(fmtDate(new Date(row.date + "T12:00:00").getTime()))}</h3>${row.tasks.map((t) => `<div class="plan-task"><span>${t.kind === "review" ? "Ripasso · " : ""}${E(t.text)} <small>${t.minutes} min</small></span><button class="secondary" data-plan-start="${E(e.id)}" data-plan-topic="${E(t.topicId)}" data-plan-minutes="${t.minutes}" data-plan-kind="${t.kind}">Studia</button></div>`).join("")}</div>`).join("") || '<p class="hint">Nessun blocco da pianificare. Controlla giorni disponibili, data e argomenti completati.</p>'}</div></article>`;
           })
           .join("")
-      : '<p class="empty">Il prossimo esame inizia da un piano realistico. Aggiungi materia, data e argomenti.</p>';
+      : '<p class="empty">Nessun piano. Compila il modulo per crearne uno.</p>';
     const cards = S.cards
       .filter((c) => !byId("cards-due-only").checked || c.due <= Date.now())
       .sort((a, b) => a.due - b.due);
@@ -150,7 +150,7 @@
     }
     if (!byId("subject").value.trim() || !byId("goal").value.trim()) {
       notify(
-        "Scegli materia e un piccolo obiettivo, poi premi Inizia a studiare.",
+        "Scegli materia e un piccolo obiettivo, poi premi Avvia il timer.",
       );
       byId(!byId("subject").value.trim() ? "subject" : "goal").focus();
       return;
@@ -243,7 +243,7 @@
     });
     commit();
     byId("card-form").reset();
-    notify("Domanda salvata e pronta per il richiamo.");
+    notify("Domanda salvata.");
   };
   function practice(kind, id) {
     const item = (kind === "card" ? S.cards : S.errors).find(

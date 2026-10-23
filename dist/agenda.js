@@ -40,20 +40,20 @@
   }
   addPage(
     "today",
-    "Da dove cominci?<br><em>Da qui.</em>",
-    "Il prossimo passo, senza dover ricomporre tutto.",
-    `<div id="today-summary" class="agenda-summary"></div><div class="list-toolbar"><h2>Cosa studio oggi?</h2><a href="#week">Apri la settimana</a></div><p class="hint">Errori e domande scadute arrivano qui insieme ai blocchi di oggi. Le durate dei richiami sono stime.</p><div id="today-agenda"></div>`,
+    "Oggi",
+    "Blocchi del piano, domande ed errori in scadenza oggi.",
+    `<div id="today-summary" class="agenda-summary"></div><div class="list-toolbar"><h2>Da fare</h2><a href="#week">Apri la settimana</a></div><p class="hint">Errori e domande scadute arrivano qui insieme ai blocchi di oggi. Le durate dei richiami sono stime.</p><div id="today-agenda"></div>`,
   );
   addPage(
     "week",
-    "La tua settimana.<br><em>Con spazio per vivere.</em>",
-    "Studio, ripassi e impegni in un unico programma.",
+    "Settimana",
+    "Studio, ripassi e impegni da lunedì a domenica.",
     `<div class="week-controls"><div><button id="week-prev" class="secondary" aria-label="Settimana precedente">←</button><button id="week-current" class="secondary">Questa settimana</button><button id="week-next" class="secondary" aria-label="Settimana successiva">→</button></div><h2 id="week-label"></h2></div><p class="hint">I blocchi dei piani si aggiornano con il lavoro rimanente. Con “Sposta” assegni giorno e ora; gli orari del programma non attivano il blocco social, che si configura in Blocco social.</p><div id="week-grid" class="week-grid"></div><p id="week-conflicts" class="notice" hidden></p><div class="week-edit-grid"><form id="week-event-form" class="feature-form"><h2 id="event-form-title">Aggiungi un impegno</h2><label for="event-title">Titolo dell’impegno</label><input id="event-title" required maxlength="220" placeholder="Es. Esercizi, lezione, allenamento"><label for="event-subject">Materia o categoria</label><input id="event-subject" maxlength="80" placeholder="Es. Matematica"><div class="duration-row"><label>Giorno<input id="event-date" type="date" required></label><label>Ora (facoltativa)<input id="event-time" type="time"></label></div><div class="duration-row"><label>Durata in minuti<input id="event-minutes" type="number" min="5" max="480" value="40" required></label><label>Tipo<select id="event-type"><option value="study">Studio</option><option value="commitment">Impegno</option><option value="break">Pausa</option></select></label></div><button class="primary wide" id="event-submit">Aggiungi al programma</button><button class="text-button" type="button" id="event-cancel" hidden>Annulla modifica</button><p id="event-message" role="status"></p></form><form id="move-form" class="feature-form" hidden><h2>Sposta il blocco</h2><p id="move-title"></p><label for="move-date">Nuovo giorno</label><input id="move-date" type="date" required><label for="move-time">Ora (facoltativa)</label><input id="move-time" type="time"><p class="hint">Lo spostamento cambia il programma personale. Le scadenze di ripasso restano visibili nella sezione originale.</p><button class="primary wide">Salva spostamento</button><button class="text-button" type="button" id="move-cancel">Annulla</button><p id="move-message" role="status"></p></form></div>`,
   );
   addPage(
     "attempts",
-    "Vedi come cambia<br><em>il tuo ricordo.</em>",
-    "Risposte, correzioni e tentativi precedenti, in ordine di tempo.",
+    "Tentativi",
+    "Le risposte date nelle sessioni e nelle domande, dalla più recente.",
     `<div class="history-filters"><label>Materia<select id="attempt-subject"><option value="">Tutte le materie</option></select></label><label>Tipo<select id="attempt-type"><option value="">Tutti i tentativi</option><option value="session">Sessioni</option><option value="card">Domande</option><option value="error">Errori</option></select></label></div><div id="attempt-list"></div>`,
   );
   $("page-planning")
@@ -283,7 +283,7 @@
           total = entries
             .filter((e) => !e.done)
             .reduce((n, e) => n + e.minutes, 0);
-        return `<section class="week-day ${date === today ? "is-today" : ""}"><div class="week-day-heading"><h3>${dateLabel(date)}</h3><span>${total} min</span></div>${entries.map((e) => eventRow(e, true)).join("") || '<p class="week-free">Spazio libero.</p>'}<button class="text-button" data-add-on="${date}">Aggiungi qui</button></section>`;
+        return `<section class="week-day ${date === today ? "is-today" : ""}"><div class="week-day-heading"><h3>${dateLabel(date)}</h3><span>${total} min</span></div>${entries.map((e) => eventRow(e, true)).join("") || '<p class="week-free">Niente in programma.</p>'}<button class="text-button" data-add-on="${date}">Aggiungi qui</button></section>`;
       })
       .join("");
     const conflicts = all.filter(

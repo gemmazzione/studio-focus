@@ -6,7 +6,7 @@ Progetto web statico. Serve Node.js 18 o superiore. Non ci sono dipendenze da in
 
 - `npm run dev` avvia http://127.0.0.1:5187.
 - `npm run check` controlla sintassi e test dell'estensione.
-- `npm run package:source` aggiorna lo ZIP scaricabile.
+- `npm run package:source` ricrea `dist/studio-extension.zip` e `dist/studio-source.zip`. Va lanciato dopo ogni modifica a `extension/`.
 
 ## File da modificare
 
@@ -14,7 +14,7 @@ Progetto web statico. Serve Node.js 18 o superiore. Non ci sono dipendenze da in
 
 - `dist/index.html`: struttura e testi italiani.
 - `dist/style.css`: layout di base, responsive e accessibilità.
-- `dist/premium.css`: identità carbone/rame e animazioni. Caricato dopo style.css.
+- `dist/premium.css`: tema “Quaderno” (token colore chiaro/scuro, font, composizione). Caricato dopo style.css: i colori si cambiano dai token in `:root`.
 - `dist/app.js`: timer, sessioni, richiamo attivo, ripassi, dati locali e collegamento estensione.
 - `dist/experience.js`: Web Audio, volume, preferenze sonore e animazioni.
 - `extension/`: estensione Manifest V3 per Chrome ed Edge.
@@ -48,12 +48,12 @@ Il piano riserva, quando possibile, l'ultimo giorno disponibile ai ripassi. Ogni
 
 ## Verifica
 
-Provare avvio, pausa/ripresa, ricarica, passaggio alla verifica, salvataggio, pausa e ripasso. Provare i tre suoni tramite Ascolta l'avviso. Il suono scatta solo alla scadenza naturale di studio o pausa, non quando si termina in anticipo. I test in check.cjs simulano le API Chrome: non sostituiscono una verifica con l'estensione installata.
+Provare avvio, pausa/ripresa, ricarica, passaggio alla verifica, salvataggio, pausa e ripasso. Provare i tre suoni tramite Prova il suono. Il suono scatta solo alla scadenza naturale di studio o pausa, non quando si termina in anticipo. I test in check.cjs simulano le API Chrome: non sostituiscono una verifica con l'estensione installata.
 
 ## Pubblicazione
 
-Il codice funziona su qualunque hosting statico, caricando il contenuto di dist. Questo repository contiene una configurazione Sites in .openai/hosting.json per il sito esistente. Modificare i file localmente NON aggiorna automaticamente il sito online. Per aggiornare Sites usare il flusso autorizzato del plugin Sites da Codex; non creare un secondo sito e non inserire token nei file. In alternativa pubblicare su altro hosting statico e aggiornare le origini dell'estensione.
+Il sito è su GitHub Pages: https://gemmazzione.github.io/studio-focus/. Ogni push su `main` esegue `npm run check` e pubblica la cartella `dist` (`.github/workflows/pages.yml`). Se i test falliscono, il sito non viene aggiornato. L’estensione accetta messaggi da `https://gemmazzione.github.io`, dal vecchio dominio chatgpt.site e da localhost: se cambia dominio, aggiornare ALLOWED in `extension/background.js` e externally_connectable in `extension/manifest.json`, poi `npm run package:source`.
 
 ## Design
 
-App per studiare, non landing promozionale. Fondo carbone, accento rame, Bricolage Grotesque e Manrope. Animazione cinetica legata al focus, niente glassmorphism, gradienti decorativi, schede ripetitive o statistiche inventate. Mantenere la navigazione e la funzione principali riconoscibili.
+App per studiare, non landing promozionale. Tema “Quaderno”: carta bianca, inchiostro blu-nero, penna blu (`--green`, nome storico) per azioni e avanzamento, penna rossa (`--warm`) solo per errori e scadenze. La quadrettatura con il margine rosso compare solo dove si scrive: pannello della sessione ed esercizi. Un solo font, Schibsted Grotesk. Tema scuro automatico con prefers-color-scheme. Titoli di pagina semplici (il nome della sezione), sottotitoli che dicono cosa fa la pagina: niente slogan, frasi motivazionali o titoli su due righe con parola colorata.

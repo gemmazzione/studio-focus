@@ -1,54 +1,32 @@
 ---
-name: Studio — Carbon & Copper
+name: Studio — Quaderno
 colors:
-  paper: '#141716'
-  surface: '#1c201e'
-  rail: '#101311'
-  ink: '#f1f0e9'
-  secondary: '#adb5ae'
-  accent: '#efad87'
-  accentInk: '#241e19'
-  line: '#353c37'
+  paper: '#f7f8fa'
+  surface: '#ffffff'
+  ink: '#18213a'
+  muted: '#59627a'
+  penBlue: '#2346c8'
+  penRed: '#b8322a'
+  grid: '#e5eaf3'
+  line: '#dde2ea'
 typography:
-  heading:
-    fontFamily: Bricolage Grotesque, sans-serif
-    fontWeight: 500
-  body:
-    fontFamily: Manrope, sans-serif
-    fontSize: 14px
-spacing:
-  sm: 8px
-  md: 16px
-  lg: 24px
-  xl: 32px
-  xxl: 48px
+  family: Schibsted Grotesk, system-ui, sans-serif
+  body: 15px
 rounded:
-  panel: 4px
-  control: 4px
+  control: 6px
 ---
-# Studio — Carbon & Copper
+# Studio — Quaderno
 
-Operate mode. Redesign explicitly requested: premium graphics, animations and sound, preserving workflows and stored data. Dark surfaces suit evening PC study; copper isolates actions and elapsed time. Bricolage Grotesque is the display voice; Manrope keeps forms legible. No decorative gradients, glass or stock imagery.
+Il riferimento è il quaderno a quadretti di scuola: pagina bianca, penna blu per scrivere, penna rossa per correggere. Tutti i token sono in `dist/premium.css` (`:root`), con una variante scura sotto `prefers-color-scheme: dark`.
 
-## Composition
-220px navigation rail, generous working canvas, large two-line task statement. Main work surface beside quieter utilities: audio controls, daily data, thought parking. Mobile stacks the canvas and scrolls navigation horizontally. No fabricated progress.
+## Regole
 
-## Motion
-48 discrete strokes form a slowly shifting kinetic ribbon. Focus changes rhythm and color; pause freezes it. Page transitions combine a small vertical movement and blur. Timer completion briefly lights the work surface edge. Hidden pages pause animation. Reduced-motion disables animations and transitions. Motion never controls data or timer state.
+- La quadrettatura con il margine rosso è riservata alle superfici dove si studia o si scrive: il pannello della sessione e il pannello degli esercizi. Il resto è carta bianca con bordi sottili.
+- Blu solo per azioni, voce attiva della navigazione, materia della sessione e barra del tempo. Rosso solo per errori e avvisi.
+- Un solo font, Schibsted Grotesk, con pesi 400–700. Il timer usa cifre tabellari.
+- Titoli: il nome della sezione. Sottotitolo: cosa si fa nella pagina, in una frase. Niente slogan.
+- Animazione: solo una breve dissolvenza al cambio pagina e il bordo blu a fine timer. Rispettare prefers-reduced-motion.
 
-## Components
-Flat lightly rounded inputs; copper primary action with dark text; outlined secondary actions. Audio toggle, sound select, volume, preview and status. Tabular timer with real progress line. Actual extension expiry governs social blocking status. Visible copper keyboard focus. Preserve explicit empty, error and paused states.
+## Layout
 
-## Typography
-Body 14px; supporting copy 12–13px; headings 15–18px; learning goals 22–25px; page title 38–65px; functional timer 76–130px. Uppercase phase labels are 11px.
-
-## Implementation
-
-## Extended study surfaces
-
-## Weekly program and daily queue
-
-Preserve Carbon & Copper. Weekly layout has seven dated columns at wide desktop, four/two intermediate, and a single column on small phones. Each day uses compact, ruled tasks with time and estimated duration. Today draws a unified actionable list from the same event data. Inline movement/editor forms replace modal dialogs. Personal commitments and generated study blocks are distinguished through wording, not extra color families. Attempt history has subject/type filters and expandable evidence. Draft status is quiet supporting text, hidden in immersive mode. Navigation remains scrollable at short viewport heights.
-
-Preserve Carbon & Copper. Navigation adds Piano esami, Domande and Ripasso errori. Two-column creation/list layouts stack at 1100px. Structured, scroll-bounded daily plans; explicit day/time controls; answer-first practice with revealed feedback. Backup preview and confirmation are inline. Immersive focus removes surrounding navigation and utility noise while keeping a visible exit and thought parking. Body text retains full contrast.
-style.css supplies existing layout and accessibility; premium.css replaces visual tokens and responsive composition. experience.js adds Web Audio and motion separately from study state. Code is formatted, framework-free and documented for Claude Code. Fonts load from Google Fonts with local fallbacks.
+Barra laterale da 216px con la navigazione; sotto gli 800px diventa una barra in alto, fissa, che scorre in orizzontale. Pagina Sessione: pannello quaderno a sinistra, colonna con suono, riepilogo di oggi e “Da fare dopo” a destra; sotto i 900px la colonna va sotto. La settimana ha 7 colonne su desktop, 4, 2 e infine 1 su telefono.

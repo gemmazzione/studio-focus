@@ -12,3 +12,4 @@ extension/worker.js
 extension/popup-v2.js
 .DS_Store
 *.log
+.claude/

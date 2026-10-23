@@ -1,5 +1,8 @@
 importScripts("scheduler.js");
-const ALLOWED = "https://studio-focus-sam-221026.samurugge02.chatgpt.site";
+const ALLOWED = [
+  "https://gemmazzione.github.io",
+  "https://studio-focus-sam-221026.samurugge02.chatgpt.site",
+];
 let queue = Promise.resolve();
 async function reconcile() {
   const values = await chrome.storage.local.get(null);
@@ -110,7 +113,7 @@ chrome.runtime.onMessageExternal.addListener((message, sender, respond) => {
     return false;
   }
   if (
-    origin !== ALLOWED &&
+    !ALLOWED.includes(origin) &&
     !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
   )
     return false;

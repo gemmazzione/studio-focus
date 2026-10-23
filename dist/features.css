@@ -6,6 +6,7 @@
 }
 .feature-form {
   background: var(--white);
+  border: 1px solid var(--line);
   padding: 26px;
   border-radius: 4px;
 }
@@ -35,7 +36,7 @@
   align-items: center;
   margin: 0;
   padding: 6px;
-  background: #293027;
+  background: var(--raised);
   border-radius: 4px;
 }
 .day-picks input,
@@ -109,9 +110,7 @@ summary {
   border-top: 1px solid var(--line);
 }
 .plan-day h3 {
-  font:
-    500 16px Manrope,
-    sans-serif;
+  font: 600 15px var(--font);
   margin: 0 0 10px;
 }
 .plan-task {
@@ -134,20 +133,21 @@ summary {
 }
 .notice {
   padding: 14px;
-  background: #392d22;
-  color: #f5cba9;
+  background: var(--notice-bg);
+  color: var(--notice-ink);
   border-radius: 4px;
   font-size: 13px;
 }
 .practice {
   margin: 30px 0;
   padding: 28px;
-  background: #232b24;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   max-width: 850px;
   scroll-margin: 25px;
 }
 .practice h3 {
-  font-family: "Bricolage Grotesque", sans-serif;
+  font-family: var(--font);
 }
 .practice textarea {
   margin-bottom: 20px;
@@ -246,7 +246,7 @@ summary {
   top: 18px;
   right: 22px;
   z-index: 20;
-  background: #202720;
+  background: var(--white);
 }
 .immersive aside,
 .immersive header,

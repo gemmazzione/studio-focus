@@ -181,22 +181,22 @@ function render() {
   $("recall").hidden = !a || a.phase !== "recall";
   document.body.classList.toggle("focusing", !!a && a.phase === "focus");
   $("phase-title").textContent = !a
-    ? "Prepara la tua sessione"
+    ? "Nuova sessione"
     : a.phase === "focus"
-      ? "Adesso, una cosa sola."
+      ? "Studio in corso"
       : a.phase === "recall"
-        ? "Metti alla prova il ricordo."
-        : "Hai fatto spazio. Ora recupera.";
+        ? "Verifica senza appunti"
+        : "Pausa";
   if (a) {
     $("session-subject").textContent = a.subject;
     $("session-goal").textContent =
       a.phase === "break"
-        ? "Alzati. Respira. Lascia riposare la mente."
+        ? "Alzati e allontanati dallo schermo."
         : a.goal;
     $("session-hint").textContent =
       a.phase === "break"
-        ? "Una pausa senza feed: cammina, bevi un po’ d’acqua o guarda fuori."
-        : "Se la mente si allontana, riportala qui. È parte del processo.";
+        ? "Meglio senza telefono: cammina, bevi qualcosa, guarda fuori."
+        : "Se ti viene in mente altro, annotalo in “Da fare dopo” e torna qui.";
     $("pause").textContent = a.running ? "Metti in pausa" : "Riprendi";
     $("finish").textContent =
       a.phase === "break" ? "Concludi la pausa" : "Passa alla verifica";
@@ -243,7 +243,7 @@ function renderLists() {
             `<article class="entry"><div class="meta">${esc(r.subject)} · ${r.due <= Date.now() ? "Da ripassare" : `Previsto il ${fmtDate(r.due)}`}</div><h3>${esc(r.goal)}</h3><p class="hint">${r.count || 0} ripassi completati · Ultima valutazione: ${ratingLabel(r.rating)}</p><button class="secondary" data-review="${r.id}">Richiama senza appunti</button></article>`,
         )
         .join("")
-    : '<p class="empty">Il primo ripasso nasce dalla prima sessione. Scegli un obiettivo e inizia dal tuo spazio.</p>';
+    : '<p class="empty">Nessun ripasso in programma. Se ne crea uno ogni volta che salvi una sessione.</p>';
   $("history").innerHTML = data.sessions.length
     ? [...data.sessions]
         .reverse()
@@ -252,7 +252,7 @@ function renderLists() {
             `<article class="entry"><div class="meta">${fmtDate(s.at)} · ${esc(s.subject)} · ${Math.round(s.seconds / 60)} min ${s.reviewId ? "· Ripasso" : ""}</div><h3>${esc(s.goal)}</h3><details><summary>Risposta, correzioni e valutazione</summary><p>${esc(s.answer)}</p><p><b>Correzioni:</b> ${esc(s.correction || "Nessuna annotata.")}</p><p>${ratingLabel(s.rating)}</p></details></article>`,
         )
         .join("")
-    : '<p class="empty">Non ci sono ancora sessioni completate. Qui troverai il tuo diario.</p>';
+    : '<p class="empty">Ancora nessuna sessione completata.</p>';
   const days = Array.from({ length: 7 }, (_, i) => {
       let d = new Date();
       d.setDate(d.getDate() - 6 + i);
@@ -312,7 +312,7 @@ function endBreak() {
   save();
   syncBlock();
   render();
-  notify("Pausa conclusa. Scegli il prossimo passo quando vuoi.");
+  notify("Pausa finita.");
 }
 function route() {
   const requested = location.hash.slice(1) || "focus",
@@ -504,7 +504,8 @@ $("save-settings").onclick = () => {
   const valid = lines.every(
     (s) =>
       /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,63}$/.test(s) &&
-      !s.endsWith("chatgpt.site"),
+      !s.endsWith("chatgpt.site") &&
+          !s.endsWith("github.io"),
   );
   if (!valid || lines.length > 100) {
     $("settings-message").textContent =

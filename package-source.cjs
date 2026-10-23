@@ -36,12 +36,13 @@ function crc32(bytes) {
   for (const b of bytes) c = crcTable[(c ^ b) & 255] ^ (c >>> 8);
   return (c ^ 0xffffffff) >>> 0;
 }
+function zip(out, files, prefix, base = ".") {
 const local = [],
   central = [];
 let offset = 0;
 for (const file of files) {
-  const name = Buffer.from("studio-focus/" + file),
-    bytes = fs.readFileSync(path.resolve(file)),
+  const name = Buffer.from(prefix + file),
+    bytes = fs.readFileSync(path.resolve(base, file)),
     crc = crc32(bytes);
   const header = Buffer.alloc(30);
   header.writeUInt32LE(0x04034b50);
@@ -72,10 +73,16 @@ end.writeUInt16LE(files.length, 8);
 end.writeUInt16LE(files.length, 10);
 end.writeUInt32LE(directory.length, 12);
 end.writeUInt32LE(offset, 16);
-fs.writeFileSync(
-  "dist/studio-source.zip",
-  Buffer.concat([...local, directory, end]),
+fs.writeFileSync(out, Buffer.concat([...local, directory, end]));
+}
+// Prima l’estensione, così lo ZIP dei sorgenti contiene quella aggiornata.
+zip(
+  "dist/studio-extension.zip",
+  ["manifest.json", "background.js", "scheduler.js", "popup.html", "popup.js", "LEGGIMI.txt"],
+  "",
+  "extension",
 );
+zip("dist/studio-source.zip", files, "studio-focus/");
 console.log(
   "Creato dist/studio-source.zip: " +
     files.length +

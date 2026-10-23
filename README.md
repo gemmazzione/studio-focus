@@ -40,4 +40,4 @@ L'estensione inclusa blocca i domini scelti nel browser in cui è installata. Ve
 
 Sessioni e risposte sono in localStorage. Sito online, localhost e browser diversi hanno archivi distinti. L'esportazione JSON è disponibile nei progressi. I font sono caricati da Google Fonts; in assenza di rete vengono usati i font di riserva.
 
-I sorgenti sono file statici e non dipendono da Codex. Le modifiche locali non si pubblicano da sole: carica dist su un hosting statico oppure usa il flusso Sites in Codex per aggiornare l'URL attuale. Un cambio di dominio richiede aggiornare le origini consentite dell'estensione.
+Online: https://gemmazzione.github.io/studio-focus/. Ogni push su `main` esegue i test e aggiorna il sito tramite GitHub Actions (cartella `dist`). Il sito online e la versione locale hanno archivi dati separati: usa Esporta/Importa backup per spostare i dati.

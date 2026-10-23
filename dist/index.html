@@ -3,8 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#315c48" />
-    <title>Studio — spazio alla concentrazione</title>
+    <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#11151c" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Timer di studio, domande a memoria, ripassi e piani d’esame. I dati restano nel browser." />
+    <title>Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="premium.css" />
     <link rel="stylesheet" href="features.css" />
@@ -18,11 +23,10 @@
           <path d="M16 11v12" /></svg
         >studio<span>.</span></a
       >
-      <p class="aside-note">Un passo alla volta.<br />Una cosa alla volta.</p>
       <nav aria-label="Navigazione">
-        <a href="#focus" data-page="focus">Il tuo spazio</a
+        <a href="#focus" data-page="focus">Sessione</a
         ><a href="#today" data-page="today">Oggi</a
-        ><a href="#week" data-page="week">La settimana</a
+        ><a href="#week" data-page="week">Settimana</a
         ><a href="#planning" data-page="planning">Piano esami</a
         ><a href="#cards" data-page="cards">Domande</a
         ><a href="#errors" data-page="errors"
@@ -30,60 +34,31 @@
         ><a href="#reviews" data-page="reviews"
           >Ripassi <span id="due-count">0</span></a
         ><a href="#attempts" data-page="attempts">Tentativi</a
-        ><a href="#progress" data-page="progress">I tuoi progressi</a
+        ><a href="#progress" data-page="progress">Progressi</a
         ><a href="#settings" data-page="settings">Blocco social</a
-        ><a href="#method" data-page="method">Il metodo</a>
+        ><a href="#method" data-page="method">Metodo</a>
       </nav>
-      <div class="aside-bottom">
-        Meno rumore.<br />Più spazio per imparare.<small
-          >Dati salvati su questo browser.</small
-        >
-      </div>
+      <p class="aside-bottom">I dati restano in questo browser.</p>
     </aside>
     <main>
       <header>
         <span id="today"></span
-        ><span class="local-tag">Il tuo spazio personale</span>
+        >
       </header>
       <section id="page-focus" class="page">
         <div class="heading">
-          <h1>La prossima cosa.<br /><em>Solo quella.</em></h1>
-          <p>Il resto può aspettare. Questo è il tuo tempo.</p>
+          <h1>Sessione di studio</h1>
+          <p>Scegli materia e obiettivo, avvia il timer. Alla fine scrivi cosa ricordi senza guardare gli appunti.</p>
         </div>
         <div class="workspace">
           <section class="workpanel">
-            <div class="kinetic" aria-hidden="true">
-              <i style="--i: 0"></i><i style="--i: 1"></i><i style="--i: 2"></i
-              ><i style="--i: 3"></i><i style="--i: 4"></i><i style="--i: 5"></i
-              ><i style="--i: 6"></i><i style="--i: 7"></i><i style="--i: 8"></i
-              ><i style="--i: 9"></i><i style="--i: 10"></i
-              ><i style="--i: 11"></i><i style="--i: 12"></i
-              ><i style="--i: 13"></i><i style="--i: 14"></i
-              ><i style="--i: 15"></i><i style="--i: 16"></i
-              ><i style="--i: 17"></i><i style="--i: 18"></i
-              ><i style="--i: 19"></i><i style="--i: 20"></i
-              ><i style="--i: 21"></i><i style="--i: 22"></i
-              ><i style="--i: 23"></i><i style="--i: 24"></i
-              ><i style="--i: 25"></i><i style="--i: 26"></i
-              ><i style="--i: 27"></i><i style="--i: 28"></i
-              ><i style="--i: 29"></i><i style="--i: 30"></i
-              ><i style="--i: 31"></i><i style="--i: 32"></i
-              ><i style="--i: 33"></i><i style="--i: 34"></i
-              ><i style="--i: 35"></i><i style="--i: 36"></i
-              ><i style="--i: 37"></i><i style="--i: 38"></i
-              ><i style="--i: 39"></i><i style="--i: 40"></i
-              ><i style="--i: 41"></i><i style="--i: 42"></i
-              ><i style="--i: 43"></i><i style="--i: 44"></i
-              ><i style="--i: 45"></i><i style="--i: 46"></i
-              ><i style="--i: 47"></i>
-            </div>
             <div class="panel-head">
-              <h2 id="phase-title">Prepara la tua sessione</h2>
+              <h2 id="phase-title">Nuova sessione</h2>
               <span id="phase-label">Focus</span>
             </div>
             <div class="focus-tools">
               <button type="button" id="five-minute" class="secondary">
-                Parti con 5 minuti</button
+                Inizia con 5 minuti</button
               ><button type="button" id="immersive" class="text-button">
                 Modalità immersiva
               </button>
@@ -106,7 +81,7 @@
                 <label
                   >Studio
                   <select id="duration">
-                    <option value="5">5 minuti · inizia piano</option>
+                    <option value="5">5 minuti</option>
                     <option value="25">25 minuti</option>
                     <option value="40" selected>40 minuti</option>
                     <option value="50">50 minuti</option>
@@ -122,10 +97,10 @@
                 >
               </div>
               <p class="hint">
-                40 + 10 è un punto di partenza. Adatta i tempi a te.
+                40 minuti di studio e 10 di pausa vanno bene per cominciare. Cambiali come preferisci.
               </p>
               <button class="primary wide" type="submit">
-                Inizia a studiare <span aria-hidden="true">→</span>
+                Avvia il timer
               </button>
               <p id="block-status" class="status">
                 Blocco social non collegato · <a href="#settings">Configura</a>
@@ -142,7 +117,7 @@
               </div>
               <div class="time-track"><div id="time-fill"></div></div>
               <p id="session-hint" class="hint">
-                Se la mente si allontana, riportala qui. È parte del processo.
+                Se ti viene in mente altro, annotalo in “Da fare dopo” e torna qui.
               </p>
               <div class="actions">
                 <button id="pause" class="primary">Metti in pausa</button
@@ -156,9 +131,7 @@
             </div>
             <form id="recall" hidden>
               <p class="hint">
-                Chiudi gli appunti. Prova a spiegare ciò che hai imparato,
-                oppure risolvi un esercizio. Poi controlla la risposta con il
-                materiale.
+                Chiudi gli appunti e scrivi quello che ricordi, oppure risolvi un esercizio. Poi confronta con il materiale.
               </p>
               <label for="answer">Cosa ricordi senza guardare?</label
               ><textarea
@@ -188,14 +161,14 @@
                   Bene — risposta corretta e autonoma
                 </option></select
               ><button class="primary wide" type="submit">
-                Salva e fai una pausa
+                Salva e inizia la pausa
               </button>
             </form>
           </section>
           <div class="right-column">
             <section class="sound-panel">
               <div class="sound-heading">
-                <h2>Il suono del tempo.</h2>
+                <h2>Avviso sonoro</h2>
                 <label class="sound-toggle"
                   ><input
                     type="checkbox"
@@ -221,7 +194,7 @@
                 /><output id="volume-value" for="sound-volume">50%</output>
               </div>
               <button type="button" id="sound-test" class="sound-test">
-                Ascolta l’avviso
+                Prova il suono
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="m9 5 11 7-11 7Z" />
                 </svg>
@@ -229,13 +202,10 @@
               <p id="audio-status" class="hint" role="status">
                 Suona a fine studio e a fine pausa.
               </p>
-              <p class="hint audio-note">
-                Per sentirlo, lascia la pagina aperta e l’audio del browser
-                attivo.
-              </p>
+              <p class="hint audio-note">Funziona solo con la pagina aperta e l’audio del browser attivo.</p>
             </section>
             <section class="daily">
-              <h2>Oggi, con calma.</h2>
+              <h2>Oggi</h2>
               <p><strong id="daily-minutes">0</strong> minuti di studio</p>
               <div class="ruled">
                 <span>Sessioni completate</span><b id="daily-sessions">0</b>
@@ -243,13 +213,11 @@
               <div class="ruled">
                 <span>Ripassi da fare</span><b id="daily-reviews">0</b>
               </div>
-              <p class="hint">
-                Conta quello che impari,<br />non solo il tempo che passa.
-              </p>
+              
             </section>
             <section class="thoughts">
-              <h2>Ci pensi dopo.</h2>
-              <p>Un pensiero ti distrae? Lascialo qui e torna a studiare.</p>
+              <h2>Da fare dopo</h2>
+              <p>Ti viene in mente altro? Scrivilo qui e riprendi.</p>
               <form id="thought-form">
                 <label class="sr-only" for="thought"
                   >Pensiero da parcheggiare</label
@@ -272,15 +240,15 @@
       </section>
       <section id="page-reviews" class="page" hidden>
         <div class="heading">
-          <h1>Ritrova quello<br />che hai imparato.</h1>
-          <p>Richiama dalla memoria. Controlla. Ripeti nel tempo.</p>
+          <h1>Ripassi</h1>
+          <p>Gli obiettivi delle sessioni passate che oggi vanno ripresi. Rispondi a memoria, poi controlla.</p>
         </div>
         <div id="review-list"></div>
       </section>
       <section id="page-progress" class="page" hidden>
         <div class="heading">
-          <h1>Il sapere cresce,<br />un giorno alla volta.</h1>
-          <p>Sessioni, risposte e correzioni: il tuo percorso reale.</p>
+          <h1>Progressi</h1>
+          <p>Minuti, sessioni e ripassi salvati in questo browser.</p>
         </div>
         <div class="summary-strip">
           <div>
@@ -296,7 +264,7 @@
         </div>
         <h2>Ultimi sette giorni</h2>
         <div id="week" class="week"></div>
-        <h2>Il diario di studio</h2>
+        <h2>Diario delle sessioni</h2>
         <div id="history"></div>
         <button id="export" class="secondary">Esporta i tuoi dati</button>
         <p class="hint">
@@ -305,12 +273,12 @@
       </section>
       <section id="page-settings" class="page" hidden>
         <div class="heading">
-          <h1>Proteggi la tua<br />concentrazione.</h1>
-          <p>Decidi prima cosa può aspettare.</p>
+          <h1>Blocco social</h1>
+          <p>Scegli i siti da bloccare mentre studi. Serve l’estensione per Chrome o Edge inclusa nell’app.</p>
         </div>
         <div class="settings-grid">
           <section class="workpanel">
-            <h2>I siti da mettere in pausa</h2>
+            <h2>Siti da bloccare</h2>
             <p>Un dominio per riga. Il blocco include i sottodomini.</p>
             <label for="domains">Siti da bloccare</label
             ><textarea id="domains" rows="7" spellcheck="false"></textarea
@@ -364,8 +332,8 @@
       </section>
       <section id="page-method" class="page prose" hidden>
         <div class="heading">
-          <h1>Studiare con metodo.<br />Senza formule magiche.</h1>
-          <p>Un ambiente che ti aiuta a iniziare, ricordare e tornare.</p>
+          <h1>Metodo</h1>
+          <p>Da dove vengono le scelte dell’app, con i link alle fonti.</p>
         </div>
         <h2>Un obiettivo e un blocco di tempo</h2>
         <p>
@@ -423,13 +391,9 @@
         </p>
       </section>
       <section class="source-strip">
-        <span>Fatto per essere tuo. Anche nel codice.</span
-        ><a href="studio-source.zip" download
-          >Scarica i sorgenti per Claude Code
-          <span aria-hidden="true">↗</span></a
-        >
+        <span>Studio, versione 4</span
+        ><a href="studio-source.zip" download>Scarica il codice sorgente</a>
       </section>
-      <footer>Studio <span>Lascia spazio alla prossima idea.</span></footer>
     </main>
     <div id="toast" role="status" hidden></div>
     <button id="exit-immersive" type="button" class="secondary" hidden>

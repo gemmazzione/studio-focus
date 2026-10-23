@@ -5,8 +5,7 @@
 }
 .agenda-summary strong {
   font:
-    500 38px "Bricolage Grotesque",
-    sans-serif;
+    500 38px var(--font);
   color: var(--green);
   margin-right: 8px;
 }
@@ -21,8 +20,7 @@
 }
 .agenda-event h3 {
   font:
-    500 17px "Bricolage Grotesque",
-    sans-serif;
+    500 17px var(--font);
   margin: 8px 0;
 }
 .agenda-event p {
@@ -49,13 +47,13 @@
   font-size: 12px;
 }
 .completion-label {
-  color: #c0d6b8;
+  color: var(--muted);
   font-size: 12px;
 }
 .event-done h3,
 .event-done p {
   text-decoration: line-through;
-  text-decoration-color: #71826b;
+  text-decoration-color: var(--muted);
 }
 .week-controls {
   display: flex;
@@ -84,7 +82,8 @@
 }
 .week-day {
   padding: 14px 10px;
-  background: #1b201c;
+  background: var(--white);
+  border: 1px solid var(--line);
   min-height: 180px;
   border-radius: 4px;
 }
@@ -93,8 +92,7 @@
 }
 .week-day-heading h3 {
   font:
-    500 15px/1.4 Manrope,
-    sans-serif;
+    500 15px/1.4 var(--font);
   margin: 0 0 5px;
 }
 .week-day-heading > span {
@@ -102,7 +100,7 @@
   color: var(--muted);
 }
 .is-today {
-  outline: 1px solid #9d7557;
+  outline: 2px solid var(--green);
   outline-offset: -1px;
 }
 .is-today > .week-day-heading h3 {

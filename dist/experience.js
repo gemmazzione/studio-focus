@@ -126,7 +126,7 @@
         .querySelector(".workpanel")
         .animate(
           [
-            { boxShadow: "inset 0 0 0 1px #efad87" },
+            { boxShadow: "inset 0 0 0 2px #2346c8" },
             { boxShadow: "inset 0 0 0 1px transparent" },
           ],
           { duration: 1800, iterations: 2 },
@@ -139,10 +139,10 @@
       "timer-paused",
       !byId("session").hidden && byId("pause").textContent === "Riprendi",
     );
-    if (!byId("recall").hidden) document.title = "Richiamo attivo · Studio";
+    if (!byId("recall").hidden) document.title = "Verifica · Studio";
     else if (byId("setup").hidden)
       document.title = `${byId("timer").textContent} · Studio`;
-    else document.title = "Studio — una cosa alla volta";
+    else document.title = "Studio";
   });
   observer.observe(byId("timer"), { childList: true });
   observer.observe(byId("pause"), { childList: true });
@@ -152,10 +152,10 @@
     if (current)
       current.animate(
         [
-          { opacity: 0.6, transform: "translateY(12px)", filter: "blur(3px)" },
-          { opacity: 1, transform: "translateY(0)", filter: "blur(0)" },
+          { opacity: 0.4 },
+          { opacity: 1 },
         ],
-        { duration: 480, easing: "cubic-bezier(.16,1,.3,1)" },
+        { duration: 180, easing: "ease-out" },
       );
   }
   window.addEventListener("hashchange", enter);
