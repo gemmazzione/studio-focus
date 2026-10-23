@@ -1,8 +1,3 @@
 # Tipi per l app installabile (AlterVista / Apache)
 AddType application/manifest+json .webmanifest
 AddType image/svg+xml .svg
-
-# Il service worker deve essere sempre aggiornato
-<Files "sw.js">
-  Header set Cache-Control "no-cache"
-</Files>
