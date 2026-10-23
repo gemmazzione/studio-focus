@@ -1,0 +1,325 @@
+/* Statistiche per materia */
+.compact-select {
+  width: auto;
+  font-size: 13px;
+  padding: 6px 10px;
+}
+.subject-stats {
+  margin: 8px 0 40px;
+}
+.stats-head,
+.stats-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(0, 1.4fr) minmax(0, 1.4fr);
+  gap: 8px 24px;
+  align-items: center;
+}
+.stats-head {
+  font-size: 12px;
+  color: var(--muted);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+.stats-row {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.stats-row b {
+  overflow-wrap: anywhere;
+}
+.stats-row span {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.answer-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--raised);
+}
+.answer-bar i {
+  display: block;
+}
+.a-easy {
+  background: var(--green);
+}
+.a-medium {
+  background: color-mix(in srgb, var(--green) 35%, var(--raised));
+}
+.a-hard {
+  background: var(--warm);
+}
+
+/* Calendario dell'anno */
+.heatmap-wrap {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+.heatmap {
+  --cell: 12px;
+  width: max-content;
+}
+.heatmap-months {
+  display: grid;
+  grid-template-columns: repeat(53, var(--cell));
+  gap: 3px;
+  font-size: 11px;
+  color: var(--muted);
+  height: 16px;
+}
+.heatmap-months span {
+  white-space: nowrap;
+}
+.heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, var(--cell));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--cell);
+  gap: 3px;
+}
+.heatmap i,
+.heatmap-legend i {
+  display: block;
+  width: var(--cell, 12px);
+  height: var(--cell, 12px);
+  border-radius: 2px;
+}
+.l0 {
+  background: var(--raised);
+}
+.l1 {
+  background: color-mix(in srgb, var(--green) 25%, var(--raised));
+}
+.l2 {
+  background: color-mix(in srgb, var(--green) 50%, var(--raised));
+}
+.l3 {
+  background: color-mix(in srgb, var(--green) 75%, var(--raised));
+}
+.l4 {
+  background: var(--green);
+}
+.heatmap .future {
+  background: transparent;
+}
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 8px 0 40px;
+}
+
+/* Domande da un testo */
+.bulk-cards {
+  margin-top: 16px;
+}
+.bulk-cards summary {
+  font-weight: 600;
+  color: var(--green);
+}
+
+/* Modalità esame */
+.exam-mode {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  max-width: 850px;
+}
+.exam-mode .feature-form .primary {
+  margin-top: 18px;
+}
+.exam-run {
+  --m: 52px;
+  margin: 20px 0;
+  padding: 26px 28px 28px calc(var(--m) + 28px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background-color: var(--white);
+  background-image:
+    linear-gradient(var(--margin), var(--margin)),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 1px 100%, 22px 22px, 22px 22px;
+  background-position: var(--m) 0, -1px -1px, -1px -1px;
+  background-repeat: no-repeat, repeat, repeat;
+}
+.exam-run textarea {
+  margin-bottom: 16px;
+}
+.exam-run #exam-stop {
+  display: block;
+  margin-top: 14px;
+}
+.exam-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.exam-clock {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+}
+.exam-clock.is-late {
+  color: var(--warm);
+}
+.exam-review li,
+.exam-history li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.exam-review span {
+  overflow-wrap: anywhere;
+}
+.exam-review .is-right b {
+  color: var(--green);
+}
+.exam-review .is-wrong b {
+  color: var(--warm);
+}
+.exam-history {
+  margin-top: 8px;
+}
+.exam-history b {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Note per argomento */
+.topic-note {
+  margin: 2px 0 10px 26px;
+  font-size: 13px;
+}
+.topic-note summary {
+  color: var(--muted);
+}
+.topic-note[open] summary,
+.topic-note summary:hover {
+  color: var(--green);
+}
+.topic-note textarea {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.topic-note .hint {
+  margin: 4px 0 0;
+}
+
+@media (max-width: 800px) {
+  .stats-head {
+    display: none;
+  }
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+  .exam-run {
+    --m: 26px;
+    padding: 22px 18px 24px calc(var(--m) + 16px);
+  }
+}
+
+/* Gruppo di studio */
+.goals-group {
+  margin-bottom: 44px;
+  max-width: 900px;
+}
+.group-card {
+  padding: 18px 0 20px;
+  border-top: 1px solid var(--line);
+}
+.group-card h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+.group-goal .secondary {
+  white-space: nowrap;
+}
+.group-code {
+  font-size: 14px;
+  margin: 6px 0 12px;
+}
+.group-code b {
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.group-code .text-button {
+  padding: 0 0 0 8px;
+}
+.group-members li {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(80px, 1.2fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.group-members li.is-me span {
+  font-weight: 700;
+}
+.group-members small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.group-members b {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.group-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: 12px;
+}
+.group-goal label {
+  margin-top: 0;
+}
+.group-goal input {
+  max-width: 140px;
+}
+.group-actions .text-button {
+  padding: 0;
+}
+.group-forms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 18px;
+}
+.group-forms h3,
+.exam-mode h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+@media (max-width: 800px) {
+  .group-forms {
+    grid-template-columns: 1fr;
+  }
+  .group-members li {
+    grid-template-columns: 1fr auto;
+  }
+  .group-members .goal-bar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

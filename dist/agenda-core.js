@@ -103,6 +103,7 @@
         ...row,
         done: !!row.done,
         doneAt: row.done ? old?.doneAt || Date.now() : null,
+        note: old?.note || "",
       };
     });
   }

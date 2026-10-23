@@ -62,7 +62,20 @@ const day = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0
     t.store.set("reminder-state.json", JSON.stringify(state));
     assert.strictEqual(await t.ctx.maybeNotify(), false);
   }
-  console.log("PASS: reminder time, once a day, disabled, permission, nothing due.");
+  // Obiettivo settimanale indietro (solo da giovedì) senza ripassi scaduti
+  const ws = new Date();
+  ws.setHours(0, 0, 0, 0);
+  ws.setDate(ws.getDate() - ((ws.getDay() + 6) % 7));
+  const weekday = (new Date().getDay() + 6) % 7;
+  t = load("granted");
+  t.store.set("reminder-state.json", JSON.stringify({ enabled: true, time: "00:00", dues: [], weekly: { weekStart: ws.getTime(), target: 700, done: 0 }, lastShown: null }));
+  assert.strictEqual(await t.ctx.maybeNotify(), weekday >= 3);
+  if (weekday >= 3) assert.match(t.shown[0][1].body, /0 di 700 minuti/);
+  // Obiettivo raggiunto: nessun avviso
+  t = load("granted");
+  t.store.set("reminder-state.json", JSON.stringify({ enabled: true, time: "00:00", dues: [], weekly: { weekStart: ws.getTime(), target: 70, done: 70 }, lastShown: null }));
+  assert.strictEqual(await t.ctx.maybeNotify(), false);
+  console.log("PASS: reminder time, once a day, disabled, permission, nothing due, weekly goal.");
 })().catch((e) => {
   console.error(e);
   process.exit(1);

@@ -107,6 +107,7 @@
               minutes: num(t.minutes, 10000),
               done: !!t.done,
               doneAt: t.doneAt == null ? null : num(t.doneAt),
+              note: t.note == null ? "" : str(t.note, 5000),
             }),
             1000,
           ),
@@ -202,6 +203,18 @@
           500,
         ),
       },
+      examRuns: arr(
+        s.examRuns || [],
+        (r) => ({
+          id: id(r.id),
+          at: num(r.at),
+          subject: str(r.subject, 80),
+          total: num(r.total, 1000),
+          score: num(r.score, 1000),
+          seconds: num(r.seconds, 86400),
+        }),
+        500,
+      ),
       achievements: Object.fromEntries(
         Object.entries(s.achievements || {}).map(([key, value]) => {
           if (!/^[a-z0-9-]{1,40}$/.test(key)) fail();
@@ -227,6 +240,7 @@
       study.agendaEvents,
       study.agendaOverrides,
       study.goals.items,
+      study.examRuns,
     ])
       if (new Set(list.map((x) => x.id)).size !== list.length) fail();
     let sound = null;
@@ -386,6 +400,9 @@
       weekly: Object.values(og.weekly).some(Boolean) ? og.weekly : ig.weekly,
       items: [...goalMap.values()],
     };
+    const runs = new Map((old.study.examRuns || []).map((x) => [x.id, x]));
+    for (const x of incoming.study.examRuns || []) if (!runs.has(x.id)) runs.set(x.id, x);
+    merged.study.examRuns = [...runs.values()];
     // Traguardi: vale la data di sblocco più vecchia
     merged.study.achievements = { ...(incoming.study.achievements || {}) };
     for (const [key, at] of Object.entries(old.study.achievements || {}))

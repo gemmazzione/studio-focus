@@ -37,6 +37,25 @@
       .filter((t) => t != null);
   }
   const dueNow = () => dueTimes().filter((t) => t <= Date.now()).length;
+  // Minuti fatti e obiettivo della settimana (da lunedì), per l'avviso "sei indietro"
+  function weekly() {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+    const from = start.getTime();
+    return {
+      weekStart: from,
+      target: data.study?.goals?.weekly?.minutes || 0,
+      done: data.sessions
+        .filter((s) => s.at >= from)
+        .reduce((n, s) => n + Math.round((s.seconds || 0) / 60), 0),
+    };
+  }
+  // Da giovedì in poi: indietro se i minuti sono sotto la quota prevista fino a oggi
+  function behind(w = weekly()) {
+    const day = (new Date().getDay() + 6) % 7;
+    return w.target > 0 && day >= 3 && w.done < Math.round((w.target * (day + 1)) / 7);
+  }
 
   // --- Service worker -----------------------------------------------------
   if (supportsSW)
@@ -50,7 +69,7 @@
         lastShown = old ? (await old.json()).lastShown : null;
       await cache.put(
         REMINDER_URL,
-        new Response(JSON.stringify({ ...settings, dues: dueTimes(), lastShown }), {
+        new Response(JSON.stringify({ ...settings, dues: dueTimes(), weekly: weekly(), lastShown }), {
           headers: { "Content-Type": "application/json" },
         }),
       );
@@ -80,17 +99,24 @@
     );
   function renderBanner() {
     const n = dueNow(),
+      w = weekly(),
+      late = behind(w),
       today = StudyCore.localDay(new Date()),
       page = location.hash.slice(1),
       hide =
-        !n ||
+        (!n && !late) ||
         data.active ||
         ["today", "reviews", "cards", "errors"].includes(page) ||
         localStorage.getItem(BANNER) === today;
     byId("due-banner").hidden = !!hide;
     if (!hide)
       byId("due-banner-text").textContent =
-        n === 1 ? "Hai 1 ripasso in scadenza." : `Hai ${n} ripassi in scadenza.`;
+        [
+          n ? (n === 1 ? "Hai 1 ripasso in scadenza." : `Hai ${n} ripassi in scadenza.`) : "",
+          late ? `Obiettivo della settimana: ${w.done} di ${w.target} minuti, sei un po’ indietro.` : "",
+        ]
+          .filter(Boolean)
+          .join(" ");
     if ("setAppBadge" in navigator)
       (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {});
   }
@@ -103,7 +129,7 @@
   byId("account-body").insertAdjacentHTML(
     "afterend",
     `<section class="pwa-section"><h2>Installa l’app</h2><div id="install-body"></div></section>
-    <section class="pwa-section"><h2>Promemoria dei ripassi</h2><p class="hint">Una notifica al giorno, all’ora che scegli, se ci sono ripassi in scadenza. Vale solo per questo dispositivo.</p><form id="reminder-form" class="feature-form"><label class="checkbox"><input id="reminder-enabled" type="checkbox">Avvisami dei ripassi in scadenza</label><label for="reminder-time">Dopo le ore</label><input id="reminder-time" type="time" required><div class="actions"><button class="primary">Salva promemoria</button><button type="button" id="reminder-test" class="secondary">Prova la notifica</button></div><p id="reminder-status" class="hint" role="status"></p></form></section>`,
+    <section class="pwa-section"><h2>Promemoria dei ripassi</h2><p class="hint">Una notifica al giorno, all’ora che scegli, se ci sono ripassi in scadenza o se da giovedì sei indietro con l’obiettivo settimanale di minuti. Vale solo per questo dispositivo.</p><form id="reminder-form" class="feature-form"><label class="checkbox"><input id="reminder-enabled" type="checkbox">Avvisami di ripassi e obiettivo settimanale</label><label for="reminder-time">Dopo le ore</label><input id="reminder-time" type="time" required><div class="actions"><button class="primary">Salva promemoria</button><button type="button" id="reminder-test" class="secondary">Prova la notifica</button></div><p id="reminder-status" class="hint" role="status"></p></form></section>`,
   );
   function renderInstall() {
     const box = byId("install-body");

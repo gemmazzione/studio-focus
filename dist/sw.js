@@ -1,7 +1,7 @@
 // Service worker: app usabile offline e promemoria dei ripassi.
 // Strategia "prima la rete": online si ricevono sempre i file aggiornati,
 // offline si usa l'ultima copia salvata. L'API (api/) non passa mai dalla cache.
-const CACHE = "studio-v5";
+const CACHE = "studio-v6";
 const SHELL = [
   "./",
   "index.html",
@@ -12,6 +12,8 @@ const SHELL = [
   "agenda.css",
   "sync.css",
   "goals.css",
+  "pwa.css",
+  "extras.css",
   "study-core.js",
   "app.js",
   "experience.js",
@@ -19,6 +21,8 @@ const SHELL = [
   "agenda-core.js",
   "agenda.js",
   "goals.js",
+  "extras.js",
+  "group.js",
   "sync.js",
   "pwa.js",
   "icons/icon-192.png",
@@ -97,14 +101,23 @@ async function maybeNotify() {
     today = localDay(now);
   if (s.lastShown === today || now.getHours() * 60 + now.getMinutes() < h * 60 + m) return false;
   const due = (s.dues || []).filter((t) => t <= now.getTime()).length;
-  if (!due) return false;
+  // Obiettivo settimanale: da giovedì, sotto la quota prevista fino a oggi
+  const w = s.weekly || {},
+    weekStart = new Date(now);
+  weekStart.setHours(0, 0, 0, 0);
+  weekStart.setDate(weekStart.getDate() - ((weekStart.getDay() + 6) % 7));
+  const day = (now.getDay() + 6) % 7,
+    doneMinutes = w.weekStart === weekStart.getTime() ? w.done || 0 : 0,
+    expected = Math.round(((w.target || 0) * (day + 1)) / 7),
+    late = w.target > 0 && day >= 3 && doneMinutes < expected;
+  if (!due && !late) return false;
   s.lastShown = today;
   await writeReminder(s);
-  await self.registration.showNotification("Ripassi da fare", {
-    body:
-      due === 1
-        ? "Hai 1 ripasso in scadenza. Bastano pochi minuti."
-        : `Hai ${due} ripassi in scadenza. Inizia dal primo.`,
+  const parts = [];
+  if (due) parts.push(due === 1 ? "Hai 1 ripasso in scadenza." : `Hai ${due} ripassi in scadenza.`);
+  if (late) parts.push(`Questa settimana: ${doneMinutes} di ${w.target} minuti. Una sessione oggi ti rimette in pari.`);
+  await self.registration.showNotification(due ? "Ripassi da fare" : "Obiettivo della settimana", {
+    body: parts.join(" "),
     icon: "icons/icon-192.png",
     badge: "icons/icon-192.png",
     tag: "studio-reminder",
