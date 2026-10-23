@@ -42,6 +42,7 @@
       ["review", data.reviews || [], 15],
     ])
       for (const item of list) {
+        if (item.due == null) continue; // senza data scelta non entra nel programma
         const dueDate = C.localDay(new Date(item.due));
         events.push({
           id: `${source}_${item.id}_${item.due}`,

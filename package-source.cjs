@@ -26,6 +26,8 @@ const files = [
   "dist/study-core.js",
   "dist/sync.js",
   "dist/sync.css",
+  "dist/goals.js",
+  "dist/goals.css",
   ...fs.readdirSync("dist/api").filter((f) => f !== "config.php").map((f) => "dist/api/" + f),
   "scripts/serve-php.cjs",
   "dist/studio-extension.zip",

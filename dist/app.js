@@ -213,7 +213,7 @@ function render() {
 function renderLists() {
   const today = dateKey(),
     todaySessions = data.sessions.filter((s) => dateKey(s.at) === today),
-    due = data.reviews.filter((r) => r.due <= Date.now());
+    due = data.reviews.filter((r) => StudyCore.isDue(r));
   $("daily-minutes").textContent = Math.round(
     todaySessions.reduce((t, s) => t + s.seconds, 0) / 60,
   );
@@ -235,15 +235,26 @@ function renderLists() {
         `<li><span>${esc(t.text)}</span><button data-remove-thought="${t.id}" aria-label="Elimina pensiero">×</button></li>`,
     )
     .join("");
+  const now = Date.now(),
+    reviewEntry = (r) =>
+      `<article class="entry"><div class="meta">${esc(r.subject)} · ${r.due == null ? "Senza data" : r.due <= now ? "Da ripassare" : `Previsto il ${fmtDate(r.due)}`}</div><h3>${esc(r.goal)}</h3><p class="hint">${r.count || 0} ripassi completati · Ultima valutazione: ${ratingLabel(r.rating)}</p><div class="review-actions"><button class="secondary" data-review="${r.id}">Richiama senza appunti</button><label class="sr-only" for="when-${r.id}">Quando ripassare</label><select id="when-${r.id}" data-review-when="${r.id}"><option value="">${r.due == null ? "Programma…" : "Sposta…"}</option><option value="1">Domani</option><option value="3">Tra 3 giorni</option><option value="7">Tra una settimana</option><option value="14">Tra due settimane</option><option value="30">Tra un mese</option>${r.due == null ? "" : '<option value="0">Togli la data</option>'}</select><button class="text-button" data-review-delete="${r.id}">Elimina</button></div></article>`,
+    groups = [
+      ["Da ripassare", data.reviews.filter((r) => r.due != null && r.due <= now)],
+      ["In programma", data.reviews.filter((r) => r.due != null && r.due > now)],
+      ["Senza data", data.reviews.filter((r) => r.due == null)],
+    ];
   $("review-list").innerHTML = data.reviews.length
-    ? [...data.reviews]
-        .sort((a, b) => a.due - b.due)
+    ? groups
+        .filter(([, list]) => list.length)
         .map(
-          (r) =>
-            `<article class="entry"><div class="meta">${esc(r.subject)} · ${r.due <= Date.now() ? "Da ripassare" : `Previsto il ${fmtDate(r.due)}`}</div><h3>${esc(r.goal)}</h3><p class="hint">${r.count || 0} ripassi completati · Ultima valutazione: ${ratingLabel(r.rating)}</p><button class="secondary" data-review="${r.id}">Richiama senza appunti</button></article>`,
+          ([title, list]) =>
+            `<h2 class="review-group">${title} <span>${list.length}</span></h2>${[...list]
+              .sort((a, b) => (a.due ?? Infinity) - (b.due ?? Infinity))
+              .map(reviewEntry)
+              .join("")}`,
         )
         .join("")
-    : '<p class="empty">Nessun ripasso in programma. Se ne crea uno ogni volta che salvi una sessione.</p>';
+    : '<p class="empty">Nessun obiettivo da ripassare. Dopo ogni sessione scegli se e quando ripassarla.</p>';
   $("history").innerHTML = data.sessions.length
     ? [...data.sessions]
         .reverse()
@@ -329,6 +340,7 @@ function route() {
       "cards",
       "errors",
       "account",
+      "goals",
     ].includes(requested)
       ? requested
       : "focus";
@@ -413,31 +425,18 @@ $("recall").onsubmit = (e) => {
     seconds: a.seconds || 0,
     reviewId,
   });
+  // Il ripasso non si programma da solo: data scelta nel modulo o nessuna
+  const due = StudyCore.nextDue($("review-when").value, $("review-date").value, now);
   let review = reviewId ? data.reviews.find((r) => r.id === reviewId) : null;
-  if (review) {
-    review.interval =
-      rating === "hard"
-        ? 1
-        : Math.min(
-            180,
-            Math.max(
-              2,
-              Math.round(review.interval * (rating === "easy" ? 2.5 : 1.5)),
-            ),
-          );
-    review.count = (review.count || 0) + 1;
-  } else {
-    review = {
-      id: uid(),
-      subject: a.subject,
-      goal: a.goal,
-      interval: rating === "hard" ? 1 : rating === "medium" ? 2 : 3,
-      count: 0,
-    };
+  if (!review) {
+    review = { id: uid(), subject: a.subject, goal: a.goal, interval: 1, count: 0 };
     data.reviews.push(review);
-  }
+  } else review.count = (review.count || 0) + 1;
   review.rating = rating;
-  review.due = now + review.interval * DAY;
+  review.due = due;
+  if (due) review.interval = Math.min(180, Math.max(1, Math.round((due - now) / DAY)));
+  $("review-when").value = "0";
+  $("review-date").hidden = true;
   reviewing = null;
   const total = a.breakMinutes * 60000;
   data.active = {
@@ -453,7 +452,9 @@ $("recall").onsubmit = (e) => {
   save();
   syncBlock();
   render();
-  notify(`Salvato. Prossimo ripasso: ${fmtDate(review.due)}.`);
+  notify(
+    due ? `Salvato. Ripasso il ${fmtDate(due)}.` : "Salvato. Nessun ripasso programmato.",
+  );
 };
 $("thought-form").onsubmit = (e) => {
   e.preventDefault();
@@ -472,7 +473,29 @@ $("thought-list").onclick = (e) => {
     renderLists();
   }
 };
+$("review-when").onchange = () => {
+  $("review-date").hidden = $("review-when").value !== "date";
+  if (!$("review-date").hidden) $("review-date").focus();
+};
+$("review-list").onchange = (e) => {
+  const id = e.target.dataset.reviewWhen,
+    r = id && data.reviews.find((r) => r.id === id);
+  if (!r || e.target.value === "") return;
+  r.due = StudyCore.nextDue(e.target.value, "");
+  save();
+  renderLists();
+  notify(r.due ? `Ripasso il ${fmtDate(r.due)}.` : "Data del ripasso tolta.");
+};
 $("review-list").onclick = (e) => {
+  const del = e.target.closest("[data-review-delete]")?.dataset.reviewDelete;
+  if (del) {
+    if (confirm("Eliminare questo ripasso? La sessione resta nel diario.")) {
+      data.reviews = data.reviews.filter((r) => r.id !== del);
+      save();
+      renderLists();
+    }
+    return;
+  }
   const id = e.target.closest("[data-review]")?.dataset.review;
   if (!id) return;
   if (data.active)

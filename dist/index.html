@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="features.css" />
     <link rel="stylesheet" href="agenda.css" />
     <link rel="stylesheet" href="sync.css" />
+    <link rel="stylesheet" href="goals.css" />
   </head>
   <body>
     <aside>
@@ -36,6 +37,7 @@
           >Ripassi <span id="due-count">0</span></a
         ><a href="#attempts" data-page="attempts">Tentativi</a
         ><a href="#progress" data-page="progress">Progressi</a
+        ><a href="#goals" data-page="goals">Obiettivi</a
         ><a href="#settings" data-page="settings">Blocco social</a
         ><a href="#method" data-page="method">Metodo</a
         ><a href="#account" data-page="account">Account</a>
@@ -162,7 +164,7 @@
                 <option value="easy">
                   Bene — risposta corretta e autonoma
                 </option></select
-              ><button class="primary wide" type="submit">
+              ><label for="review-when">Quando vuoi ripassarlo?</label><select id="review-when"><option value="0" selected>Non programmare un ripasso</option><option value="1">Domani</option><option value="3">Tra 3 giorni</option><option value="7">Tra una settimana</option><option value="14">Tra due settimane</option><option value="30">Tra un mese</option><option value="date">Scegli una data…</option></select><input id="review-date" type="date" hidden aria-label="Data del ripasso" /><p class="hint">Puoi programmarlo anche dopo, dalla pagina Ripassi.</p><button class="primary wide" type="submit">
                 Salva e inizia la pausa
               </button>
             </form>
@@ -243,7 +245,7 @@
       <section id="page-reviews" class="page" hidden>
         <div class="heading">
           <h1>Ripassi</h1>
-          <p>Gli obiettivi delle sessioni passate che oggi vanno ripresi. Rispondi a memoria, poi controlla.</p>
+          <p>Le sessioni che hai scelto di ripassare. Programmale, spostale o riprendile quando vuoi: rispondi a memoria, poi controlla.</p>
         </div>
         <div id="review-list"></div>
       </section>
@@ -372,13 +374,12 @@
             >Revisione della ricerca</a
           >.
         </p>
-        <h2>Ripassi che si adattano alle risposte</h2>
+        <h2>I ripassi li decidi tu</h2>
         <p>
-          Il primo ripasso è previsto dopo 1, 2 o 3 giorni in base alla tua
-          valutazione. Nei ripassi successivi l'intervallo aumenta quando
-          ricordi bene e torna a un giorno se hai difficoltà. È una semplice
-          regola pratica, non un algoritmo scientificamente ottimale per ogni
-          materia.
+          Dopo ogni sessione o domanda scegli se ripassare e quando: domani, tra
+          qualche giorno o in una data precisa. Una regola utile è ripassare
+          presto ciò che è andato male e allungare l’attesa per ciò che ricordi
+          bene, ma l’app non programma nulla al posto tuo.
         </p>
         <h2>Pause per recuperare</h2>
         <p>
@@ -407,6 +408,7 @@
     <script src="features.js"></script>
     <script src="agenda-core.js"></script>
     <script src="agenda.js"></script>
+    <script src="goals.js"></script>
     <script src="sync.js"></script>
   </body>
 </html>

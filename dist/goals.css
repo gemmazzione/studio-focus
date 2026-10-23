@@ -1,0 +1,203 @@
+/* Obiettivi, traguardi e frase del giorno */
+.quote {
+  margin: 18px 0 0;
+  padding: 2px 0 2px 14px;
+  border-left: 2px solid var(--margin);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+.quote blockquote {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.quote .text-button {
+  padding: 0;
+  font-size: 12px;
+}
+
+.goals-week,
+.goals-list,
+.goals-achievements {
+  margin-bottom: 44px;
+  max-width: 900px;
+}
+.goal-progress {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.goal-progress > div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.goal-progress b {
+  font-variant-numeric: tabular-nums;
+}
+.goal-bar {
+  height: 6px;
+  background: var(--raised);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.goal-bar i {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  border-radius: 3px;
+}
+.goal-progress.is-met b {
+  color: var(--green);
+}
+.goal-settings {
+  margin-top: 16px;
+}
+.goal-settings summary {
+  font-size: 14px;
+  color: var(--green);
+  font-weight: 600;
+}
+.goal-settings .feature-form {
+  margin-top: 14px;
+}
+.goal-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.goal-inputs label {
+  margin-top: 0;
+}
+.goal-inputs input {
+  margin-top: 6px;
+}
+
+.goal-row {
+  display: flex;
+  gap: 10px;
+}
+.goal-row input[type="date"] {
+  width: auto;
+}
+.goal-row .primary {
+  flex-shrink: 0;
+}
+.goal-items li {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.goal-items .checkbox {
+  margin: 0;
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.goal-items .is-done .checkbox span {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.goal-items .meta {
+  white-space: nowrap;
+}
+.goal-items .is-late {
+  color: var(--warm);
+}
+.goal-items .text-button {
+  padding: 0;
+}
+
+.achievement-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0 28px;
+}
+.achievement {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.achievement .badge {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--field);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.achievement.is-unlocked .badge {
+  border: 0;
+  background: var(--green);
+  color: var(--accent-ink);
+}
+.achievement h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 3px 0 2px;
+}
+.achievement p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.achievement:not(.is-unlocked) h3 {
+  color: var(--muted);
+}
+.achievement .goal-bar {
+  height: 4px;
+  margin: 8px 0 4px;
+}
+
+/* Ripassi raggruppati e programmabili */
+.review-group {
+  margin: 28px 0 4px;
+}
+.review-group span {
+  color: var(--muted);
+  font-weight: 500;
+}
+.review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+.review-actions select {
+  width: auto;
+  font-size: 13px;
+  padding: 8px 10px;
+}
+.review-actions .text-button {
+  padding: 0;
+}
+#review-date,
+#practice-date {
+  margin-top: 8px;
+  max-width: 220px;
+}
+
+@media (max-width: 640px) {
+  .goal-inputs {
+    grid-template-columns: 1fr;
+  }
+  .goal-row {
+    flex-wrap: wrap;
+  }
+  .goal-row input:first-child {
+    flex-basis: 100%;
+  }
+  .goal-items li {
+    flex-wrap: wrap;
+  }
+}

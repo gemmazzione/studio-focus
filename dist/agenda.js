@@ -60,7 +60,7 @@
     .querySelector(".heading")
     .insertAdjacentHTML(
       "afterend",
-      `<form id="exam-editor" class="feature-form exam-editor" hidden><h2>Modifica il piano</h2><p class="hint">Gli argomenti mantengono identità e completamento. Il lavoro rimanente viene ridistribuito; i blocchi automatici possono cambiare giorno.</p><label for="edit-subject">Materia del piano</label><input id="edit-subject" required maxlength="80"><div class="duration-row"><label>Nuova data dell’esame<input id="edit-date" type="date" required></label><label>Minuti disponibili al giorno<input id="edit-minutes" type="number" min="5" max="480" required></label></div><fieldset><legend>Giorni di studio</legend><div class="day-picks">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" name="edit-day" value="${d}">${["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"][d]}</label>`).join("")}</div></fieldset><h3>Argomenti</h3><div id="edit-topics"></div><button type="button" id="edit-add-topic" class="secondary">Aggiungi argomento</button><div class="editor-actions"><button class="primary">Salva modifiche al piano</button><button type="button" id="edit-cancel" class="secondary">Annulla</button></div><p id="edit-message" role="status"></p></form>`,
+      `<form id="exam-editor" class="feature-form exam-editor" hidden><h2>Modifica il piano</h2><p class="hint">Gli argomenti mantengono identità e completamento. Il lavoro rimanente viene ridistribuito; i blocchi automatici possono cambiare giorno.</p><label for="edit-subject">Materia del piano</label><input id="edit-subject" required maxlength="80"><div class="duration-row"><label>Nuova data dell’esame<input id="edit-date" type="date" required></label><label>Minuti disponibili al giorno<input id="edit-minutes" type="number" min="5" max="480" required></label></div><fieldset><legend>Giorni di studio</legend><div class="day-picks">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" name="edit-day" value="${d}">${["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"][d]}</label>`).join("")}</div></fieldset><label class="checkbox"><input id="edit-reviews" type="checkbox">Aggiungi un breve ripasso per ogni argomento dopo averlo studiato</label><h3>Argomenti</h3><div id="edit-topics"></div><button type="button" id="edit-add-topic" class="secondary">Aggiungi argomento</button><div class="editor-actions"><button class="primary">Salva modifiche al piano</button><button type="button" id="edit-cancel" class="secondary">Annulla</button></div><p id="edit-message" role="status"></p></form>`,
     );
   document
     .querySelector('label[for="card-question"]')
@@ -337,6 +337,7 @@
     $("edit-subject").value = exam.subject;
     $("edit-date").value = exam.date;
     $("edit-minutes").value = exam.minutes;
+    $("edit-reviews").checked = exam.reviews !== false;
     document
       .querySelectorAll('[name="edit-day"]')
       .forEach((x) => (x.checked = exam.days.includes(Number(x.value))));
@@ -416,6 +417,7 @@
     exam.date = date;
     exam.minutes = minutes;
     exam.days = days;
+    exam.reviews = $("edit-reviews").checked;
     exam.topics = A.preserveTopics(exam.topics, rows);
     for (const card of S.cards) {
       if (card.examId === exam.id && card.subject === oldSubject)

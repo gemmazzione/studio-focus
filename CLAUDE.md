@@ -44,7 +44,7 @@ Conservare compatibilità con localStorage `studio.v1` e `studio.sound.v1`. Non 
 
 Il protocollo estensione è PING, START {domains,until}, STOP. Non ampliare le origini autorizzate senza motivo. Se cambia dominio di hosting, aggiornare ALLOWED in background.js e externally_connectable in manifest.json.
 
-Il piano riserva, quando possibile, l'ultimo giorno disponibile ai ripassi. Ogni argomento ha un breve richiamo in un giorno successivo al termine dello studio; l'intervallo di un giorno e la durata del 10% (5–15 minuti) sono euristiche modificabili, non un protocollo scientificamente ottimale. Un avviso segnala i ripassi che non trovano spazio. I blocchi del piano non attestano completamento: spetta allo studente spuntare l'argomento.
+I ripassi NON si programmano da soli (richiesta esplicita dell'utente, v5): dopo una sessione (`#review-when`) o una domanda (`#practice-next`) l'utente sceglie se e quando ripassare; `due: null` significa senza data e l'elemento non entra in Oggi né nei contatori. Usare `StudyCore.isDue` e `StudyCore.nextDue`, mai `x.due <= now` (null vale 0). I ripassi nei piani d'esame sono un'opzione (`exam.reviews`, spenta per i piani nuovi, accesa per quelli vecchi). Con l'opzione attiva il piano riserva, quando possibile, l'ultimo giorno disponibile ai ripassi. Ogni argomento ha un breve richiamo in un giorno successivo al termine dello studio; l'intervallo di un giorno e la durata del 10% (5–15 minuti) sono euristiche modificabili, non un protocollo scientificamente ottimale. Un avviso segnala i ripassi che non trovano spazio. I blocchi del piano non attestano completamento: spetta allo studente spuntare l'argomento.
 
 ## Verifica
 
@@ -56,10 +56,14 @@ Il sito principale è su AlterVista: https://samueleruggeri.altervista.org/studi
 
 ## Design
 
-App per studiare, non landing promozionale. Tema “Quaderno”: carta bianca, inchiostro blu-nero, penna blu (`--green`, nome storico) per azioni e avanzamento, penna rossa (`--warm`) solo per errori e scadenze. La quadrettatura con il margine rosso compare solo dove si scrive: pannello della sessione ed esercizi. Un solo font, Schibsted Grotesk. Tema scuro automatico con prefers-color-scheme. Titoli di pagina semplici (il nome della sezione), sottotitoli che dicono cosa fa la pagina: niente slogan, frasi motivazionali o titoli su due righe con parola colorata.
+App per studiare, non landing promozionale. Tema “Quaderno”: carta bianca, inchiostro blu-nero, penna blu (`--green`, nome storico) per azioni e avanzamento, penna rossa (`--warm`) solo per errori e scadenze. La quadrettatura con il margine rosso compare solo dove si scrive: pannello della sessione ed esercizi. Un solo font, Schibsted Grotesk. Tema scuro automatico con prefers-color-scheme. Titoli di pagina semplici (il nome della sezione), sottotitoli che dicono cosa fa la pagina: niente slogan nei titoli né titoli su due righe con parola colorata. Le frasi motivazionali (richieste dall'utente) stanno solo in `PHRASES` di `dist/goals.js`: frase del giorno sotto il titolo di Sessione e messaggio quando si completa un obiettivo. Frasi originali, concrete e senza autori inventati.
 
 ## Account e sincronizzazione
 
 `dist/sync.js` aggiunge la pagina Account e sincronizza i dati con l'API PHP in `dist/api/` (stessa struttura di Scacchi da Zero, tabelle con prefisso `stf_` nel database condiviso my_samueleruggeri). Il server tiene per ogni utente un documento studio.backup v4 con numero di revisione; `progress.php` risponde 409 se un altro dispositivo ha salvato nel frattempo. In quel caso il client unisce con `StudyCore.mergeData` (unione per ID, vincono gli elementi locali) e reinvia. Non si sincronizzano sessione in corso, ID dell'estensione e bozze. Con una sessione attiva i dati in arrivo vengono rimandati alla fine della sessione. Lo stato della sincronizzazione è in localStorage `studio.sync.v1` (token, revisione, hash dell'ultimo invio).
 
 `dist/api/config.php` NON va nel repository: lo crea la Action dalle variabili DB_NAME e DB_USER (e dal secret facoltativo DB_PASSWORD). Prova locale con SQLite: `npm run dev:php` (http://localhost:5188). Con `npm run dev` o su GitHub Pages non c'è PHP e la pagina Account lo dice.
+
+## Obiettivi e traguardi
+
+`dist/goals.js` aggiunge la pagina Obiettivi: obiettivi settimanali (`data.study.goals.weekly`: minuti, sessioni, tentativi; 0 = non usato, settimana da lunedì), obiettivi personali (`goals.items`, data facoltativa) e traguardi. I traguardi sono in `ACHIEVEMENTS` e si calcolano dai dati reali; in `data.study.achievements` resta solo `{id: data di sblocco}`. Al primo avvio i traguardi già raggiunti si segnano senza avviso. I nuovi campi sono validati in `validateBackup` e uniti in `mergeData`, quindi passano per backup e sincronizzazione.

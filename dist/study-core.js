@@ -72,7 +72,7 @@
       interval: num(r.interval, 180),
       count: num(r.count || 0, 100000),
       rating: grade(r.rating),
-      due: num(r.due),
+      due: r.due == null ? null : num(r.due),
     }));
     const thoughts = arr(d.thoughts, (t) => ({
       id: id(t.id),
@@ -92,6 +92,8 @@
           subject: str(e.subject, 80),
           date: day(e.date),
           minutes: num(e.minutes, 480),
+          // I piani creati prima della v5 avevano sempre i ripassi
+          reviews: e.reviews == null ? true : !!e.reviews,
           days: arr(
             e.days,
             (v) => (Number.isInteger(v) && v >= 0 && v <= 6 ? v : fail()),
@@ -116,7 +118,7 @@
         subject: str(c.subject, 80),
         question: str(c.question, 1000),
         solution: str(c.solution),
-        due: num(c.due),
+        due: c.due == null ? null : num(c.due),
         interval: num(c.interval, 180),
         count: num(c.count || 0, 100000),
         examId: c.examId ? id(c.examId) : null,
@@ -128,7 +130,7 @@
         subject: str(e.subject, 80),
         question: str(e.question, 1000),
         solution: str(e.solution),
-        due: num(e.due),
+        due: e.due == null ? null : num(e.due),
         interval: num(e.interval || 1, 180),
         count: num(e.count || 0, 100000),
         resolved: !!e.resolved,
@@ -182,6 +184,30 @@
         }),
         10000,
       ),
+      goals: {
+        weekly: {
+          minutes: num(s.goals?.weekly?.minutes || 0, 10000),
+          sessions: num(s.goals?.weekly?.sessions || 0, 500),
+          recalls: num(s.goals?.weekly?.recalls || 0, 5000),
+        },
+        items: arr(
+          s.goals?.items || [],
+          (g) => ({
+            id: id(g.id),
+            text: str(g.text, 220),
+            due: g.due ? day(g.due) : null,
+            done: !!g.done,
+            doneAt: g.doneAt == null ? null : num(g.doneAt),
+          }),
+          500,
+        ),
+      },
+      achievements: Object.fromEntries(
+        Object.entries(s.achievements || {}).map(([key, value]) => {
+          if (!/^[a-z0-9-]{1,40}$/.test(key)) fail();
+          return [key, num(value)];
+        }),
+      ),
       drafts: Object.fromEntries(
         Object.entries(s.drafts || {}).map(([key, value]) => {
           if (!/^[a-zA-Z0-9:_-]{1,200}$/.test(key)) fail();
@@ -200,6 +226,7 @@
       study.logs,
       study.agendaEvents,
       study.agendaOverrides,
+      study.goals.items,
     ])
       if (new Set(list.map((x) => x.id)).size !== list.length) fail();
     let sound = null;
@@ -257,7 +284,8 @@
       if (tasks.length) rows.push({ date, tasks });
     }
     let reviewMissed = 0;
-    for (const topic of exam.topics) {
+    // Ripassi nel piano solo se l’utente li ha chiesti (exam.reviews)
+    for (const topic of exam.reviews === false ? [] : exam.topics) {
       const remainder = pending.find((t) => t.id === topic.id);
       if (!topic.done && remainder?.left > 0) continue;
       const studyDays = rows.filter((r) =>
@@ -350,6 +378,18 @@
       merged.study[key] = [...map.values()];
     }
     merged.study.drafts = { ...incoming.study.drafts, ...old.study.drafts };
+    const og = old.study.goals || { weekly: {}, items: [] },
+      ig = incoming.study.goals || { weekly: {}, items: [] },
+      goalMap = new Map(og.items.map((x) => [x.id, x]));
+    for (const x of ig.items) if (!goalMap.has(x.id)) goalMap.set(x.id, x);
+    merged.study.goals = {
+      weekly: Object.values(og.weekly).some(Boolean) ? og.weekly : ig.weekly,
+      items: [...goalMap.values()],
+    };
+    // Traguardi: vale la data di sblocco più vecchia
+    merged.study.achievements = { ...(incoming.study.achievements || {}) };
+    for (const [key, at] of Object.entries(old.study.achievements || {}))
+      merged.study.achievements[key] = Math.min(at, merged.study.achievements[key] ?? at);
     merged.study.seenSessions = [
       ...new Set([...old.study.seenSessions, ...incoming.study.seenSessions]),
     ];
@@ -357,8 +397,21 @@
       throw Error("L’unione supera il limite di 30 fasce orarie.");
     return merged;
   }
+  // Un elemento è da ripassare solo se ha una data scelta e la data è arrivata
+  const isDue = (item, now = Date.now()) => item.due != null && item.due <= now;
+  // Data del prossimo ripasso dalla scelta del modulo: giorni, "date" con data, 0 = nessuno
+  function nextDue(choice, dateValue, now = Date.now()) {
+    if (choice === "date") {
+      const t = new Date(dateValue + "T09:00:00").getTime();
+      return Number.isFinite(t) && t > now ? t : null;
+    }
+    const days = Number(choice);
+    return days > 0 ? now + days * 86400000 : null;
+  }
   const api = {
     validateBackup,
+    isDue,
+    nextDue,
     mergeData,
     validateSchedule,
     plan,

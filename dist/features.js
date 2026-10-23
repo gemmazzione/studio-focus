@@ -32,7 +32,7 @@
     "planning",
     "Piano esami",
     "Inserisci data e argomenti: l’app divide il lavoro sui giorni che hai a disposizione.",
-    `<div class="feature-grid"><form id="exam-form" class="feature-form"><h2>Nuovo piano</h2><label for="exam-subject">Materia dell’esame</label><input id="exam-subject" required maxlength="80" placeholder="Es. Matematica"><div class="duration-row"><label>Data dell’esame<input id="exam-date" type="date" required></label><label>Minuti al giorno<input id="exam-minutes" type="number" min="5" max="480" value="60" required></label></div><fieldset><legend>Giorni disponibili</legend><div class="day-picks">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" name="exam-day" value="${d}" ${d > 0 && d < 6 ? "checked" : ""}>${dayNames[d]}</label>`).join("")}</div></fieldset><label for="exam-topics">Argomenti e minuti stimati</label><textarea id="exam-topics" rows="5" required maxlength="20000" placeholder="Derivate | 90&#10;Integrali | 120&#10;Esercizi di riepilogo | 60"></textarea><p class="hint">Un argomento per riga. Dopo | indica i minuti; se li ometti usiamo 60. Il giorno dell’esame è escluso.</p><button class="primary wide">Crea il piano</button><p id="exam-message" role="status"></p></form><div id="exam-list"></div></div>`,
+    `<div class="feature-grid"><form id="exam-form" class="feature-form"><h2>Nuovo piano</h2><label for="exam-subject">Materia dell’esame</label><input id="exam-subject" required maxlength="80" placeholder="Es. Matematica"><div class="duration-row"><label>Data dell’esame<input id="exam-date" type="date" required></label><label>Minuti al giorno<input id="exam-minutes" type="number" min="5" max="480" value="60" required></label></div><label class="checkbox"><input id="exam-reviews" type="checkbox">Aggiungi un breve ripasso per ogni argomento dopo averlo studiato</label><fieldset><legend>Giorni disponibili</legend><div class="day-picks">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" name="exam-day" value="${d}" ${d > 0 && d < 6 ? "checked" : ""}>${dayNames[d]}</label>`).join("")}</div></fieldset><label for="exam-topics">Argomenti e minuti stimati</label><textarea id="exam-topics" rows="5" required maxlength="20000" placeholder="Derivate | 90&#10;Integrali | 120&#10;Esercizi di riepilogo | 60"></textarea><p class="hint">Un argomento per riga. Dopo | indica i minuti; se li ometti usiamo 60. Il giorno dell’esame è escluso.</p><button class="primary wide">Crea il piano</button><p id="exam-message" role="status"></p></form><div id="exam-list"></div></div>`,
   );
   page(
     "cards",
@@ -74,7 +74,7 @@
           solution:
             s.correction?.trim() ||
             "Riprendi il materiale di studio e verifica la risposta prima di valutarti.",
-          due: Date.now(),
+          due: null,
           interval: 1,
           count: 0,
           resolved: false,
@@ -95,27 +95,27 @@
           .join("")
       : '<p class="empty">Nessun piano. Compila il modulo per crearne uno.</p>';
     const cards = S.cards
-      .filter((c) => !byId("cards-due-only").checked || c.due <= Date.now())
-      .sort((a, b) => a.due - b.due);
+      .filter((c) => !byId("cards-due-only").checked || C.isDue(c))
+      .sort((a, b) => (a.due ?? Infinity) - (b.due ?? Infinity));
     byId("card-list").innerHTML = cards.length
       ? cards
           .map(
             (c) =>
-              `<article class="entry"><div class="meta">${E(c.subject)} · ${c.due <= Date.now() ? "Da ripassare" : `Prossimo ripasso ${E(fmtDate(c.due))}`}</div><h3>${E(c.question)}</h3><button class="secondary" data-practice="card" data-item="${E(c.id)}">Rispondi senza guardare</button><button class="text-button" data-delete-card="${E(c.id)}">Elimina domanda</button></article>`,
+              `<article class="entry"><div class="meta">${E(c.subject)} · ${c.due == null ? "Nessun ripasso programmato" : C.isDue(c) ? "Da ripassare" : `Prossimo ripasso ${E(fmtDate(c.due))}`}</div><h3>${E(c.question)}</h3><button class="secondary" data-practice="card" data-item="${E(c.id)}">Rispondi senza guardare</button><button class="text-button" data-delete-card="${E(c.id)}">Elimina domanda</button></article>`,
           )
           .join("")
       : '<p class="empty">Nessuna domanda in questa selezione. Crea la prima o disattiva il filtro.</p>';
     const errors = S.errors
       .filter((e) => byId("errors-all").checked || !e.resolved)
-      .sort((a, b) => a.resolved - b.resolved || a.due - b.due);
+      .sort((a, b) => a.resolved - b.resolved || (a.due ?? Infinity) - (b.due ?? Infinity));
     byId("error-count").textContent = S.errors.filter(
-      (e) => !e.resolved && e.due <= Date.now(),
+      (e) => !e.resolved && C.isDue(e),
     ).length;
     byId("error-list").innerHTML = errors.length
       ? errors
           .map(
             (e) =>
-              `<article class="entry"><div class="meta">${E(e.subject)} · ${e.resolved ? "Risolto" : e.due <= Date.now() ? "Da riprovare" : `Ripasso ${E(fmtDate(e.due))}`}</div><h3>${E(e.question)}</h3><button class="secondary" data-practice="error" data-item="${E(e.id)}">Riprova senza appunti</button><button class="text-button" data-resolve="${E(e.id)}">${e.resolved ? "Riapri" : "Segna risolto"}</button></article>`,
+              `<article class="entry"><div class="meta">${E(e.subject)} · ${e.resolved ? "Risolto" : e.due == null ? "Da riprovare quando vuoi" : C.isDue(e) ? "Da riprovare" : `Ripasso ${E(fmtDate(e.due))}`}</div><h3>${E(e.question)}</h3><button class="secondary" data-practice="error" data-item="${E(e.id)}">Riprova senza appunti</button><button class="text-button" data-resolve="${E(e.id)}">${e.resolved ? "Riapri" : "Segna risolto"}</button></article>`,
           )
           .join("")
       : '<p class="empty">Nessun errore da riprendere. Le correzioni e le risposte difficili compariranno qui.</p>';
@@ -215,7 +215,15 @@
       topics.push({ id: uid(), text, minutes: mins, done: false });
     }
     if (!topics.length) return;
-    S.exams.push({ id: uid(), subject, date, minutes, days, topics });
+    S.exams.push({
+      id: uid(),
+      subject,
+      date,
+      minutes,
+      days,
+      topics,
+      reviews: byId("exam-reviews").checked,
+    });
     commit();
     byId("exam-form").reset();
     byId("exam-message").textContent =
@@ -237,7 +245,7 @@
       solution,
       examId: examId || null,
       topicId: topicId || null,
-      due: Date.now(),
+      due: null,
       interval: 1,
       count: 0,
     });
@@ -258,7 +266,7 @@
     });
     const panel = byId(kind === "card" ? "practice-card" : "practice-error");
     panel.hidden = false;
-    panel.innerHTML = `<h2>${E(item.subject)}</h2><h3>${E(item.question)}</h3><label for="practice-answer">Il tuo tentativo, senza appunti</label><textarea id="practice-answer" rows="5" maxlength="10000" placeholder="Prova a rispondere prima di controllare…"></textarea><button id="reveal-answer" class="primary">Mostra la risposta di riferimento</button><div id="practice-feedback" hidden><h3>Confronta la risposta</h3><p class="solution">${E(item.solution)}</p><p class="hint">Controlla sul materiale se la soluzione di riferimento è incompleta. La valutazione è tua.</p><div class="practice-grades"><button class="secondary" data-grade="hard">Da riprendere</button><button class="secondary" data-grade="medium">Qualche lacuna</button><button class="primary" data-grade="easy">Ricordo autonomo</button></div></div><button id="practice-close" class="text-button">Chiudi esercizio</button>`;
+    panel.innerHTML = `<h2>${E(item.subject)}</h2><h3>${E(item.question)}</h3><label for="practice-answer">Il tuo tentativo, senza appunti</label><textarea id="practice-answer" rows="5" maxlength="10000" placeholder="Prova a rispondere prima di controllare…"></textarea><button id="reveal-answer" class="primary">Mostra la risposta di riferimento</button><div id="practice-feedback" hidden><h3>Confronta la risposta</h3><p class="solution">${E(item.solution)}</p><p class="hint">Controlla sul materiale se la soluzione di riferimento è incompleta. La valutazione è tua.</p><label for="practice-next">Quando riproporla?</label><select id="practice-next"><option value="0" selected>Non programmare</option><option value="1">Domani</option><option value="3">Tra 3 giorni</option><option value="7">Tra una settimana</option><option value="14">Tra due settimane</option><option value="30">Tra un mese</option><option value="date">Scegli una data…</option></select><input id="practice-date" type="date" hidden aria-label="Data del ripasso"><p class="hint">Poi scegli come è andata: il tentativo viene salvato.</p><div class="practice-grades"><button class="secondary" data-grade="hard">Da riprendere</button><button class="secondary" data-grade="medium">Qualche lacuna</button><button class="primary" data-grade="easy">Ricordo autonomo</button></div></div><button id="practice-close" class="text-button">Chiudi esercizio</button>`;
     byId("reveal-answer").onclick = () => {
       if (!byId("practice-answer").value.trim())
         return notify("Scrivi prima un tentativo, anche incompleto.");
@@ -267,6 +275,9 @@
       byId("reveal-answer").hidden = true;
       byId("practice-feedback").tabIndex = -1;
       byId("practice-feedback").focus();
+    };
+    byId("practice-next").onchange = () => {
+      byId("practice-date").hidden = byId("practice-next").value !== "date";
     };
     byId("practice-close").onclick = () => {
       panel.hidden = true;
@@ -342,7 +353,7 @@
     if (d.resolve) {
       const x = S.errors.find((x) => x.id === d.resolve);
       x.resolved = !x.resolved;
-      if (!x.resolved) x.due = Date.now();
+      if (!x.resolved) x.due = null;
       commit();
     }
     if (d.grade && current && feedbackOpen) {
@@ -352,9 +363,10 @@
       if (!item) return;
       const answer = byId("practice-answer").value.trim(),
         rating = d.grade;
-      item.interval = C.nextInterval(item.interval, rating);
+      // Prossimo ripasso scelto dall’utente, nessuna data automatica
+      item.due = C.nextDue(byId("practice-next").value, byId("practice-date").value);
+      if (item.due) item.interval = Math.min(180, Math.max(1, Math.round((item.due - Date.now()) / DAY)));
       item.count++;
-      item.due = Date.now() + item.interval * DAY;
       S.logs.push({
         id: uid(),
         at: Date.now(),
@@ -380,7 +392,6 @@
           };
           S.errors.push(error);
         }
-        error.due = Date.now();
         error.resolved = false;
       }
       if (current.kind === "error") item.resolved = rating === "easy";
@@ -392,7 +403,11 @@
         new CustomEvent("studio:practice-graded", { detail: completed }),
       );
       restorePracticeFocus(completed);
-      notify(`Tentativo salvato. Prossimo ripasso: ${fmtDate(item.due)}.`);
+      notify(
+        item.due
+          ? `Tentativo salvato. Ripasso il ${fmtDate(item.due)}.`
+          : "Tentativo salvato. Nessun ripasso programmato.",
+      );
     }
     if (d.scheduleDelete) {
       S.schedules = S.schedules.filter((x) => x.id !== d.scheduleDelete);
