@@ -16,7 +16,7 @@
   ],
   "shortcuts": [
     { "name": "Nuova sessione", "url": "./#focus", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Oggi", "url": "./#today", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Ripassi", "url": "./#reviews", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Settimana", "url": "./#week", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Obiettivi", "url": "./#goals", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }

@@ -14,6 +14,12 @@ const chrome = {
         .filter((r) => !removeRuleIds.includes(r.id))
         .concat(addRules);
     },
+    updateEnabledRulesets: async () => {},
+  },
+  scripting: {
+    getRegisteredContentScripts: async () => [],
+    registerContentScripts: async () => {},
+    unregisterContentScripts: async () => {},
   },
   storage: {
     local: {

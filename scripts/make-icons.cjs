@@ -71,6 +71,8 @@ function png(size) {
 }
 for (const [name, size] of [["icon-192.png", 192], ["icon-512.png", 512], ["apple-touch-icon.png", 180]])
   fs.writeFileSync(path.join(out, name), png(size));
+// Icone dell’estensione
+for (const size of [48, 128]) fs.writeFileSync(path.join(__dirname, "..", "extension", `icon-${size}.png`), png(size));
 
 fs.writeFileSync(
   path.join(out, "favicon.svg"),

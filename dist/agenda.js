@@ -3,6 +3,8 @@
   const S = data.study,
     C = StudyCore,
     A = AgendaCore,
+    // Domande, errori e ripassi non hanno più una pagina: nel programma restano piani e impegni
+    build = (d) => A.build(d).filter((e) => !["card", "error", "review"].includes(e.source)),
     $ = (id) => document.getElementById(id),
     E = esc,
     id = () => crypto.randomUUID();
@@ -202,20 +204,6 @@
         `<button class="text-button" data-edit-exam="${E(button.dataset.deleteExam)}">Modifica piano</button>`,
       );
     });
-    document.querySelectorAll("[data-topic]").forEach((input) => {
-      if (
-        input.closest("label").nextElementSibling?.matches("[data-topic-quiz]")
-      )
-        return;
-      const cards = linkedCards(input.dataset.exam, input.dataset.topic);
-      if (cards.length)
-        input
-          .closest("label")
-          .insertAdjacentHTML(
-            "afterend",
-            `<button class="text-button topic-quiz" data-topic-quiz="${E(input.dataset.topic)}" data-quiz-exam="${E(input.dataset.exam)}">Verifica il ricordo · ${cards.length} domande</button>`,
-          );
-    });
     document.querySelectorAll("[data-delete-card]").forEach((button) => {
       const card = S.cards.find((c) => c.id === button.dataset.deleteCard);
       if (!card || button.parentElement.querySelector("[data-card-link]"))
@@ -264,7 +252,7 @@
   }
   function renderAgenda() {
     augment();
-    const all = A.build(data),
+    const all = build(data),
       today = C.localDay(new Date()),
       due = all.filter((e) => !e.done && e.date <= today),
       minutes = due.reduce((n, e) => n + e.minutes, 0);
@@ -503,7 +491,7 @@
       ? S.agendaEvents.find((x) => x.id === editingEvent)
       : null;
     if (event) {
-      event.done = A.build(data).find((x) => x.id === event.id)?.done || false;
+      event.done = build(data).find((x) => x.id === event.id)?.done || false;
       Object.assign(event, { title, subject, date, time, minutes, type });
       S.agendaOverrides = S.agendaOverrides.filter((x) => x.id !== event.id);
     } else {
@@ -519,7 +507,7 @@
       };
       S.agendaEvents.push(event);
     }
-    const count = A.conflicts(A.build(data), event).length;
+    const count = A.conflicts(build(data), event).length;
     $("event-cancel").click();
     persist();
     $("event-message").textContent = count
@@ -543,7 +531,7 @@
       S.agendaOverrides.push(override);
     }
     Object.assign(override, { date, time });
-    const overlaps = A.conflicts(A.build(data), {
+    const overlaps = A.conflicts(build(data), {
       ...moving,
       date,
       time,
@@ -617,7 +605,7 @@
       openEvent(null);
     }
     if (d.eventEdit) {
-      const event = A.build(data).find((x) => x.id === d.eventEdit);
+      const event = build(data).find((x) => x.id === d.eventEdit);
       if (event) {
         location.hash = "week";
         openEvent(event);
@@ -626,7 +614,7 @@
     }
     const target = d.agendaStart || d.agendaMove || d.agendaDone;
     if (!target) return;
-    const event = A.build(data).find((x) => x.id === target);
+    const event = build(data).find((x) => x.id === target);
     if (!event) return;
     if (d.agendaStart) {
       if (["card", "error"].includes(event.source)) {
@@ -711,7 +699,7 @@
     (e) => e.id === S.drafts["week-event-form:editingId"],
   );
   if (draftEvent) {
-    openEvent(A.build(data).find((event) => event.id === draftEvent.id) || draftEvent);
+    openEvent(build(data).find((event) => event.id === draftEvent.id) || draftEvent);
     restoreForm($("week-event-form"));
   }
   renderAgenda();

@@ -5,6 +5,36 @@ const ALLOWED = [
   "https://studio-focus-sam-221026.samurugge02.chatgpt.site",
 ];
 let queue = Promise.resolve();
+// Protezioni sempre attive (non legate alle sessioni): siti per adulti con SafeSearch
+// e pubblicità di YouTube. Spegnere il blocco adulti richiede un minuto di attesa.
+const ADULT_DELAY = 60000;
+const YT_MATCHES = ["https://www.youtube.com/*", "https://m.youtube.com/*", "https://music.youtube.com/*"];
+const YT_SCRIPTS = [
+  { id: "yt-main", matches: YT_MATCHES, js: ["youtube-main.js"], runAt: "document_start", world: "MAIN" },
+  { id: "yt-skip", matches: YT_MATCHES, js: ["youtube-skip.js"], runAt: "document_start" },
+];
+async function protections(values) {
+  let { adultOff = false, adultPendingOff = 0, adsOff = false } = values;
+  if (adultPendingOff && adultPendingOff <= Date.now()) {
+    adultOff = true;
+    adultPendingOff = 0;
+    await chrome.storage.local.set({ adultOff, adultPendingOff });
+  }
+  await chrome.declarativeNetRequest.updateEnabledRulesets({
+    enableRulesetIds: [adultOff ? null : "adult", adsOff ? null : "ads"].filter(Boolean),
+    disableRulesetIds: [adultOff ? "adult" : null, adsOff ? "ads" : null].filter(Boolean),
+  });
+  const registered = (await chrome.scripting.getRegisteredContentScripts()).map((s) => s.id);
+  if (adsOff) {
+    const ids = registered.filter((id) => id.startsWith("yt-"));
+    if (ids.length) await chrome.scripting.unregisterContentScripts({ ids });
+  } else {
+    const missing = YT_SCRIPTS.filter((s) => !registered.includes(s.id));
+    if (missing.length) await chrome.scripting.registerContentScripts(missing);
+  }
+  if (adultPendingOff) await chrome.alarms.create("adult", { when: adultPendingOff });
+  return { adult: !adultOff, adultPendingOff, ads: !adsOff };
+}
 async function reconcile() {
   const values = await chrome.storage.local.get(null);
   if (values.until && values.manualUntil === undefined) {
@@ -19,6 +49,7 @@ async function reconcile() {
     });
   }
   const state = StudioScheduler.state(values);
+  const protection = await protections(values);
   const previous = await chrome.declarativeNetRequest.getDynamicRules();
   const addRules = state.domains.map((domain, i) => ({
     id: i + 1,
@@ -46,17 +77,32 @@ async function reconcile() {
   await chrome.action.setBadgeText({
     text: state.domains.length ? "ON" : state.suspended ? "15m" : "",
   });
-  await chrome.action.setBadgeBackgroundColor({ color: "#ad7654" });
+  await chrome.action.setBadgeBackgroundColor({ color: "#2346c8" });
   return {
     ok: true,
     until: state.until,
     scheduled: state.scheduled,
     suspended: state.suspended,
     version: 2,
+    ...protection,
   };
 }
 async function handle(message) {
   if (message.type === "PING") return reconcile();
+  if (message.type === "ADULT_OFF") {
+    const { adultOff, adultPendingOff } = await chrome.storage.local.get(null);
+    if (!adultOff && !adultPendingOff)
+      await chrome.storage.local.set({ adultPendingOff: Date.now() + ADULT_DELAY });
+    return reconcile();
+  }
+  if (message.type === "ADULT_CANCEL" || message.type === "ADULT_ON") {
+    await chrome.storage.local.set({ adultOff: false, adultPendingOff: 0 });
+    return reconcile();
+  }
+  if (message.type === "ADS_SET") {
+    await chrome.storage.local.set({ adsOff: !message.on });
+    return reconcile();
+  }
   if (message.type === "STOP") {
     await chrome.storage.local.set({ manualUntil: 0, manualDomains: [] });
     return reconcile();
@@ -118,7 +164,8 @@ chrome.runtime.onMessageExternal.addListener((message, sender, respond) => {
     !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
   )
     return false;
-  if (message.type === "SUSPEND") return false;
+  // Sospensione e protezioni si cambiano solo dal pulsante dell'estensione
+  if (message.type === "SUSPEND" || /^(ADULT|ADS)_/.test(message.type)) return false;
   return enqueue(message, respond);
 });
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
@@ -126,7 +173,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   return enqueue(message, respond);
 });
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (["end", "health"].includes(alarm.name))
+  if (["end", "health", "adult"].includes(alarm.name))
     queue = queue.catch(() => {}).then(reconcile);
 });
 async function boot() {

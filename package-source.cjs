@@ -13,6 +13,7 @@ const files = [
   "features-check.cjs",
   "agenda-check.cjs",
   "reminder-check.cjs",
+  "protection-check.cjs",
   "package-source.cjs",
   "dist/index.html",
   "dist/style.css",
@@ -42,7 +43,10 @@ const files = [
   ...fs.readdirSync("dist/api").filter((f) => f !== "config.php").map((f) => "dist/api/" + f),
   "scripts/serve-php.cjs",
   "dist/studio-extension.zip",
-  ...fs.readdirSync("extension").filter(f => !['worker.js','popup-v2.js'].includes(f)).map((f) => "extension/" + f),
+  ...fs.readdirSync("extension").filter((f) => !["worker.js", "popup-v2.js", "rules"].includes(f)).map((f) => "extension/" + f),
+  "extension/rules/adult.json",
+  "extension/rules/ads.json",
+  "scripts/make-adult-rules.cjs",
 ];
 const crcTable = Array.from({ length: 256 }, (_, n) => {
   for (let k = 0; k < 8; k++) n = n & 1 ? 0xedb88320 ^ (n >>> 1) : n >>> 1;
@@ -95,7 +99,7 @@ fs.writeFileSync(out, Buffer.concat([...local, directory, end]));
 // Prima l’estensione, così lo ZIP dei sorgenti contiene quella aggiornata.
 zip(
   "dist/studio-extension.zip",
-  ["manifest.json", "background.js", "scheduler.js", "popup.html", "popup.js", "LEGGIMI.txt"],
+  ["manifest.json", "background.js", "scheduler.js", "popup.html", "popup.js", "youtube-main.js", "youtube-skip.js", "rules/adult.json", "rules/ads.json", "icon-48.png", "icon-128.png", "LEGGIMI.txt"],
   "",
   "extension",
 );

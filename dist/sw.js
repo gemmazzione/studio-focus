@@ -1,7 +1,7 @@
 // Service worker: app usabile offline e promemoria dei ripassi.
 // Strategia "prima la rete": online si ricevono sempre i file aggiornati,
 // offline si usa l'ultima copia salvata. L'API (api/) non passa mai dalla cache.
-const CACHE = "studio-v6";
+const CACHE = "studio-v7";
 const SHELL = [
   "./",
   "index.html",
@@ -121,7 +121,7 @@ async function maybeNotify() {
     icon: "icons/icon-192.png",
     badge: "icons/icon-192.png",
     tag: "studio-reminder",
-    data: { url: "./#today" },
+    data: { url: "./#focus" },
   });
   return true;
 }

@@ -26,16 +26,8 @@
   let settings = readSettings();
 
   // Date dei ripassi con una data scelta: sessioni, domande ed errori non risolti
-  function dueTimes() {
-    const S = data.study || {};
-    return [
-      ...data.reviews,
-      ...(S.cards || []),
-      ...(S.errors || []).filter((e) => !e.resolved),
-    ]
-      .map((x) => x.due)
-      .filter((t) => t != null);
-  }
+  // Le pagine dei ripassi sono state tolte: il promemoria segue solo l'obiettivo settimanale
+  const dueTimes = () => [];
   const dueNow = () => dueTimes().filter((t) => t <= Date.now()).length;
   // Minuti fatti e obiettivo della settimana (da lunedì), per l'avviso "sei indietro"
   function weekly() {
@@ -95,7 +87,7 @@
     .querySelector("main > header")
     .insertAdjacentHTML(
       "afterend",
-      '<div id="due-banner" class="due-banner" role="status" hidden><span id="due-banner-text"></span><a href="#today">Vai a Oggi</a><button type="button" class="text-button" id="due-banner-close">Più tardi</button></div>',
+      '<div id="due-banner" class="due-banner" role="status" hidden><span id="due-banner-text"></span><a href="#focus">Inizia una sessione</a><button type="button" class="text-button" id="due-banner-close">Più tardi</button></div>',
     );
   function renderBanner() {
     const n = dueNow(),
@@ -106,7 +98,7 @@
       hide =
         (!n && !late) ||
         data.active ||
-        ["today", "reviews", "cards", "errors"].includes(page) ||
+        page === "focus" ||
         localStorage.getItem(BANNER) === today;
     byId("due-banner").hidden = !!hide;
     if (!hide)
@@ -129,7 +121,7 @@
   byId("account-body").insertAdjacentHTML(
     "afterend",
     `<section class="pwa-section"><h2>Installa l’app</h2><div id="install-body"></div></section>
-    <section class="pwa-section"><h2>Promemoria dei ripassi</h2><p class="hint">Una notifica al giorno, all’ora che scegli, se ci sono ripassi in scadenza o se da giovedì sei indietro con l’obiettivo settimanale di minuti. Vale solo per questo dispositivo.</p><form id="reminder-form" class="feature-form"><label class="checkbox"><input id="reminder-enabled" type="checkbox">Avvisami di ripassi e obiettivo settimanale</label><label for="reminder-time">Dopo le ore</label><input id="reminder-time" type="time" required><div class="actions"><button class="primary">Salva promemoria</button><button type="button" id="reminder-test" class="secondary">Prova la notifica</button></div><p id="reminder-status" class="hint" role="status"></p></form></section>`,
+    <section class="pwa-section"><h2>Promemoria</h2><p class="hint">Una notifica al giorno, all’ora che scegli, quando da giovedì sei indietro con i minuti dell’obiettivo settimanale (si imposta in Obiettivi). Vale solo per questo dispositivo.</p><form id="reminder-form" class="feature-form"><label class="checkbox"><input id="reminder-enabled" type="checkbox">Avvisami se sono indietro con l’obiettivo settimanale</label><label for="reminder-time">Dopo le ore</label><input id="reminder-time" type="time" required><div class="actions"><button class="primary">Salva promemoria</button><button type="button" id="reminder-test" class="secondary">Prova la notifica</button></div><p id="reminder-status" class="hint" role="status"></p></form></section>`,
   );
   function renderInstall() {
     const box = byId("install-body");
@@ -215,11 +207,11 @@
     if (!supportsSW || !(await permission())) return reminderStatus();
     const reg = await navigator.serviceWorker.ready,
       n = dueNow();
-    reg.showNotification("Ripassi da fare", {
-      body: n ? `Hai ${n} ripassi in scadenza.` : "Prova riuscita: oggi non hai ripassi in scadenza.",
+    reg.showNotification("Obiettivo della settimana", {
+      body: `Prova riuscita. Questa settimana: ${weekly().done} minuti di studio.`,
       icon: "icons/icon-192.png",
       tag: "studio-test",
-      data: { url: "./#today" },
+      data: { url: "./#focus" },
     });
   };
 

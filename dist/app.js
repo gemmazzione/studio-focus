@@ -218,8 +218,6 @@ function renderLists() {
     todaySessions.reduce((t, s) => t + s.seconds, 0) / 60,
   );
   $("daily-sessions").textContent = todaySessions.length;
-  $("daily-reviews").textContent = due.length;
-  $("due-count").textContent = due.length;
   $("total-minutes").textContent = Math.round(
     data.sessions.reduce((t, s) => t + s.seconds, 0) / 60,
   );
@@ -329,16 +327,11 @@ function route() {
   const requested = location.hash.slice(1) || "focus",
     page = [
       "focus",
-      "reviews",
       "progress",
       "settings",
       "method",
       "planning",
-      "today",
       "week",
-      "attempts",
-      "cards",
-      "errors",
       "account",
       "goals",
     ].includes(requested)
@@ -425,18 +418,7 @@ $("recall").onsubmit = (e) => {
     seconds: a.seconds || 0,
     reviewId,
   });
-  // Il ripasso non si programma da solo: data scelta nel modulo o nessuna
-  const due = StudyCore.nextDue($("review-when").value, $("review-date").value, now);
-  let review = reviewId ? data.reviews.find((r) => r.id === reviewId) : null;
-  if (!review) {
-    review = { id: uid(), subject: a.subject, goal: a.goal, interval: 1, count: 0 };
-    data.reviews.push(review);
-  } else review.count = (review.count || 0) + 1;
-  review.rating = rating;
-  review.due = due;
-  if (due) review.interval = Math.min(180, Math.max(1, Math.round((due - now) / DAY)));
-  $("review-when").value = "0";
-  $("review-date").hidden = true;
+  // Le pagine Ripassi e Oggi non esistono più: la sessione va solo nel diario
   reviewing = null;
   const total = a.breakMinutes * 60000;
   data.active = {
@@ -452,9 +434,7 @@ $("recall").onsubmit = (e) => {
   save();
   syncBlock();
   render();
-  notify(
-    due ? `Salvato. Ripasso il ${fmtDate(due)}.` : "Salvato. Nessun ripasso programmato.",
-  );
+  notify("Sessione salvata. Adesso pausa.");
 };
 $("thought-form").onsubmit = (e) => {
   e.preventDefault();
@@ -472,10 +452,6 @@ $("thought-list").onclick = (e) => {
     save();
     renderLists();
   }
-};
-$("review-when").onchange = () => {
-  $("review-date").hidden = $("review-when").value !== "date";
-  if (!$("review-date").hidden) $("review-date").focus();
 };
 $("review-list").onchange = (e) => {
   const id = e.target.dataset.reviewWhen,

@@ -35,18 +35,11 @@
       >
       <nav aria-label="Navigazione">
         <a href="#focus" data-page="focus">Sessione</a
-        ><a href="#today" data-page="today">Oggi</a
         ><a href="#week" data-page="week">Settimana</a
         ><a href="#planning" data-page="planning">Piano esami</a
-        ><a href="#cards" data-page="cards">Domande</a
-        ><a href="#errors" data-page="errors"
-          >Ripasso errori <span id="error-count">0</span></a
-        ><a href="#reviews" data-page="reviews"
-          >Ripassi <span id="due-count">0</span></a
-        ><a href="#attempts" data-page="attempts">Tentativi</a
         ><a href="#progress" data-page="progress">Progressi</a
         ><a href="#goals" data-page="goals">Obiettivi</a
-        ><a href="#settings" data-page="settings">Blocco social</a
+        ><a href="#settings" data-page="settings">Blocco siti</a
         ><a href="#method" data-page="method">Metodo</a
         ><a href="#account" data-page="account">Account e app</a>
       </nav>
@@ -172,7 +165,7 @@
                 <option value="easy">
                   Bene — risposta corretta e autonoma
                 </option></select
-              ><label for="review-when">Quando vuoi ripassarlo?</label><select id="review-when"><option value="0" selected>Non programmare un ripasso</option><option value="1">Domani</option><option value="3">Tra 3 giorni</option><option value="7">Tra una settimana</option><option value="14">Tra due settimane</option><option value="30">Tra un mese</option><option value="date">Scegli una data…</option></select><input id="review-date" type="date" hidden aria-label="Data del ripasso" /><p class="hint">Puoi programmarlo anche dopo, dalla pagina Ripassi.</p><button class="primary wide" type="submit">
+              ><button class="primary wide" type="submit">
                 Salva e inizia la pausa
               </button>
             </form>
@@ -222,9 +215,7 @@
               <div class="ruled">
                 <span>Sessioni completate</span><b id="daily-sessions">0</b>
               </div>
-              <div class="ruled">
-                <span>Ripassi da fare</span><b id="daily-reviews">0</b>
-              </div>
+              
               
             </section>
             <section class="thoughts">
@@ -285,9 +276,10 @@
       </section>
       <section id="page-settings" class="page" hidden>
         <div class="heading">
-          <h1>Blocco social</h1>
+          <h1>Blocco siti</h1>
           <p>Scegli i siti da bloccare mentre studi. Serve l’estensione per Chrome o Edge inclusa nell’app.</p>
         </div>
+        <p class="notice-plain">L’estensione blocca anche, sempre e non solo durante lo studio, i siti per adulti (con SafeSearch su Google, Bing e DuckDuckGo e la modalità con restrizioni di YouTube) e la pubblicità di YouTube. Si gestiscono dal pulsante dell’estensione nella barra del browser; per spegnere il blocco dei siti per adulti bisogna aspettare un minuto.</p>
         <div class="settings-grid">
           <section class="workpanel">
             <h2>Siti da bloccare</h2>
@@ -381,13 +373,6 @@
             rel="noopener"
             >Revisione della ricerca</a
           >.
-        </p>
-        <h2>I ripassi li decidi tu</h2>
-        <p>
-          Dopo ogni sessione o domanda scegli se ripassare e quando: domani, tra
-          qualche giorno o in una data precisa. Una regola utile è ripassare
-          presto ciò che è andato male e allungare l’attesa per ciò che ricordi
-          bene, ma l’app non programma nulla al posto tuo.
         </p>
         <h2>Pause per recuperare</h2>
         <p>

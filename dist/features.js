@@ -108,7 +108,7 @@
     const errors = S.errors
       .filter((e) => byId("errors-all").checked || !e.resolved)
       .sort((a, b) => a.resolved - b.resolved || (a.due ?? Infinity) - (b.due ?? Infinity));
-    byId("error-count").textContent = S.errors.filter(
+    (byId("error-count") || {}).textContent = S.errors.filter(
       (e) => !e.resolved && C.isDue(e),
     ).length;
     byId("error-list").innerHTML = errors.length

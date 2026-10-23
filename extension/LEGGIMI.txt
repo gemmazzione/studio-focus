@@ -1,21 +1,25 @@
-STUDIO 2.0 — ESTENSIONE PER CHROME ED EDGE
+STUDIO 2.1 — ESTENSIONE PER CHROME ED EDGE
 
 INSTALLAZIONE
 1. Estrai lo ZIP in una cartella permanente.
 2. Apri chrome://extensions o edge://extensions e attiva Modalità sviluppatore.
 3. Scegli Carica estensione non pacchettizzata e seleziona la cartella estratta.
-4. Copia l'ID nella sezione Blocco social dell'app e verifica il collegamento.
+4. Copia l'ID nella sezione Blocco siti dell'app e verifica il collegamento.
 
-AGGIORNAMENTO DA 1.0
-Sostituisci i file nella stessa cartella installata, mantenendo il percorso. Premi Ricarica nella pagina delle estensioni. Ricollega l'app e premi Invia orari.
+AGGIORNAMENTO
+Sostituisci i file nella stessa cartella installata, mantenendo il percorso. Premi Ricarica nella pagina delle estensioni. Chrome chiede il permesso nuovo "scripting" (serve per la pubblicità di YouTube): accettalo. Ricollega l'app e premi Invia orari.
 
 SESSIONI E FASCE SETTIMANALI
-La sessione blocca i domini fino alla scadenza prevista. Le fasce salvate funzionano anche chiudendo la pagina, con browser aperto e PC attivo. Il fuso orario è quello del PC. Se la fine è prima dell'inizio, la fascia termina il giorno successivo. Finire una sessione non cancella le fasce.
+La sessione blocca i domini scelti fino alla scadenza prevista. Le fasce salvate funzionano anche chiudendo la pagina, con browser aperto e PC attivo. Il fuso orario è quello del PC. Se la fine è prima dell'inizio, la fascia termina il giorno successivo. Il pulsante dell'estensione sospende il blocco dei social per 15 minuti.
 
-Il pulsante dell'estensione permette di sospendere la protezione per 15 minuti. Dopo riprende se un orario o una sessione lo prevede. Per eliminare una fascia usa la sezione Blocco social dell'app e invia gli orari aggiornati.
+SITI PER ADULTI (SEMPRE ATTIVO)
+Blocca un elenco di oltre cento siti per adulti, i domini .xxx .porn .sex .adult e gli indirizzi con "porn" o "hentai" nel nome del sito. Attiva SafeSearch su Google, Bing e DuckDuckGo e la modalità con restrizioni di YouTube. Si spegne dal pulsante dell'estensione, ma solo dopo un minuto di attesa, che si può annullare. Il sito Studio non può spegnerlo.
+
+PUBBLICITÀ DI YOUTUBE (SEMPRE ATTIVA)
+Toglie gli annunci prima dei video e durante, i riquadri pubblicitari e le richieste agli spazi pubblicitari di Google partite da YouTube. YouTube cambia spesso: qualche annuncio può passare lo stesso. Si spegne dal pulsante dell'estensione.
 
 LIMITI
-Il blocco vale solo per questo browser: non blocca app Windows o telefono. Puoi aggirarlo disattivando l'estensione o cambiando browser. Le pagine già caricate possono mostrare contenuti finché non vengono ricaricate. Browser chiuso o PC sospeso impediscono il funzionamento puntuale.
+I blocchi valgono solo per questo browser: non bloccano app Windows o telefono. Si possono aggirare disattivando l'estensione, usando la navigazione in incognito (se l'estensione non è attiva lì) o cambiando browser. Nessun elenco di siti è completo. Le pagine già caricate possono mostrare contenuti finché non vengono ricaricate.
 
 PRIVACY
-Il permesso sui siti serve a bloccare i domini scelti. Nessun dato di navigazione viene inviato a servizi esterni. Le regole e gli orari restano nella memoria locale dell'estensione. Soltanto il sito Studio e localhost possono inviare comandi.
+Il permesso sui siti serve a bloccare i domini e a modificare le pagine di YouTube. Nessun dato di navigazione viene inviato a servizi esterni. Regole e orari restano nella memoria locale dell'estensione. Soltanto il sito Studio e localhost possono inviare comandi, e solo per i social.

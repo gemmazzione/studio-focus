@@ -1,0 +1,265 @@
+[
+  {
+    "id": 1,
+    "priority": 2,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "requestDomains": [
+        "pornhub.com",
+        "pornhub.org",
+        "pornhubpremium.com",
+        "xvideos.com",
+        "xvideos2.com",
+        "xvideos.red",
+        "xnxx.com",
+        "xnxx.tv",
+        "xhamster.com",
+        "xhamster.desi",
+        "xhamster2.com",
+        "xhamster3.com",
+        "xhamsterlive.com",
+        "redtube.com",
+        "youporn.com",
+        "tube8.com",
+        "spankbang.com",
+        "eporner.com",
+        "tnaflix.com",
+        "empflix.com",
+        "beeg.com",
+        "porn.com",
+        "pornhd.com",
+        "txxx.com",
+        "hclips.com",
+        "hdzog.com",
+        "upornia.com",
+        "porntrex.com",
+        "youjizz.com",
+        "motherless.com",
+        "sunporno.com",
+        "drtuber.com",
+        "nuvid.com",
+        "xtube.com",
+        "keezmovies.com",
+        "extremetube.com",
+        "spankwire.com",
+        "thumbzilla.com",
+        "pornerbros.com",
+        "ixxx.com",
+        "fuq.com",
+        "porndig.com",
+        "analdin.com",
+        "hqporner.com",
+        "daftsex.com",
+        "porngo.com",
+        "pornpics.com",
+        "imagefap.com",
+        "pornoxo.com",
+        "perfectgirls.net",
+        "eroprofile.com",
+        "heavy-r.com",
+        "efukt.com",
+        "4tube.com",
+        "porn300.com",
+        "pornone.com",
+        "pornhat.com",
+        "xxxbunker.com",
+        "porntube.com",
+        "fux.com",
+        "pornxp.com",
+        "tubegalore.com",
+        "porndoe.com",
+        "gotporn.com",
+        "vporn.com",
+        "chaturbate.com",
+        "stripchat.com",
+        "bongacams.com",
+        "livejasmin.com",
+        "cam4.com",
+        "camsoda.com",
+        "myfreecams.com",
+        "flirt4free.com",
+        "imlive.com",
+        "xlovecam.com",
+        "onlyfans.com",
+        "fansly.com",
+        "manyvids.com",
+        "clips4sale.com",
+        "brazzers.com",
+        "realitykings.com",
+        "bangbros.com",
+        "naughtyamerica.com",
+        "mofos.com",
+        "digitalplayground.com",
+        "vixen.com",
+        "tushy.com",
+        "blacked.com",
+        "kink.com",
+        "evilangel.com",
+        "teamskeet.com",
+        "nubiles.net",
+        "nhentai.net",
+        "hanime.tv",
+        "e-hentai.org",
+        "exhentai.org",
+        "hentai2read.com",
+        "gelbooru.com",
+        "rule34.paheal.net",
+        "redgifs.com",
+        "erome.com",
+        "fapello.com",
+        "coomer.su",
+        "kemono.su",
+        "sex.com",
+        "literotica.com",
+        "adultfriendfinder.com",
+        "missav.com",
+        "missav.ws",
+        "jable.tv",
+        "javlibrary.com",
+        "javhd.com",
+        "91porn.com"
+      ],
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "media",
+        "image",
+        "xmlhttprequest"
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 2,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "regexFilter": "^https?://[^/]+\\.(xxx|porn|sex|adult)(:[0-9]+)?(/|$)",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame"
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "priority": 2,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "regexFilter": "^https?://[^/]*(porn|hentai)[^/]*(/|$)",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame"
+      ]
+    }
+  },
+  {
+    "id": 10,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "queryTransform": {
+            "addOrReplaceParams": [
+              {
+                "key": "safe",
+                "value": "active"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://(www\\.)?google\\.[a-z.]+/(search|images)",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame"
+      ]
+    }
+  },
+  {
+    "id": 11,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "queryTransform": {
+            "addOrReplaceParams": [
+              {
+                "key": "adlt",
+                "value": "strict"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://(www\\.)?bing\\.com/(search|images|videos)",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame"
+      ]
+    }
+  },
+  {
+    "id": 12,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "queryTransform": {
+            "addOrReplaceParams": [
+              {
+                "key": "kp",
+                "value": "1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://(html\\.|lite\\.)?duckduckgo\\.com/",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame"
+      ]
+    }
+  },
+  {
+    "id": 13,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        {
+          "header": "YouTube-Restrict",
+          "operation": "set",
+          "value": "Moderate"
+        }
+      ]
+    },
+    "condition": {
+      "requestDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtubei.googleapis.com"
+      ],
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "xmlhttprequest"
+      ]
+    }
+  }
+]

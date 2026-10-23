@@ -124,12 +124,6 @@
     ["serie-3", "Tre giorni di fila", "Studia per 3 giorni consecutivi.", "streak", 3, "giorni"],
     ["serie-7", "Una settimana di fila", "Studia per 7 giorni consecutivi.", "streak", 7, "giorni"],
     ["serie-30", "Un mese di fila", "Studia per 30 giorni consecutivi.", "streak", 30, "giorni"],
-    ["memoria-10", "Memoria allenata", "Fai 10 tentativi tra ripassi e domande.", "recalls", 10],
-    ["memoria-100", "Cento tentativi", "Fai 100 tentativi tra ripassi e domande.", "recalls", 100],
-    ["domande-10", "Dieci domande", "Scrivi 10 domande.", "cards", 10],
-    ["domande-50", "Cinquanta domande", "Scrivi 50 domande.", "cards", 50],
-    ["errori-1", "Errore sistemato", "Segna risolto il primo errore.", "resolved", 1],
-    ["errori-10", "Dieci errori sistemati", "Segna risolti 10 errori.", "resolved", 10],
     ["argomenti-1", "Primo argomento", "Completa un argomento di un piano d’esame.", "topics", 1],
     ["argomenti-20", "Venti argomenti", "Completa 20 argomenti dei piani d’esame.", "topics", 20],
     ["piano", "Piano completato", "Completa tutti gli argomenti di un piano d’esame.", "plans", 1],
@@ -169,7 +163,7 @@
   section.hidden = true;
   section.innerHTML = `<div class="heading"><h1>Obiettivi</h1><p>Scegli quanto studiare a settimana, scrivi i tuoi obiettivi e guarda i traguardi che hai sbloccato.</p></div>
   <section class="goals-week"><div class="list-toolbar"><h2>Questa settimana</h2><span id="goals-streak" class="meta"></span></div><div id="week-goals"></div>
-  <details class="goal-settings"><summary>Cambia gli obiettivi della settimana</summary><form id="weekly-form" class="feature-form"><div class="goal-inputs"><label>Minuti di studio<input id="goal-minutes" type="number" min="0" max="10000" step="10"></label><label>Sessioni<input id="goal-sessions" type="number" min="0" max="500"></label><label>Tentativi a memoria<input id="goal-recalls" type="number" min="0" max="5000"></label></div><p class="hint">Lascia 0 per non usare un obiettivo. La settimana va da lunedì a domenica.</p><button class="primary">Salva obiettivi</button></form></details></section>
+  <details class="goal-settings"><summary>Cambia gli obiettivi della settimana</summary><form id="weekly-form" class="feature-form"><div class="goal-inputs"><label>Minuti di studio<input id="goal-minutes" type="number" min="0" max="10000" step="10"></label><label>Sessioni<input id="goal-sessions" type="number" min="0" max="500"></label></div><p class="hint">Lascia 0 per non usare un obiettivo. La settimana va da lunedì a domenica.</p><button class="primary">Salva obiettivi</button></form></details></section>
   <section class="goals-list"><h2>I tuoi obiettivi</h2><form id="goal-form" class="goal-form"><label for="goal-text">Nuovo obiettivo</label><div class="goal-row"><input id="goal-text" required maxlength="220" placeholder="Es. Finire gli esercizi del capitolo 4"><label class="sr-only" for="goal-due">Entro il</label><input id="goal-due" type="date" aria-label="Entro il (facoltativo)"><button class="primary">Aggiungi</button></div><p class="hint">La data è facoltativa.</p></form><ul id="goal-items" class="goal-items"></ul></section>
   <section class="goals-achievements"><div class="list-toolbar"><h2>Traguardi</h2><span id="achievement-count" class="meta"></span></div><ul id="achievement-list" class="achievement-list"></ul></section>`;
   document.querySelector(".source-strip").before(section);
@@ -184,7 +178,6 @@
       rows = [
         ["minutes", "Minuti di studio"],
         ["sessions", "Sessioni"],
-        ["recalls", "Tentativi a memoria"],
       ].filter(([k]) => w[k] > 0);
     byId("week-goals").innerHTML = rows.length
       ? rows
@@ -200,7 +193,6 @@
       : "";
     byId("goal-minutes").value = w.minutes;
     byId("goal-sessions").value = w.sessions;
-    byId("goal-recalls").value = w.recalls;
 
     const today = StudyCore.localDay(new Date()),
       items = [...S.goals.items].sort(
@@ -244,7 +236,7 @@
     S.goals.weekly = {
       minutes: n("goal-minutes", 10000),
       sessions: n("goal-sessions", 500),
-      recalls: n("goal-recalls", 5000),
+      recalls: S.goals.weekly.recalls || 0,
     };
     save();
     e.target.closest("details").open = false;
@@ -290,7 +282,7 @@
     showPhrase();
   };
   showPhrase();
-  byId("daily-reviews")
+  byId("daily-sessions")
     .closest(".ruled")
     .insertAdjacentHTML(
       "afterend",

@@ -69,6 +69,9 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
+.goal-settings .goal-inputs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .goal-inputs label {
   margin-top: 0;
 }
@@ -200,4 +203,14 @@
   .goal-items li {
     flex-wrap: wrap;
   }
+}
+
+.notice-plain {
+  max-width: 75ch;
+  margin: -12px 0 28px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  font-size: 14px;
 }

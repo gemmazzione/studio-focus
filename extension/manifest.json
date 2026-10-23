@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Studio — blocco social",
-  "version": "2.0.0",
-  "description": "Blocca i siti scelti durante le sessioni focus di Studio.",
+  "name": "Studio — blocco distrazioni",
+  "version": "2.1.0",
+  "description": "Blocca i social durante lo studio, i siti per adulti e la pubblicità di YouTube.",
   "permissions": [
     "declarativeNetRequest",
     "storage",
-    "alarms"
+    "alarms",
+    "scripting"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -25,5 +26,23 @@
       "http://localhost/*",
       "http://127.0.0.1/*"
     ]
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "adult",
+        "enabled": true,
+        "path": "rules/adult.json"
+      },
+      {
+        "id": "ads",
+        "enabled": true,
+        "path": "rules/ads.json"
+      }
+    ]
+  },
+  "icons": {
+    "48": "icon-48.png",
+    "128": "icon-128.png"
   }
 }

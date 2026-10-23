@@ -81,3 +81,11 @@ Promemoria dei ripassi (`pwa.js`): avviso nella pagina quando ci sono ripassi sc
 `dist/group.js` + `dist/api/group.php`: gruppi di studio (tabelle `stf_groups`, `stf_group_members`, max 20 persone, max 10 gruppi a testa, codice d'invito di 8 caratteri). Gli altri membri vedono solo nome utente, minuti e sessioni della settimana, calcolati sul server dai dati sincronizzati di ciascuno. Se esce chi ha creato il gruppo, passa al membro più vecchio; l'ultimo che esce lo cancella. Solo chi ha creato il gruppo cambia l'obiettivo.
 
 Il promemoria (`pwa.js`, `sw.js`) avvisa anche quando, da giovedì, i minuti della settimana sono sotto la quota prevista fino a oggi (`target × giorni passati / 7`).
+
+## Interfaccia semplificata (v7)
+
+Su richiesta dell'utente sono state tolte dal menu e dal routing le pagine Oggi, Domande, Ripasso errori, Ripassi e Tentativi, con la creazione da testo e la modalità esame. Le sezioni HTML restano nel DOM nascoste perché features.js e agenda.js le usano ancora; i dati (`reviews`, `cards`, `errors`, `logs`, `examRuns`) restano nel salvataggio, nei backup e nella sincronizzazione: NON cancellarli. Dopo una sessione non si crea più un ripasso. La Settimana mostra solo piani e impegni (`build` in agenda.js filtra card/error/review). Il promemoria segue solo l'obiettivo settimanale. Menu attuale: Sessione, Settimana, Piano esami, Progressi, Obiettivi, Blocco siti, Metodo, Account e app.
+
+## Estensione 2.1: siti per adulti e pubblicità di YouTube
+
+Due ruleset statici sempre accesi: `extension/rules/adult.json` (elenco di siti, domini .xxx/.porn/.sex/.adult, "porn"/"hentai" nel nome del sito, SafeSearch su Google/Bing/DuckDuckGo con queryTransform, header `YouTube-Restrict: Moderate`) e `extension/rules/ads.json` (spazi pubblicitari Google richiesti da YouTube). Si rigenerano con `npm run rules` da `scripts/make-adult-rules.cjs`. Gli annunci nei video li tolgono `youtube-main.js` (world MAIN: toglie adPlacements/playerAds/adSlots dalle risposte) e `youtube-skip.js` (nasconde riquadri, porta alla fine e salta l'annuncio), registrati con chrome.scripting. Solo il popup può spegnerli (ADULT_OFF / ADULT_CANCEL / ADULT_ON / ADS_SET); il sito viene rifiutato. ADULT_OFF diventa effettivo dopo 60 secondi. Test: `protection-check.cjs`. Non promettere un blocco completo: nessun elenco lo è e YouTube cambia spesso.

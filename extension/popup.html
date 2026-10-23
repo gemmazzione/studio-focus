@@ -1,1 +1,42 @@
-<!doctype html><html lang="it"><meta charset="utf-8"><title>Studio</title><style>body{width:285px;margin:0;padding:24px;background:#141716;color:#f1f0e9;font:14px/1.7 system-ui}h1{font-size:30px;letter-spacing:-.04em;margin:0 0 20px;color:#efad87}button{padding:12px 16px;background:#efad87;color:#241e19;border:0;border-radius:4px;cursor:pointer;font:600 13px system-ui}button:disabled{opacity:.5;cursor:default}small{display:block;margin-top:18px;font-size:12px;color:#adb5ae}:focus-visible{outline:2px solid #efad87;outline-offset:4px}</style><h1>studio.</h1><p id="status" role="status">Controllo del blocco…</p><button id="stop">Sospendi per 15 minuti</button><small>La sospensione vale anche per le fasce programmate. Il timer continua; poi la protezione riprende se prevista.</small><script src="popup.js"></script></html>
+<!doctype html>
+<html lang="it">
+  <meta charset="utf-8" />
+  <title>Studio</title>
+  <style>
+    body { width: 300px; margin: 0; padding: 20px; background: #fff; color: #18213a; font: 14px/1.55 system-ui, sans-serif; }
+    h1 { display: flex; align-items: center; gap: 8px; font-size: 18px; margin: 0 0 14px; }
+    h1 img { width: 22px; height: 22px; }
+    h2 { font-size: 14px; margin: 0 0 4px; }
+    section { padding: 12px 0; border-top: 1px solid #dde2ea; }
+    p { margin: 0 0 10px; }
+    .muted, small { color: #59627a; font-size: 12px; }
+    small { display: block; margin-top: 8px; }
+    button { padding: 8px 12px; border-radius: 6px; cursor: pointer; font: 600 13px system-ui, sans-serif; border: 1px solid #c6cedb; background: #fff; color: #18213a; }
+    button.primary { background: #2346c8; border-color: #2346c8; color: #fff; }
+    button:disabled { opacity: 0.5; cursor: default; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .on { color: #2346c8; font-weight: 600; }
+    .off { color: #b8322a; font-weight: 600; }
+    :focus-visible { outline: 2px solid #2346c8; outline-offset: 3px; }
+  </style>
+  <h1><img src="icon-48.png" alt="" />Studio</h1>
+  <section>
+    <h2>Social durante lo studio</h2>
+    <p id="status" role="status">Controllo del blocco…</p>
+    <button id="stop">Sospendi per 15 minuti</button>
+    <small>La sospensione vale anche per le fasce programmate. Poi la protezione riprende se prevista.</small>
+  </section>
+  <section>
+    <h2>Siti per adulti</h2>
+    <p id="adult-status" role="status"></p>
+    <div class="row" id="adult-actions"></div>
+    <small>Sempre attivo, anche fuori dalle sessioni. Su Google, Bing e DuckDuckGo è attiva SafeSearch, su YouTube la modalità con restrizioni. Per spegnerlo bisogna aspettare un minuto.</small>
+  </section>
+  <section>
+    <h2>Pubblicità di YouTube</h2>
+    <p id="ads-status" role="status"></p>
+    <button id="ads-toggle"></button>
+    <small>YouTube cambia spesso il modo in cui mostra gli annunci: a volte qualcuno può passare lo stesso.</small>
+  </section>
+  <script src="popup.js"></script>
+</html>
