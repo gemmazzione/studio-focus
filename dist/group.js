@@ -1,7 +1,7 @@
-// Gruppi di studio (pagina Obiettivi): obiettivo settimanale di minuti condiviso con amici,
-// e chi sta studiando adesso (anche nella pagina Sessione).
-// Serve l'account (api/group.php). Gli altri membri vedono solo nome utente,
-// minuti e sessioni della settimana, presi dai dati sincronizzati.
+// Lobby private (pagina Lobby, api/group.php): stanze con codice d'invito dove i membri
+// vedono chi è online, chi sta studiando e i minuti della settimana; obiettivo di minuti facoltativo.
+// Nella pagina Sessione il riquadro "Studiano adesso" mostra i membri in sessione.
+// Risposte, domande e appunti non escono mai.
 (() => {
   "use strict";
   const byId = (id) => document.getElementById(id);
@@ -35,20 +35,13 @@
     return { status: res.status, json };
   }
   const messages = {
-    name_missing: "Dai un nome al gruppo.",
+    name_missing: "Dai un nome alla lobby.",
     goal_invalid: "L’obiettivo deve essere un numero di minuti tra 0 e 100.000.",
-    too_many_groups: "Puoi far parte al massimo di 10 gruppi.",
-    group_not_found: "Nessun gruppo con questo codice. Controlla di averlo copiato bene.",
-    group_full: "Il gruppo è pieno: al massimo 20 persone.",
-    not_owner: "Solo chi ha creato il gruppo può cambiare l’obiettivo.",
+    too_many_groups: "Puoi far parte al massimo di 10 lobby private.",
+    group_not_found: "Nessuna lobby con questo codice. Controlla di averlo copiato bene.",
+    group_full: "La lobby è piena: al massimo 20 persone.",
+    not_owner: "Solo chi ha creato la lobby può cambiare l’obiettivo.",
   };
-
-  document
-    .querySelector("#page-goals .goals-achievements")
-    .insertAdjacentHTML(
-      "beforebegin",
-      '<section class="goals-group"><h2>Gruppo di studio</h2><p class="hint">Studiate insieme verso un obiettivo di minuti a settimana. Nel gruppo si vedono solo nome utente, minuti e sessioni della settimana di ciascuno: risposte, domande e appunti restano privati.</p><div id="group-body"></div></section>',
-    );
 
   async function load() {
     if (!token()) {
@@ -75,53 +68,58 @@
     renderLive();
   }
 
+  const STATE_ORDER = (m) => (m.studyingFor != null ? 0 : m.online ? 1 : 2);
+  function memberStatus(m) {
+    if (m.studyingFor != null) return `<span class="live-text">sta studiando da ${m.studyingFor} min</span>`;
+    return m.online ? '<span class="online-text">online</span>' : '<span class="meta">offline</span>';
+  }
   function render() {
     const box = byId("group-body");
-    // Non ricostruire i moduli mentre si scrive (aggiornamento ogni minuto)
+    // Non ricostruire i moduli mentre si scrive (aggiornamento periodico)
     if (box.contains(document.activeElement) && document.activeElement.matches("input")) return;
     if (status === "unavailable") {
       box.innerHTML =
-        '<p class="empty">I gruppi funzionano solo sul sito <a href="https://samueleruggeri.altervista.org/studiofocus/#goals">samueleruggeri.altervista.org/studiofocus</a>, con un account.</p>';
+        '<p class="empty">Le lobby private funzionano solo sul sito <a href="https://samueleruggeri.altervista.org/studiofocus/#lobby">samueleruggeri.altervista.org/studiofocus</a>, con un account.</p>';
       return;
     }
     if (!token()) {
-      box.innerHTML = '<p class="empty">Per creare un gruppo o entrarci serve un account. <a href="#account">Accedi o crea un account</a>.</p>';
+      box.innerHTML = '<p class="empty">Per creare una lobby privata o entrarci serve un account. <a href="#account">Accedi o crea un account</a>.</p>';
       return;
     }
     if (!groups) {
-      box.innerHTML = `<p class="hint">${status ? esc(status) : "Carico i gruppi…"}</p>`;
+      box.innerHTML = `<p class="hint">${status ? esc(status) : "Carico le lobby…"}</p>`;
       return;
     }
     const list = groups
       .map((g) => {
         const total = g.members.reduce((n, m) => n + m.minutes, 0),
           pct = g.goalMinutes ? Math.min(100, Math.round((total / g.goalMinutes) * 100)) : 0,
-          top = Math.max(1, ...g.members.map((m) => m.minutes));
-        return `<article class="group-card"><div class="entry-top"><h3>${esc(g.name)}</h3><span class="meta">${g.members.length} ${g.members.length === 1 ? "persona" : "persone"}</span></div>
+          online = g.members.filter((m) => m.online || m.studyingFor != null).length,
+          studying = g.members.filter((m) => m.studyingFor != null).length;
+        return `<article class="group-card"><div class="entry-top"><h3>${esc(g.name)}</h3><span class="meta">${g.members.length} ${g.members.length === 1 ? "persona" : "persone"} · ${online} online · ${studying} in studio</span></div>
         <p class="group-code">Codice d’invito: <b>${esc(g.code)}</b> <button type="button" class="text-button" data-copy-code="${esc(g.code)}">Copia</button></p>
-        ${
-          g.goalMinutes
-            ? `<div class="goal-progress ${total >= g.goalMinutes ? "is-met" : ""}"><div><span>Obiettivo del gruppo questa settimana</span><b>${total} / ${g.goalMinutes} min</b></div><div class="goal-bar"><i style="width:${pct}%"></i></div></div>`
-            : `<p class="hint">Nessun obiettivo di gruppo. Questa settimana insieme: ${total} minuti.</p>`
-        }
         <ul class="group-members">${[...g.members]
-          .sort((a, b) => b.minutes - a.minutes)
+          .sort((a, b) => STATE_ORDER(a) - STATE_ORDER(b) || b.minutes - a.minutes)
           .map(
             (m) =>
-              `<li class="${m.isMe ? "is-me" : ""}"><span>${m.studyingFor != null ? '<i class="live-dot" aria-hidden="true"></i>' : ""}<a href="#lobby/${encodeURIComponent(m.username)}">${esc(m.username)}</a>${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato il gruppo</small>' : ""}${m.studyingFor != null ? ` <small class="live-text">sta studiando da ${m.studyingFor} min</small>` : ""}</span><div class="goal-bar"><i style="width:${Math.round((m.minutes / top) * 100)}%"></i></div><b>${m.minutes} min · ${m.sessions} ${m.sessions === 1 ? "sessione" : "sessioni"}</b></li>`,
+              `<li class="${m.isMe ? "is-me" : ""}"><span><i class="live-dot ${m.studyingFor != null ? "" : m.online ? "is-online" : "is-offline"}" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(m.username)}">${esc(m.username)}</a>${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato la lobby</small>' : ""}</span>${memberStatus(m)}<b>${m.minutes} min questa settimana</b></li>`,
           )
           .join("")}</ul>
+        ${
+          g.goalMinutes
+            ? `<div class="goal-progress ${total >= g.goalMinutes ? "is-met" : ""}"><div><span>Obiettivo della lobby questa settimana</span><b>${total} / ${g.goalMinutes} min</b></div><div class="goal-bar"><i style="width:${pct}%"></i></div></div>`
+            : ""
+        }
         <div class="group-actions">${
           g.isOwner
-            ? `<form class="group-goal" data-group-goal="${g.id}"><label for="goal-${g.id}">Minuti a settimana per il gruppo</label><div class="goal-row"><input id="goal-${g.id}" type="number" min="0" max="100000" step="30" value="${g.goalMinutes}"><button class="secondary">Cambia obiettivo</button></div></form>`
+            ? `<form class="group-goal" data-group-goal="${g.id}"><label for="goal-${g.id}">Obiettivo di minuti a settimana (0 = nessuno)</label><div class="goal-row"><input id="goal-${g.id}" type="number" min="0" max="100000" step="30" value="${g.goalMinutes}"><button class="secondary">Salva</button></div></form>`
             : ""
-        }<button type="button" class="text-button" data-leave-group="${g.id}">Esci dal gruppo</button></div></article>`;
+        }<button type="button" class="text-button" data-leave-group="${g.id}">Esci dalla lobby</button></div></article>`;
       })
       .join("");
-    box.innerHTML = `${list || '<p class="empty">Non fai ancora parte di un gruppo. Creane uno e manda il codice ai tuoi amici, oppure entra con il loro codice.</p>'}
-      <p class="hint">I minuti degli altri si aggiornano quando la loro app si sincronizza.</p>
-      <div class="group-forms"><form id="group-create" class="feature-form"><h3>Crea un gruppo</h3><label for="group-name">Nome del gruppo</label><input id="group-name" required maxlength="60" placeholder="Es. Maturità 5B"><label for="group-goal">Minuti a settimana per tutto il gruppo</label><input id="group-goal" type="number" min="0" max="100000" step="30" value="600"><button class="primary wide">Crea gruppo</button></form>
-      <form id="group-join" class="feature-form"><h3>Entra in un gruppo</h3><label for="group-code">Codice d’invito</label><input id="group-code" required maxlength="12" autocomplete="off" spellcheck="false" placeholder="8 caratteri"><button class="secondary wide">Entra</button><p id="group-message" role="status" class="hint">${esc(status)}</p></form></div>`;
+    box.innerHTML = `${list || '<p class="empty">Non sei in nessuna lobby privata. Creane una e manda il codice ai tuoi amici, oppure entra con il loro codice.</p>'}
+      <div class="group-forms"><form id="group-create" class="feature-form"><h3>Crea una lobby privata</h3><label for="group-name">Nome</label><input id="group-name" required maxlength="60" placeholder="Es. Maturità 5B"><label for="group-goal">Obiettivo di minuti a settimana (facoltativo)</label><input id="group-goal" type="number" min="0" max="100000" step="30" value="0"><button class="primary wide">Crea lobby</button></form>
+      <form id="group-join" class="feature-form"><h3>Entra con un codice</h3><label for="group-code">Codice d’invito</label><input id="group-code" required maxlength="12" autocomplete="off" spellcheck="false" placeholder="8 caratteri"><button class="secondary wide">Entra</button><p id="group-message" role="status" class="hint">${esc(status)}</p></form></div>`;
   }
 
   async function act(body, done) {
@@ -146,14 +144,14 @@
     if (f.id === "group-create")
       act(
         { action: "create", name: byId("group-name").value, goalMinutes: Math.max(0, Math.round(Number(byId("group-goal").value) || 0)) },
-        (j) => `Gruppo creato. Codice d’invito: ${j.code}`,
+        (j) => `Lobby creata. Codice d’invito: ${j.code}`,
       );
     if (f.id === "group-join")
-      act({ action: "join", code: byId("group-code").value }, (j) => (j.already ? "Fai già parte di questo gruppo." : "Sei entrato nel gruppo."));
+      act({ action: "join", code: byId("group-code").value }, (j) => (j.already ? "Sei già in questa lobby." : "Sei entrato nella lobby."));
     if (f.dataset.groupGoal)
       act(
         { action: "goal", groupId: Number(f.dataset.groupGoal), goalMinutes: Math.max(0, Math.round(Number(f.querySelector("input").value) || 0)) },
-        () => "Obiettivo del gruppo aggiornato.",
+        () => "Obiettivo della lobby aggiornato.",
       );
   });
   byId("group-body").addEventListener("click", async (e) => {
@@ -167,8 +165,8 @@
         notify(`Codice d’invito: ${code}`);
       }
     }
-    if (leave && confirm("Uscire dal gruppo? Potrai rientrare con il codice."))
-      act({ action: "leave", groupId: Number(leave) }, () => "Sei uscito dal gruppo.");
+    if (leave && confirm("Uscire dalla lobby? Potrai rientrare con il codice."))
+      act({ action: "leave", groupId: Number(leave) }, () => "Sei uscito dalla lobby.");
   });
 
   // --- Chi sta studiando adesso -------------------------------------------
@@ -189,9 +187,9 @@
     const list = others();
     byId("live-list").innerHTML = list.length
       ? list.map(([name, min]) => `<li><i class="live-dot" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(name)}"><b>${esc(name)}</b></a> <span>da ${min} min</span></li>`).join("")
-      : '<li class="hint">Nessuno del tuo gruppo sta studiando in questo momento.</li>';
+      : '<li class="hint">Nelle tue lobby private nessuno sta studiando in questo momento.</li>';
   }
-  // Traguardi legati al gruppo (letti da goals.js tramite data.study.flags)
+  // Traguardi legati alle lobby private (letti da goals.js tramite data.study.flags)
   function rememberFlags() {
     const S = data.study,
       f = (S.flags ||= {});
@@ -205,10 +203,10 @@
   const focusing = () => !!data.active && data.active.phase === "focus" && data.active.running;
   function onPage() {
     clearInterval(timer);
-    const page = location.hash.slice(1) || "focus";
-    if (page !== "goals" && page !== "focus") return;
+    const [page, profile] = (location.hash.slice(1) || "focus").split("/");
+    if ((page !== "lobby" || profile) && page !== "focus") return;
     load();
-    timer = setInterval(load, 60000);
+    timer = setInterval(load, 30000);
   }
   window.addEventListener("hashchange", onPage);
   onPage();

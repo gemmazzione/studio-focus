@@ -1,7 +1,7 @@
 <?php
 // Lobby e profili (header X-Auth-Token).
-// Un utente è visibile agli altri se è entrato nella lobby (profilo pubblico)
-// oppure se condivide con loro un gruppo di studio. Risposte e correzioni non escono mai.
+// Nella lobby pubblica compare chi ci è entrato; il profilo è visibile a loro e ai compagni
+// delle stesse lobby private. Risposte e correzioni non escono mai.
 // GET  ?action=lobby&week=<inizio settimana ms>  -> {public, publicCount, users: [...]}
 // GET  ?action=profile&user=<nome>               -> {username, since, online, studyingFor, sessions, achievements}
 // POST {action: "ping", remaining, elapsed}      -> sono online (e sto studiando se remaining > 0)
@@ -68,7 +68,9 @@ $action = $method === 'GET' ? ($_GET['action'] ?? '') : '';
 if ($method === 'GET' && $action === 'lobby') {
     $week = isset($_GET['week']) && is_numeric($_GET['week']) ? (float) $_GET['week'] : 0;
     if (abs($week - $now) > 14 * 86400000) respond(400, ['error' => 'invalid_week']);
-    $visible = visible_ids($pdo, $V, $M, $userId);
+    // Nella lobby pubblica solo chi ci è entrato (i compagni si vedono nelle lobby private)
+    $visible = [$userId => true];
+    foreach ($pdo->query("SELECT user_id FROM $V WHERE is_public = 1")->fetchAll() as $r) $visible[(int) $r['user_id']] = true;
     $users = [];
     $s = $pdo->prepare("SELECT id, username FROM $U WHERE id = ?");
     foreach (array_keys($visible) as $id) {

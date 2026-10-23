@@ -509,3 +509,37 @@
     grid-row: 2;
   }
 }
+
+/* Lobby private: stato dei membri */
+.lobby-section {
+  max-width: 900px;
+  margin-bottom: 44px;
+}
+.lobby-section > .hint {
+  margin-top: -6px;
+}
+.group-members li {
+  grid-template-columns: minmax(120px, 1fr) auto auto;
+}
+.group-members li > span:nth-child(2) {
+  font-size: 13px;
+}
+.live-dot.is-online {
+  animation: none;
+}
+.live-dot.is-offline {
+  background: transparent;
+  border: 1.5px solid var(--field);
+  animation: none;
+}
+.online-text {
+  color: #2f9e5a;
+}
+@media (max-width: 800px) {
+  .group-members li {
+    grid-template-columns: 1fr auto;
+  }
+  .group-members li > b {
+    grid-column: 1 / -1;
+  }
+}

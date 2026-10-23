@@ -34,6 +34,8 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS $M (
 )$suffix");
 // Chi sta studiando adesso: fine prevista della sessione (ms, ora del server)
 $P = table('presence');
+$O = table('online');
+$pdo->exec("CREATE TABLE IF NOT EXISTS $O (user_id INTEGER PRIMARY KEY, last_seen BIGINT NOT NULL)$suffix");
 $pdo->exec("CREATE TABLE IF NOT EXISTS $P (
     user_id INTEGER PRIMARY KEY,
     until_at BIGINT NOT NULL,
@@ -96,6 +98,14 @@ function studying_for(PDO $pdo, string $P, int $userId): ?int
     return max(0, (int) floor(($now - (int) $row['started_at']) / 60000));
 }
 
+/** Online se l'app ha dato segni di vita negli ultimi 3 minuti (api/social.php, action ping). */
+function is_online(PDO $pdo, string $O, int $userId): bool
+{
+    $s = $pdo->prepare("SELECT last_seen FROM $O WHERE user_id = ?");
+    $s->execute([$userId]);
+    return time() * 1000 - (int) ($s->fetch()['last_seen'] ?? 0) < 180000;
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
@@ -111,7 +121,7 @@ if ($method === 'GET') {
         $members = [];
         foreach ($ms->fetchAll() as $u) {
             $members[] = ['username' => $u['username'], 'isMe' => (int) $u['id'] === $userId, 'isOwner' => (int) $u['id'] === (int) $g['owner_id']]
-                + week_stats($pdo, (int) $u['id'], $week) + ['studyingFor' => studying_for($pdo, $P, (int) $u['id'])];
+                + week_stats($pdo, (int) $u['id'], $week) + ['studyingFor' => studying_for($pdo, $P, (int) $u['id']), 'online' => is_online($pdo, $O, (int) $u['id'])];
         }
         $groups[] = [
             'id' => (int) $g['id'],

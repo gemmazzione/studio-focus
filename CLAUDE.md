@@ -100,3 +100,7 @@ Due ruleset statici sempre accesi: `extension/rules/adult.json` (elenco di siti,
 ## v9: lobby e profili
 
 `dist/lobby.js` + `dist/api/social.php` (tabelle `stf_online`, `stf_profiles`, `stf_presence`). Pagina Lobby (`#lobby`; `#lobby/<nome>` apre un profilo, il router usa la parte prima di "/"). Si entra nella lobby con un pulsante (`visibility`, spento di base): da lì nome, stato e profilo sono visibili a tutti gli utenti con account; i compagni di gruppo si vedono sempre. Online = segnale `ping` negli ultimi 3 minuti (uno al minuto con l'app aperta, subito a inizio, pausa e fine sessione); in studio = `stf_presence` attiva. Il profilo manda solo data, minuti, materia e obiettivo delle sessioni (max 3000) e le date dei traguardi: MAI risposte, correzioni o valutazioni. I nomi dei traguardi vengono da `window.StudioAchievements` (goals.js). group.js non manda più il segnale di presenza: lo fa lobby.js.
+
+## v10: lobby private
+
+I "gruppi" sono diventati **lobby private** e stanno nella pagina Lobby (non più in Obiettivi). Stesso backend (`api/group.php`, tabelle `stf_groups`/`stf_group_members`, codice d'invito, max 20 persone, max 10 a testa), obiettivo di minuti facoltativo (0 = nessuno). I membri vedono sempre gli altri come in studio / online / offline (`online` = `stf_online` negli ultimi 3 minuti) senza entrare nella lobby pubblica. La lobby pubblica (`social.php?action=lobby`) mostra solo chi ci è entrato. `lobby.js` va caricato prima di `group.js` (crea `#group-body`).
