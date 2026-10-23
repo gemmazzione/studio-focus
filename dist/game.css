@@ -1,0 +1,354 @@
+/* Stile a livelli: oro per punti e livelli, medaglie, pulsanti "a tasto", animazioni di premio.
+   Caricato per ultimo: ritocca il tema Quaderno senza cambiarne i colori di base. */
+:root {
+  --xp: #d99a00;
+  --xp-soft: #fff3cf;
+  --xp-ink: #5c3d00;
+  --bronze: #c27a3e;
+  --silver: #8d9aab;
+  --gold: #e0a800;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --xp: #f5c242;
+    --xp-soft: #3a2f12;
+    --xp-ink: #ffe7a3;
+    --bronze: #e09a5f;
+    --silver: #b7c2d0;
+    --gold: #f5c242;
+  }
+}
+
+/* Pulsanti come tasti da premere */
+.primary {
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--green) 60%, #000);
+  transition: transform 0.08s, box-shadow 0.08s, background 0.15s;
+}
+.primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--green) 60%, #000);
+}
+.secondary {
+  box-shadow: 0 2px 0 var(--field);
+}
+.secondary:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--field);
+}
+.workpanel,
+.feature-form,
+.group-card,
+.recap-card,
+.lobby-me {
+  border-radius: 14px;
+}
+
+/* Scheda giocatore nella barra laterale */
+.player {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -12px 0 20px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  text-decoration: none;
+  color: var(--ink);
+}
+.player:hover {
+  border-color: var(--xp);
+  color: var(--ink);
+}
+.player-info {
+  flex: 1;
+  min-width: 0;
+}
+.player-info b {
+  display: block;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.player-info small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.lvl-badge {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--xp);
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  box-shadow:
+    inset 0 -3px 0 rgb(0 0 0 / 0.18),
+    0 0 0 3px var(--xp-soft);
+}
+.lvl-badge.big {
+  width: 64px;
+  height: 64px;
+  font-size: 26px;
+  box-shadow:
+    inset 0 -4px 0 rgb(0 0 0 / 0.18),
+    0 0 0 5px var(--xp-soft);
+}
+.lvl-badge.huge {
+  width: 110px;
+  height: 110px;
+  font-size: 48px;
+  margin: 8px auto 14px;
+  box-shadow:
+    inset 0 -6px 0 rgb(0 0 0 / 0.18),
+    0 0 0 8px var(--xp-soft);
+}
+.xp-bar {
+  display: block;
+  height: 7px;
+  margin: 5px 0 3px;
+  border-radius: 4px;
+  background: var(--raised);
+  overflow: hidden;
+}
+.xp-bar.big {
+  height: 12px;
+  border-radius: 6px;
+  margin: 10px 0 6px;
+}
+.xp-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--xp);
+  transition: width 0.6s ease;
+}
+.xp-float {
+  position: absolute;
+  right: 10px;
+  top: -6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--xp);
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+}
+.xp-float.show {
+  animation: xp-float 1.8s ease-out;
+}
+@keyframes xp-float {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0) scale(1.1);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-22px);
+  }
+}
+.lvl-chip {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--xp-soft);
+  color: var(--xp-ink);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Punti in palio durante la sessione */
+.xp-stake {
+  display: inline-block;
+  margin: -8px 0 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--xp-soft);
+  color: var(--xp-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+.xp-stake[hidden] {
+  display: none;
+}
+
+/* Il tuo livello (Obiettivi) */
+.level-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 900px;
+  margin-bottom: 36px;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+}
+.level-card > div {
+  flex: 1;
+  min-width: 0;
+}
+.level-card h2 {
+  margin: 0;
+  font-size: 22px;
+}
+.level-card .meta {
+  margin: 0;
+}
+.level-card .hint {
+  margin: 8px 0 0;
+}
+
+/* Medaglie */
+.achievement .badge {
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+}
+.achievement.is-unlocked .badge {
+  color: #fff;
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.2);
+}
+.achievement.tier-bronze.is-unlocked .badge {
+  background: var(--bronze);
+}
+.achievement.tier-silver.is-unlocked .badge {
+  background: var(--silver);
+}
+.achievement.tier-gold.is-unlocked .badge {
+  background: var(--gold);
+}
+.achievement.tier-gold.is-unlocked .badge {
+  box-shadow:
+    inset 0 -3px 0 rgb(0 0 0 / 0.2),
+    0 0 0 3px var(--xp-soft);
+}
+.achievement:not(.is-unlocked) .badge {
+  opacity: 0.6;
+}
+
+/* Salita di livello */
+.levelup {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(10 15 30 / 0.55);
+  animation: fade-in 0.2s ease-out;
+}
+.levelup-box {
+  position: relative;
+  max-width: 360px;
+  width: 100%;
+  padding: 26px 24px 24px;
+  border-radius: 18px;
+  background: var(--white);
+  text-align: center;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.3);
+  animation: pop 0.45s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+.levelup-box h2 {
+  font-size: 28px;
+  margin: 0 0 6px;
+}
+.levelup-box .primary {
+  margin-top: 12px;
+  min-width: 160px;
+}
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.confetti i {
+  position: absolute;
+  top: -12px;
+  left: var(--x);
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  transform: rotate(var(--r));
+  animation: fall 2.4s ease-in var(--d) forwards;
+}
+.confetti i:nth-child(4n) {
+  background: var(--xp);
+}
+.confetti i:nth-child(4n + 1) {
+  background: var(--green);
+}
+.confetti i:nth-child(4n + 2) {
+  background: var(--warm);
+}
+.confetti i:nth-child(4n + 3) {
+  background: #2f9e5a;
+}
+@keyframes fall {
+  to {
+    transform: translateY(105vh) rotate(calc(var(--r) + 540deg));
+  }
+}
+@keyframes pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  .player {
+    margin: 0 0 10px;
+    padding: 6px 10px;
+  }
+  .lvl-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+  .level-card {
+    gap: 16px;
+    padding: 16px;
+  }
+  .lvl-badge.big {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xp-float.show,
+  .levelup,
+  .levelup-box {
+    animation: none;
+  }
+  .xp-float.show {
+    opacity: 1;
+  }
+}

@@ -560,5 +560,7 @@ setInterval(() => {
   if (data.active?.running) syncBlock();
 }, 60000);
 route();
+// Le pagine create dagli altri script (Obiettivi, Lobby…) esistono solo dopo: rifà la scelta a fine caricamento
+window.addEventListener("DOMContentLoaded", route);
 render();
 if (data.settings.extensionId) connect(true);

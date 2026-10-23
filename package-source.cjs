@@ -35,6 +35,8 @@ const files = [
   "dist/group.js",
   "dist/lobby.js",
   "dist/extras.css",
+  "dist/game.js",
+  "dist/game.css",
   "dist/.htaccess",
   "dist/pwa.css",
   "dist/sw.js",

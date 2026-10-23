@@ -149,3 +149,14 @@ function now_iso(): string
 {
     return gmdate('Y-m-d\TH:i:s\Z');
 }
+
+/** Punti esperienza come in StudyCore.xpFor: 1 per minuto, 10 per sessione, 50 per traguardo. */
+function xp_from(array $sessions, $achievements): int
+{
+    $xp = 0;
+    foreach ($sessions as $s) {
+        if (!is_array($s)) continue;
+        $xp += (int) round(((float) ($s['seconds'] ?? 0)) / 60) + 10;
+    }
+    return $xp + (is_array($achievements) ? count($achievements) * 50 : 0);
+}

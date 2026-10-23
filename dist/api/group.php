@@ -74,17 +74,20 @@ function week_stats(PDO $pdo, int $userId, float $from): array
     $row = $s->fetch();
     $minutes = 0;
     $sessions = 0;
+    $xp = 0;
     if ($row) {
         $doc = json_decode($row['data'], true);
-        foreach (($doc['data']['sessions'] ?? []) as $session) {
+        $all = is_array($doc['data']['sessions'] ?? null) ? $doc['data']['sessions'] : [];
+        foreach ($all as $session) {
             $at = $session['at'] ?? 0;
             if (is_numeric($at) && $at >= $from && $at < $from + 7 * 86400000) {
                 $sessions++;
                 $minutes += (int) round(($session['seconds'] ?? 0) / 60);
             }
         }
+        $xp = xp_from($all, $doc['data']['study']['achievements'] ?? []);
     }
-    return $cache[$userId] = ['minutes' => $minutes, 'sessions' => $sessions];
+    return $cache[$userId] = ['minutes' => $minutes, 'sessions' => $sessions, 'xp' => $xp];
 }
 
 /** Minuti da cui l'utente sta studiando, oppure null se non è in sessione. */

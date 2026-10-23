@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node preview.cjs",
     "start": "node preview.cjs",
-    "check": "node --check dist/app.js && node --check dist/features.js && node --check dist/agenda.js && node --check dist/experience.js && node --check dist/sync.js && node --check dist/goals.js && node --check dist/pwa.js && node --check dist/extras.js && node --check dist/group.js && node --check dist/lobby.js && node --check dist/sw.js && node --check extension/background.js && node --check extension/popup.js && node check.cjs && node audio-check.cjs && node features-check.cjs && node agenda-check.cjs && node reminder-check.cjs && node protection-check.cjs",
+    "check": "node --check dist/app.js && node --check dist/features.js && node --check dist/agenda.js && node --check dist/experience.js && node --check dist/sync.js && node --check dist/goals.js && node --check dist/pwa.js && node --check dist/extras.js && node --check dist/group.js && node --check dist/lobby.js && node --check dist/game.js && node --check dist/sw.js && node --check extension/background.js && node --check extension/popup.js && node check.cjs && node audio-check.cjs && node features-check.cjs && node agenda-check.cjs && node reminder-check.cjs && node protection-check.cjs",
     "package:source": "node package-source.cjs",
     "dev:php": "node scripts/serve-php.cjs",
     "icons": "node scripts/make-icons.cjs",

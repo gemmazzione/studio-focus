@@ -1,7 +1,7 @@
 // Service worker: app usabile offline e promemoria dei ripassi.
 // Strategia "prima la rete": online si ricevono sempre i file aggiornati,
 // offline si usa l'ultima copia salvata. L'API (api/) non passa mai dalla cache.
-const CACHE = "studio-v11";
+const CACHE = "studio-v12";
 const SHELL = [
   "./",
   "index.html",
@@ -14,6 +14,7 @@ const SHELL = [
   "goals.css",
   "pwa.css",
   "extras.css",
+  "game.css",
   "study-core.js",
   "app.js",
   "experience.js",
@@ -21,6 +22,7 @@ const SHELL = [
   "agenda-core.js",
   "agenda.js",
   "goals.js",
+  "game.js",
   "extras.js",
   "group.js",
   "lobby.js",

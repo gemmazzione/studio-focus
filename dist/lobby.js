@@ -38,6 +38,7 @@
     const [page, name] = location.hash.slice(1).split("/");
     return page === "lobby" && name ? decodeURIComponent(name) : "";
   };
+  const lvl = (xp) => `<span class="lvl-chip" title="Livello">Lv ${StudyCore.levelFor(xp || 0).level}</span>`;
   const statusText = (u) =>
     u.studyingFor != null ? `sta studiando da ${u.studyingFor} min` : u.online ? "online" : "offline";
 
@@ -91,7 +92,7 @@
         ? others
             .map(
               (u) =>
-                `<li class="${u.studyingFor != null ? "is-studying" : ""}"><i class="live-dot ${u.studyingFor != null ? "" : "is-idle"}" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(u.username)}">${esc(u.username)}</a><span>${statusText(u)}</span><b>${u.weekMinutes} min questa settimana</b></li>`,
+                `<li class="${u.studyingFor != null ? "is-studying" : ""}"><i class="live-dot ${u.studyingFor != null ? "" : "is-idle"}" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(u.username)}">${esc(u.username)}</a> ${lvl(u.xp)}<span>${statusText(u)}</span><b>${u.weekMinutes} min questa settimana</b></li>`,
             )
             .join("")
         : '<li class="empty">Nella lobby pubblica non c’è nessun altro online in questo momento.</li>'
@@ -158,9 +159,10 @@
       unlocked = all.filter((a) => got[a.id]).sort((a, b) => got[b.id] - got[a.id]),
       maxSubject = Math.max(1, ...st.subjects.map((s) => s.minutes)),
       since = new Date(p.since).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" }),
+      level = StudyCore.levelFor(StudyCore.xpFor(st.minutes, p.sessions.length, Object.keys(got).length)),
       hours = st.minutes >= 120 ? `${(Math.round(st.minutes / 6) / 10).toLocaleString("it-IT")} ore` : `${st.minutes} min`;
     byId("lobby-profile").innerHTML = `<p><a href="#lobby">← Torna alla lobby</a></p>
-      <div class="profile-head"><h2>${esc(p.username)}${p.isMe ? " (tu)" : ""}</h2><span class="${p.studyingFor != null ? "live-text" : "meta"}">${p.studyingFor != null ? '<i class="live-dot" aria-hidden="true"></i>' : ""}${statusText(p)}</span></div>
+      <div class="profile-head"><span class="lvl-badge big">${level.level}</span><div><h2>${esc(p.username)}${p.isMe ? " (tu)" : ""}</h2><p class="meta">Livello ${level.level} · ${level.title} · ${level.xp.toLocaleString("it-IT")} XP</p><div class="xp-bar"><i style="width:${Math.round((level.into / level.needed) * 100)}%"></i></div></div><span class="${p.studyingFor != null ? "live-text" : "meta"}">${p.studyingFor != null ? '<i class="live-dot" aria-hidden="true"></i>' : ""}${statusText(p)}</span></div>
       <p class="meta">Su Studio dal ${since}${p.isMe && !p.public ? " · il tuo profilo lo vede solo chi è con te nelle lobby private" : ""}</p>
       <div class="summary-strip profile-strip"><div><strong>${hours}</strong><span>studiate in tutto</span></div><div><strong>${p.sessions.length}</strong><span>sessioni</span></div><div><strong>${st.days}</strong><span>giorni di studio</span></div><div><strong>${st.streak}</strong><span>giorni di fila</span></div><div><strong>${st.weekMinutes}</strong><span>min questa settimana</span></div></div>
       <h3>Cosa studia</h3>${
@@ -182,7 +184,7 @@
       <div class="list-toolbar"><h3>Traguardi</h3><span class="meta">${unlocked.length} su ${all.length}</span></div>${
         unlocked.length
           ? `<ul class="achievement-list">${unlocked
-              .map((a) => `<li class="achievement is-unlocked"><span class="badge" aria-hidden="true">✓</span><div><h3>${a.name}</h3><p>${a.text}</p><p class="meta">Sbloccato il ${fmtDate(got[a.id])}</p></div></li>`)
+              .map((a) => `<li class="achievement tier-${a.tier} is-unlocked"><span class="badge" aria-hidden="true">★</span><div><h3>${a.name}</h3><p>${a.text}</p><p class="meta">Sbloccato il ${fmtDate(got[a.id])}</p></div></li>`)
               .join("")}</ul>`
           : '<p class="empty">Nessun traguardo sbloccato per ora.</p>'
       }`;

@@ -102,7 +102,7 @@
           .sort((a, b) => STATE_ORDER(a) - STATE_ORDER(b) || b.minutes - a.minutes)
           .map(
             (m) =>
-              `<li class="${m.isMe ? "is-me" : ""}"><span><i class="live-dot ${m.studyingFor != null ? "" : m.online ? "is-online" : "is-offline"}" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(m.username)}">${esc(m.username)}</a>${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato la lobby</small>' : ""}</span>${memberStatus(m)}<b>${m.minutes} min questa settimana</b></li>`,
+              `<li class="${m.isMe ? "is-me" : ""}"><span><i class="live-dot ${m.studyingFor != null ? "" : m.online ? "is-online" : "is-offline"}" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(m.username)}">${esc(m.username)}</a> <span class="lvl-chip">Lv ${StudyCore.levelFor(m.xp || 0).level}</span>${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato la lobby</small>' : ""}</span>${memberStatus(m)}<b>${m.minutes} min questa settimana</b></li>`,
           )
           .join("")}</ul>
         ${

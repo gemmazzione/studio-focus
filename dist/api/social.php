@@ -79,12 +79,12 @@ if ($method === 'GET' && $action === 'lobby') {
         $s->execute([$id]);
         $u = $s->fetch();
         if (!$u) continue;
-        [$sessions] = sessions_of($pdo, $id);
+        [$sessions, $achievements] = sessions_of($pdo, $id);
         $minutes = 0;
         foreach ($sessions as $x)
             if (is_numeric($x['at'] ?? null) && $x['at'] >= $week && $x['at'] < $week + 7 * 86400000)
                 $minutes += (int) round(($x['seconds'] ?? 0) / 60);
-        $users[] = ['username' => $u['username'], 'isMe' => $id === $userId, 'weekMinutes' => $minutes] + $st;
+        $users[] = ['username' => $u['username'], 'isMe' => $id === $userId, 'weekMinutes' => $minutes, 'xp' => xp_from($sessions, $achievements)] + $st;
     }
     $count = (int) $pdo->query("SELECT COUNT(*) AS n FROM $V WHERE is_public = 1")->fetch()['n'];
     respond(200, ['public' => is_public($pdo, $V, $userId), 'publicCount' => $count, 'users' => $users]);

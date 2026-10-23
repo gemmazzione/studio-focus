@@ -177,6 +177,13 @@
     ["mattino", "Prima delle otto", "Finisci una sessione prima delle 8 del mattino.", "early", 1],
     ["notte", "Dopo le undici", "Finisci una sessione dopo le 23.", "late", 1],
   ].map(([id, name, text, key, target, unit = ""]) => ({ id, name, text, key, target, unit }));
+  // Medaglie: nella stessa serie (stesso valore) la soglia più bassa è bronzo, la seconda argento, le altre oro.
+  // I traguardi singoli (soglia 1, una sola volta) sono d'argento.
+  for (const a of ACHIEVEMENTS) {
+    const serie = ACHIEVEMENTS.filter((b) => b.key === a.key).map((b) => b.target).sort((x, y) => x - y),
+      i = serie.indexOf(a.target);
+    a.tier = serie.length === 1 ? "silver" : i === 0 ? "bronze" : i === 1 ? "silver" : "gold";
+  }
   window.StudioAchievements = ACHIEVEMENTS; // per i profili della lobby
 
   // Registra i traguardi raggiunti. Al primo avvio li segna in silenzio.
@@ -264,7 +271,7 @@
     byId("achievement-list").innerHTML = ACHIEVEMENTS.map((a) => {
       const done = !!got[a.id],
         value = Math.min(t[a.key], a.target);
-      return `<li class="achievement ${done ? "is-unlocked" : ""}"><span class="badge" aria-hidden="true">${done ? "✓" : ""}</span><div><h3>${a.name}</h3><p>${a.text}</p>${
+      return `<li class="achievement tier-${a.tier} ${done ? "is-unlocked" : ""}"><span class="badge" aria-hidden="true">${done ? "★" : ""}</span><div><h3>${a.name}</h3><p>${a.text}</p>${
         done
           ? `<p class="meta">Sbloccato il ${fmtDate(got[a.id])}</p>`
           : a.target > 1

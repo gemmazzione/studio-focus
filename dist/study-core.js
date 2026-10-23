@@ -433,8 +433,23 @@
     const days = Number(choice);
     return days > 0 ? now + days * 86400000 : null;
   }
+  // Punti esperienza: 1 per minuto di studio, 10 per sessione, 50 per traguardo.
+  // Stessa formula in api/social.php e api/group.php (xp_of).
+  const xpFor = (minutes, sessions, achievements) => Math.round(minutes) + sessions * 10 + achievements * 50;
+  const TITLES = ["Principiante", "Apprendista", "Studente", "Studente modello", "Studioso", "Esperto", "Maestro", "Gran maestro", "Saggio", "Leggenda"];
+  // Livello n da 100·(n−1)·n/2 XP: 100 per il 2, 300 per il 3, 600 per il 4… Titolo nuovo ogni 3 livelli.
+  function levelFor(xp) {
+    let level = 1;
+    while ((100 * level * (level + 1)) / 2 <= xp) level++;
+    const start = (100 * (level - 1) * level) / 2,
+      end = (100 * level * (level + 1)) / 2;
+    return { level, title: TITLES[Math.min(TITLES.length - 1, Math.floor((level - 1) / 3))], xp, start, end, into: xp - start, needed: end - start };
+  }
   const api = {
     validateBackup,
+    xpFor,
+    levelFor,
+    TITLES,
     isDue,
     nextDue,
     mergeData,
