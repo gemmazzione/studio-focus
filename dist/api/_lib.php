@@ -160,3 +160,15 @@ function xp_from(array $sessions, $achievements): int
     }
     return $xp + (is_array($achievements) ? count($achievements) * 50 : 0);
 }
+
+/** Avatar (solo numeri piccoli) dal documento salvato, o null se non ce n'è uno. */
+function avatar_from($avatar): ?array
+{
+    if (!is_array($avatar)) return null;
+    $out = [];
+    foreach (['bg', 'skin', 'hair', 'hairColor', 'eyes', 'mouth', 'extra'] as $k) {
+        $v = $avatar[$k] ?? 0;
+        $out[$k] = is_int($v) && $v >= 0 && $v < 20 ? $v : 0;
+    }
+    return $out;
+}

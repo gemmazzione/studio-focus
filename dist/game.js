@@ -16,7 +16,7 @@
   // --- Scheda giocatore ------------------------------------------------------
   document.querySelector("aside .brand").insertAdjacentHTML(
     "afterend",
-    `<a href="#goals" class="player" id="player" aria-label="Il tuo livello">
+    `<a href="#progress" class="player" id="player" aria-label="Il tuo livello">
       <span class="lvl-badge" id="player-level">1</span>
       <span class="player-info"><b id="player-title">Principiante</b><span class="xp-bar"><i id="player-bar"></i></span><small id="player-xp">0 / 100 XP</small></span>
       <span class="xp-float" id="xp-float" aria-hidden="true"></span>

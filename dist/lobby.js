@@ -92,7 +92,7 @@
         ? others
             .map(
               (u) =>
-                `<li class="${u.studyingFor != null ? "is-studying" : ""}"><i class="live-dot ${u.studyingFor != null ? "" : "is-idle"}" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(u.username)}">${esc(u.username)}</a> ${lvl(u.xp)}<span>${statusText(u)}</span><b>${u.weekMinutes} min questa settimana</b></li>`,
+                `<li class="${u.studyingFor != null ? "is-studying" : ""}"><i class="live-dot ${u.studyingFor != null ? "" : "is-idle"}" aria-hidden="true"></i>${StudioAvatar.svg(u.avatar, 30, u.username)}<a href="#lobby/${encodeURIComponent(u.username)}">${esc(u.username)}</a> ${lvl(u.xp)}<span>${statusText(u)}</span><b>${u.weekMinutes} min questa settimana</b></li>`,
             )
             .join("")
         : '<li class="empty">Nella lobby pubblica non c’è nessun altro online in questo momento.</li>'
@@ -162,7 +162,7 @@
       level = StudyCore.levelFor(StudyCore.xpFor(st.minutes, p.sessions.length, Object.keys(got).length)),
       hours = st.minutes >= 120 ? `${(Math.round(st.minutes / 6) / 10).toLocaleString("it-IT")} ore` : `${st.minutes} min`;
     byId("lobby-profile").innerHTML = `<p><a href="#lobby">← Torna alla lobby</a></p>
-      <div class="profile-head"><span class="lvl-badge big">${level.level}</span><div><h2>${esc(p.username)}${p.isMe ? " (tu)" : ""}</h2><p class="meta">Livello ${level.level} · ${level.title} · ${level.xp.toLocaleString("it-IT")} XP</p><div class="xp-bar"><i style="width:${Math.round((level.into / level.needed) * 100)}%"></i></div></div><span class="${p.studyingFor != null ? "live-text" : "meta"}">${p.studyingFor != null ? '<i class="live-dot" aria-hidden="true"></i>' : ""}${statusText(p)}</span></div>
+      <div class="profile-head"><span class="profile-avatar">${StudioAvatar.svg(p.avatar, 88, p.username)}<span class="lvl-badge on-avatar">${level.level}</span></span><div><h2>${esc(p.username)}${p.isMe ? " (tu)" : ""}</h2><p class="meta">Livello ${level.level} · ${level.title} · ${level.xp.toLocaleString("it-IT")} XP</p><div class="xp-bar"><i style="width:${Math.round((level.into / level.needed) * 100)}%"></i></div></div><span class="${p.studyingFor != null ? "live-text" : "meta"}">${p.studyingFor != null ? '<i class="live-dot" aria-hidden="true"></i>' : ""}${statusText(p)}</span></div>
       <p class="meta">Su Studio dal ${since}${p.isMe && !p.public ? " · il tuo profilo lo vede solo chi è con te nelle lobby private" : ""}</p>
       <div class="summary-strip profile-strip"><div><strong>${hours}</strong><span>studiate in tutto</span></div><div><strong>${p.sessions.length}</strong><span>sessioni</span></div><div><strong>${st.days}</strong><span>giorni di studio</span></div><div><strong>${st.streak}</strong><span>giorni di fila</span></div><div><strong>${st.weekMinutes}</strong><span>min questa settimana</span></div></div>
       <h3>Cosa studia</h3>${

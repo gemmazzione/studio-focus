@@ -323,7 +323,10 @@ function endBreak() {
 }
 function route() {
   // "#lobby/nome" apre la lobby sul profilo di un utente
-  const requested = location.hash.slice(1).split("/")[0] || "focus",
+  // Pagine unite nella versione semplificata: i vecchi indirizzi portano a quelle nuove
+  const alias = { goals: "progress", account: "settings", method: "settings" },
+    first = location.hash.slice(1).split("/")[0] || "focus",
+    requested = alias[first] || first,
     page = [
       "focus",
       "progress",

@@ -75,6 +75,7 @@ function week_stats(PDO $pdo, int $userId, float $from): array
     $minutes = 0;
     $sessions = 0;
     $xp = 0;
+    $avatar = null;
     if ($row) {
         $doc = json_decode($row['data'], true);
         $all = is_array($doc['data']['sessions'] ?? null) ? $doc['data']['sessions'] : [];
@@ -86,8 +87,9 @@ function week_stats(PDO $pdo, int $userId, float $from): array
             }
         }
         $xp = xp_from($all, $doc['data']['study']['achievements'] ?? []);
+        $avatar = avatar_from($doc['data']['study']['avatar'] ?? null);
     }
-    return $cache[$userId] = ['minutes' => $minutes, 'sessions' => $sessions, 'xp' => $xp];
+    return $cache[$userId] = ['minutes' => $minutes, 'sessions' => $sessions, 'xp' => $xp, 'avatar' => $avatar];
 }
 
 /** Minuti da cui l'utente sta studiando, oppure null se non è in sessione. */

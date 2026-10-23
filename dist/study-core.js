@@ -215,6 +215,16 @@
         }),
         500,
       ),
+      // Avatar: solo numeri piccoli (scelte delle parti), vedi avatar.js
+      avatar:
+        s.avatar && typeof s.avatar === "object"
+          ? Object.fromEntries(
+              ["bg", "skin", "hair", "hairColor", "eyes", "mouth", "extra"].map((k) => [
+                k,
+                Number.isInteger(s.avatar[k]) && s.avatar[k] >= 0 && s.avatar[k] < 20 ? s.avatar[k] : 0,
+              ]),
+            )
+          : null,
       // Eventi per i traguardi che non si ricavano dai dati (es. entrare in un gruppo)
       flags: Object.fromEntries(
         Object.entries(s.flags || {}).map(([key, value]) => {
@@ -410,6 +420,7 @@
     const runs = new Map((old.study.examRuns || []).map((x) => [x.id, x]));
     for (const x of incoming.study.examRuns || []) if (!runs.has(x.id)) runs.set(x.id, x);
     merged.study.examRuns = [...runs.values()];
+    merged.study.avatar = old.study.avatar || incoming.study.avatar || null;
     merged.study.flags = { ...(incoming.study.flags || {}), ...(old.study.flags || {}) };
     // Traguardi: vale la data di sblocco più vecchia
     merged.study.achievements = { ...(incoming.study.achievements || {}) };

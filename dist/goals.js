@@ -438,7 +438,7 @@
   function refresh() {
     renderDaily();
     renderRecap();
-    if (location.hash === "#goals") renderGoals();
+    if (["#progress", "#goals"].includes(location.hash)) renderGoals();
   }
   window.addEventListener("studio:saved", () => {
     checkAchievements();
