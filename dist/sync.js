@@ -247,7 +247,7 @@
   section.className = "page";
   section.hidden = location.hash !== "#account";
   section.innerHTML =
-    '<div class="heading"><h1>Account</h1><p>Con un account ritrovi sessioni, piani, domande ed errori su ogni dispositivo. Senza account i dati restano solo in questo browser.</p></div><div id="account-body"></div>';
+    '<div class="heading"><h1>Account e app</h1><p>Con un account ritrovi sessioni, piani, domande ed errori su ogni dispositivo. Qui installi anche l’app e attivi il promemoria dei ripassi.</p></div><div id="account-body"></div>';
   document.querySelector(".source-strip").before(section);
 
   render();

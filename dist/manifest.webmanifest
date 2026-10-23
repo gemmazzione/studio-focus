@@ -1,0 +1,22 @@
+{
+  "name": "Studio",
+  "short_name": "Studio",
+  "description": "Timer di studio, domande a memoria, ripassi, piani d'esame e obiettivi.",
+  "lang": "it",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f8fa",
+  "theme_color": "#2346c8",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Nuova sessione", "url": "./#focus", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Oggi", "url": "./#today", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Ripassi", "url": "./#reviews", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

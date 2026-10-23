@@ -25,6 +25,10 @@ http
           ".css": "text/css",
           ".js": "text/javascript",
           ".zip": "application/zip",
+          ".webmanifest": "application/manifest+json",
+          ".png": "image/png",
+          ".svg": "image/svg+xml",
+          ".json": "application/json",
         }[path.extname(file)] || "application/octet-stream",
       );
       res.end(bytes);

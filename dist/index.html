@@ -7,6 +7,12 @@
     <meta name="theme-color" content="#11151c" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="Timer di studio, domande a memoria, ripassi e piani d’esame. I dati restano nel browser." />
     <title>Studio</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Studio" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" />
@@ -16,6 +22,7 @@
     <link rel="stylesheet" href="agenda.css" />
     <link rel="stylesheet" href="sync.css" />
     <link rel="stylesheet" href="goals.css" />
+    <link rel="stylesheet" href="pwa.css" />
   </head>
   <body>
     <aside>
@@ -40,7 +47,7 @@
         ><a href="#goals" data-page="goals">Obiettivi</a
         ><a href="#settings" data-page="settings">Blocco social</a
         ><a href="#method" data-page="method">Metodo</a
-        ><a href="#account" data-page="account">Account</a>
+        ><a href="#account" data-page="account">Account e app</a>
       </nav>
       <p class="aside-bottom" id="sync-note">I dati restano in questo browser.</p>
     </aside>
@@ -410,5 +417,6 @@
     <script src="agenda.js"></script>
     <script src="goals.js"></script>
     <script src="sync.js"></script>
+    <script src="pwa.js"></script>
   </body>
 </html>

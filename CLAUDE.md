@@ -67,3 +67,9 @@ App per studiare, non landing promozionale. Tema “Quaderno”: carta bianca, i
 ## Obiettivi e traguardi
 
 `dist/goals.js` aggiunge la pagina Obiettivi: obiettivi settimanali (`data.study.goals.weekly`: minuti, sessioni, tentativi; 0 = non usato, settimana da lunedì), obiettivi personali (`goals.items`, data facoltativa) e traguardi. I traguardi sono in `ACHIEVEMENTS` e si calcolano dai dati reali; in `data.study.achievements` resta solo `{id: data di sblocco}`. Al primo avvio i traguardi già raggiunti si segnano senza avviso. I nuovi campi sono validati in `validateBackup` e uniti in `mergeData`, quindi passano per backup e sincronizzazione.
+
+## App installabile e promemoria
+
+`dist/manifest.webmanifest`, `dist/sw.js` e `dist/pwa.js` rendono l'app installabile (PWA). Il service worker usa "prima la rete" con `cache: "no-cache"`: online arrivano sempre i file nuovi, offline si usa l'ultima copia. `api/` e gli ZIP non passano dalla cache. Se aggiungi un file JS o CSS, mettilo anche in `SHELL` di `sw.js` (e aumenta `CACHE` se cambia l'elenco). Icone generate da `npm run icons` (`scripts/make-icons.cjs`).
+
+Promemoria dei ripassi (`pwa.js`): avviso nella pagina quando ci sono ripassi scaduti, numero sull'icona (`setAppBadge`) e notifica una volta al giorno dopo l'ora scelta. Le impostazioni sono per dispositivo (`studio.reminder.v1`, non sincronizzate). La pagina copia le date dei ripassi nella cache `studio-reminder` (`reminder-state.json`) perché il service worker non legge localStorage. La notifica parte quando l'app è aperta (controllo ogni minuto) o, con l'app installata su Chrome/Edge, dal Periodic Background Sync, che il browser esegue quando vuole: non promettere orari precisi né notifiche a browser chiuso. Su iPhone le notifiche funzionano solo dall'app aggiunta alla Home. Non ci sono notifiche push dal server. Test: `reminder-check.cjs`.
