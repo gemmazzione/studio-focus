@@ -330,7 +330,6 @@ function route() {
       "progress",
       "settings",
       "method",
-      "planning",
       "week",
       "account",
       "goals",

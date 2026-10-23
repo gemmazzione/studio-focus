@@ -84,7 +84,7 @@ Il promemoria (`pwa.js`, `sw.js`) avvisa anche quando, da giovedì, i minuti del
 
 ## Interfaccia semplificata (v7)
 
-Su richiesta dell'utente sono state tolte dal menu e dal routing le pagine Oggi, Domande, Ripasso errori, Ripassi e Tentativi, con la creazione da testo e la modalità esame. Le sezioni HTML restano nel DOM nascoste perché features.js e agenda.js le usano ancora; i dati (`reviews`, `cards`, `errors`, `logs`, `examRuns`) restano nel salvataggio, nei backup e nella sincronizzazione: NON cancellarli. Dopo una sessione non si crea più un ripasso. La Settimana mostra solo piani e impegni (`build` in agenda.js filtra card/error/review). Il promemoria segue solo l'obiettivo settimanale. Menu attuale: Sessione, Settimana, Piano esami, Progressi, Obiettivi, Blocco siti, Metodo, Account e app.
+Su richiesta dell'utente sono state tolte dal menu e dal routing le pagine Oggi, Domande, Ripasso errori, Ripassi e Tentativi, con la creazione da testo e la modalità esame. Le sezioni HTML restano nel DOM nascoste perché features.js e agenda.js le usano ancora; i dati (`reviews`, `cards`, `errors`, `logs`, `examRuns`) restano nel salvataggio, nei backup e nella sincronizzazione: NON cancellarli. Dopo una sessione non si crea più un ripasso. La Settimana mostra solo piani e impegni (`build` in agenda.js filtra card/error/review). Il promemoria segue solo l'obiettivo settimanale. Poi è stato tolto anche Piano esami (con le note per argomento e i traguardi dei piani); `exams` resta nei dati. La Settimana mostra solo gli impegni personali (`source === "custom"`). Menu attuale: Sessione, Settimana, Progressi, Obiettivi, Blocco siti, Metodo, Account e app.
 
 ## Estensione 2.1: siti per adulti e pubblicità di YouTube
 

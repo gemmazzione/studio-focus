@@ -1,4 +1,4 @@
-// Statistiche per materia, calendario dell'anno e note per gli argomenti dei piani d'esame.
+// Statistiche per materia e calendario dell'anno (pagina Progressi).
 (() => {
   "use strict";
   data.study ||= {};
@@ -105,48 +105,14 @@
     wrap.scrollLeft = wrap.scrollWidth;
   }
 
-  // ==== Piano esami: note per argomento =====================================
-  const openNotes = new Set();
-  function renderNotes() {
-    for (const input of document.querySelectorAll("#exam-list [data-topic]")) {
-      const exam = (S.exams || []).find((e) => e.id === input.dataset.exam),
-        topic = exam?.topics.find((t) => t.id === input.dataset.topic);
-      if (!topic) continue;
-      const label = input.closest("label");
-      if (label.parentElement.querySelector(`[data-note-for="${topic.id}"]`)) continue;
-      let anchor = label;
-      while (anchor.nextElementSibling?.matches(".topic-quiz")) anchor = anchor.nextElementSibling;
-      anchor.insertAdjacentHTML(
-        "afterend",
-        `<details class="topic-note" data-note-for="${esc(topic.id)}" ${openNotes.has(topic.id) ? "open" : ""}><summary>${topic.note ? "Note" : "Aggiungi una nota"}</summary><label class="sr-only" for="note-${esc(topic.id)}">Note su ${esc(topic.text)}</label><textarea id="note-${esc(topic.id)}" rows="3" maxlength="5000" data-note-exam="${esc(exam.id)}" data-note-topic="${esc(topic.id)}" placeholder="Formule, pagine del libro, dubbi da chiedere…">${esc(topic.note || "")}</textarea><p class="hint">Si salva quando esci dal campo.</p></details>`,
-      );
-    }
-  }
-  byId("exam-list").addEventListener("toggle", (e) => {
-    const id = e.target.dataset?.noteFor;
-    if (id) e.target.open ? openNotes.add(id) : openNotes.delete(id);
-  }, true);
-  // Salva all'uscita dal campo: salvare a ogni tasto ricostruirebbe la lista mentre scrivi
-  byId("exam-list").addEventListener("change", (e) => {
-    const t = e.target;
-    if (!t.dataset.noteTopic) return;
-    const topic = S.exams.find((x) => x.id === t.dataset.noteExam)?.topics.find((x) => x.id === t.dataset.noteTopic);
-    if (!topic) return;
-    topic.note = t.value.slice(0, 5000);
-    save();
-  });
-
   function refresh() {
     const page = location.hash.slice(1);
     if (page === "progress") {
       renderStats();
       renderHeatmap();
     }
-    if (page === "planning") renderNotes();
   }
-  window.addEventListener("studio:features-rendered", renderNotes);
   window.addEventListener("studio:saved", refresh);
   window.addEventListener("hashchange", refresh);
-  renderNotes();
   refresh();
 })();
