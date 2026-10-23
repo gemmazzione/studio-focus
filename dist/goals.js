@@ -177,6 +177,7 @@
     ["mattino", "Prima delle otto", "Finisci una sessione prima delle 8 del mattino.", "early", 1],
     ["notte", "Dopo le undici", "Finisci una sessione dopo le 23.", "late", 1],
   ].map(([id, name, text, key, target, unit = ""]) => ({ id, name, text, key, target, unit }));
+  window.StudioAchievements = ACHIEVEMENTS; // per i profili della lobby
 
   // Registra i traguardi raggiunti. Al primo avvio li segna in silenzio.
   function checkAchievements() {

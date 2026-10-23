@@ -322,7 +322,8 @@ function endBreak() {
   notify("Pausa finita.");
 }
 function route() {
-  const requested = location.hash.slice(1) || "focus",
+  // "#lobby/nome" apre la lobby sul profilo di un utente
+  const requested = location.hash.slice(1).split("/")[0] || "focus",
     page = [
       "focus",
       "progress",
@@ -331,6 +332,7 @@ function route() {
       "week",
       "account",
       "goals",
+      "lobby",
     ].includes(requested)
       ? requested
       : "focus";

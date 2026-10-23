@@ -108,7 +108,7 @@
           .sort((a, b) => b.minutes - a.minutes)
           .map(
             (m) =>
-              `<li class="${m.isMe ? "is-me" : ""}"><span>${m.studyingFor != null ? '<i class="live-dot" aria-hidden="true"></i>' : ""}${esc(m.username)}${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato il gruppo</small>' : ""}${m.studyingFor != null ? ` <small class="live-text">sta studiando da ${m.studyingFor} min</small>` : ""}</span><div class="goal-bar"><i style="width:${Math.round((m.minutes / top) * 100)}%"></i></div><b>${m.minutes} min · ${m.sessions} ${m.sessions === 1 ? "sessione" : "sessioni"}</b></li>`,
+              `<li class="${m.isMe ? "is-me" : ""}"><span>${m.studyingFor != null ? '<i class="live-dot" aria-hidden="true"></i>' : ""}<a href="#lobby/${encodeURIComponent(m.username)}">${esc(m.username)}</a>${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato il gruppo</small>' : ""}${m.studyingFor != null ? ` <small class="live-text">sta studiando da ${m.studyingFor} min</small>` : ""}</span><div class="goal-bar"><i style="width:${Math.round((m.minutes / top) * 100)}%"></i></div><b>${m.minutes} min · ${m.sessions} ${m.sessions === 1 ? "sessione" : "sessioni"}</b></li>`,
           )
           .join("")}</ul>
         <div class="group-actions">${
@@ -188,7 +188,7 @@
     box.hidden = false;
     const list = others();
     byId("live-list").innerHTML = list.length
-      ? list.map(([name, min]) => `<li><i class="live-dot" aria-hidden="true"></i><b>${esc(name)}</b> <span>da ${min} min</span></li>`).join("")
+      ? list.map(([name, min]) => `<li><i class="live-dot" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(name)}"><b>${esc(name)}</b></a> <span>da ${min} min</span></li>`).join("")
       : '<li class="hint">Nessuno del tuo gruppo sta studiando in questo momento.</li>';
   }
   // Traguardi legati al gruppo (letti da goals.js tramite data.study.flags)
@@ -201,22 +201,8 @@
     if (changed) save();
   }
 
-  // Invio "sto studiando": solo con il timer di studio in corso, mai la materia o l'obiettivo
+  // Il segnale "sto studiando" lo manda lobby.js (api/social.php)
   const focusing = () => !!data.active && data.active.phase === "focus" && data.active.running;
-  let lastSent = null;
-  async function heartbeat(force) {
-    if (!token() || status === "unavailable") return;
-    const a = data.active,
-      remaining = focusing() ? Math.max(0, Math.round((a.end - Date.now()) / 1000)) : 0,
-      elapsed = focusing() ? Math.max(0, Math.round((a.total - (a.end - Date.now())) / 1000)) : 0,
-      key = remaining ? "on" : "off";
-    if (!force && key === lastSent && key === "off") return;
-    try {
-      const r = await api("POST", { action: "presence", remaining: Math.min(remaining, 21600), elapsed: Math.min(elapsed, 21600) });
-      if (r.status === 200) lastSent = key;
-    } catch {}
-  }
-
   function onPage() {
     clearInterval(timer);
     const page = location.hash.slice(1) || "focus";
@@ -225,9 +211,5 @@
     timer = setInterval(load, 60000);
   }
   window.addEventListener("hashchange", onPage);
-  // Avvio, pausa e fine della sessione passano tutti da save()
-  window.addEventListener("studio:saved", () => heartbeat(false));
-  setInterval(() => heartbeat(focusing()), 60000);
-  heartbeat(false);
   onPage();
 })();

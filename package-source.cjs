@@ -33,6 +33,7 @@ const files = [
   "dist/pwa.js",
   "dist/extras.js",
   "dist/group.js",
+  "dist/lobby.js",
   "dist/extras.css",
   "dist/.htaccess",
   "dist/pwa.css",
