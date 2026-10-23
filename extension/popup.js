@@ -10,7 +10,8 @@ function render() {
     : state.until > Date.now()
       ? "Siti bloccati. " + (state.scheduled ? "Fascia programmata attiva." : "Sessione di studio attiva.")
       : "Nessun blocco attivo. Gli orari salvati restano programmati.";
-  $("stop").disabled = !state.until;
+  $("stop").disabled = !state.until || state.strict;
+  $("strict-note").hidden = !state.strict;
 
   const left = state.adultPendingOff ? Math.max(0, Math.ceil((state.adultPendingOff - Date.now()) / 1000)) : 0;
   $("adult-status").innerHTML = !state.adult
@@ -39,7 +40,11 @@ async function act(type, extra) {
   state = await send(type, extra);
   render();
 }
-$("stop").onclick = () => act("SUSPEND");
+$("stop").onclick = async () => {
+  const r = await send("SUSPEND");
+  if (r && r.ok === false) $("status").textContent = r.error;
+  else load();
+};
 $("adult-actions").onclick = (e) => e.target.dataset.act && act(e.target.dataset.act);
 $("ads-toggle").onclick = () => act("ADS_SET", { on: !state.ads });
 load();

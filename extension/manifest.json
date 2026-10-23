@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Studio — blocco distrazioni",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Blocca i social durante lo studio, i siti per adulti e la pubblicità di YouTube.",
   "permissions": [
     "declarativeNetRequest",

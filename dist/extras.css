@@ -323,3 +323,50 @@
     grid-row: 2;
   }
 }
+
+/* Chi sta studiando adesso */
+.live-group {
+  padding: 0 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+.live-group[hidden] {
+  display: none;
+}
+.live-group h2 {
+  font: 700 16px var(--font);
+  margin: 0 0 10px;
+}
+.live-group li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 14px;
+}
+.live-group li span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2f9e5a;
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: live 2s ease-in-out infinite;
+}
+.live-text {
+  color: #2f9e5a !important;
+}
+@keyframes live {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+}

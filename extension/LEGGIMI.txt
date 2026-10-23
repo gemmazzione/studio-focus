@@ -1,4 +1,4 @@
-STUDIO 2.1 — ESTENSIONE PER CHROME ED EDGE
+STUDIO 2.2 — ESTENSIONE PER CHROME ED EDGE
 
 INSTALLAZIONE
 1. Estrai lo ZIP in una cartella permanente.
@@ -10,7 +10,7 @@ AGGIORNAMENTO
 Sostituisci i file nella stessa cartella installata, mantenendo il percorso. Premi Ricarica nella pagina delle estensioni. Chrome chiede il permesso nuovo "scripting" (serve per la pubblicità di YouTube): accettalo. Ricollega l'app e premi Invia orari.
 
 SESSIONI E FASCE SETTIMANALI
-La sessione blocca i domini scelti fino alla scadenza prevista. Le fasce salvate funzionano anche chiudendo la pagina, con browser aperto e PC attivo. Il fuso orario è quello del PC. Se la fine è prima dell'inizio, la fascia termina il giorno successivo. Il pulsante dell'estensione sospende il blocco dei social per 15 minuti.
+La sessione blocca i domini scelti fino alla scadenza prevista. Le fasce salvate funzionano anche chiudendo la pagina, con browser aperto e PC attivo. Il fuso orario è quello del PC. Se la fine è prima dell'inizio, la fascia termina il giorno successivo. Il pulsante dell'estensione sospende il blocco dei social per 15 minuti, ma solo fuori dalle sessioni di studio: mentre il timer di studio è attivo la sospensione non è disponibile (blocco severo).
 
 SITI PER ADULTI (SEMPRE ATTIVO)
 Blocca un elenco di oltre cento siti per adulti, i domini .xxx .porn .sex .adult e gli indirizzi con "porn" o "hentai" nel nome del sito. Attiva SafeSearch su Google, Bing e DuckDuckGo e la modalità con restrizioni di YouTube. Si spegne dal pulsante dell'estensione, ma solo dopo un minuto di attesa, che si può annullare. Il sito Studio non può spegnerlo.

@@ -89,3 +89,10 @@ Su richiesta dell'utente sono state tolte dal menu e dal routing le pagine Oggi,
 ## Estensione 2.1: siti per adulti e pubblicità di YouTube
 
 Due ruleset statici sempre accesi: `extension/rules/adult.json` (elenco di siti, domini .xxx/.porn/.sex/.adult, "porn"/"hentai" nel nome del sito, SafeSearch su Google/Bing/DuckDuckGo con queryTransform, header `YouTube-Restrict: Moderate`) e `extension/rules/ads.json` (spazi pubblicitari Google richiesti da YouTube). Si rigenerano con `npm run rules` da `scripts/make-adult-rules.cjs`. Gli annunci nei video li tolgono `youtube-main.js` (world MAIN: toglie adPlacements/playerAds/adSlots dalle risposte) e `youtube-skip.js` (nasconde riquadri, porta alla fine e salta l'annuncio), registrati con chrome.scripting. Solo il popup può spegnerli (ADULT_OFF / ADULT_CANCEL / ADULT_ON / ADS_SET); il sito viene rifiutato. ADULT_OFF diventa effettivo dopo 60 secondi. Test: `protection-check.cjs`. Non promettere un blocco completo: nessun elenco lo è e YouTube cambia spesso.
+
+## v8: riepilogo, gruppo dal vivo, blocco severo, nuovi traguardi
+
+- Riepilogo della settimana (`goals.js`, `recap()`): scheda nella pagina Sessione dal lunedì finché non la chiudi (`studio.recap.v1` = inizio della settimana già vista, per dispositivo) e blocco fisso "La settimana scorsa" in Obiettivi. Confronto con la settimana precedente, giorno migliore, materia più studiata, obiettivo.
+- Gruppo dal vivo (`group.js`, `api/group.php` action `presence`, tabella `stf_presence`): l'app invia solo secondi rimanenti e trascorsi quando il timer di studio è in corso (ogni minuto e a ogni save), "off" in pausa o a fine sessione. Mai materia od obiettivo. Ora del server per evitare orologi sbagliati. Nella pagina Sessione il riquadro "Studiano adesso" mostra gli altri membri in sessione.
+- Traguardi: 31. Quelli non ricavabili dai dati usano `data.study.flags` (`group`, `together`), validato e unito come gli altri campi.
+- Estensione 2.2, blocco severo: SUSPEND rifiutato se c'è una sessione manuale attiva (`manualUntil > now`); `strict` nello stato. Le fasce programmate restano sospendibili.

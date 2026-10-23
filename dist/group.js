@@ -1,4 +1,5 @@
-// Gruppi di studio (pagina Obiettivi): obiettivo settimanale di minuti condiviso con amici.
+// Gruppi di studio (pagina Obiettivi): obiettivo settimanale di minuti condiviso con amici,
+// e chi sta studiando adesso (anche nella pagina Sessione).
 // Serve l'account (api/group.php). Gli altri membri vedono solo nome utente,
 // minuti e sessioni della settimana, presi dai dati sincronizzati.
 (() => {
@@ -59,6 +60,7 @@
       if (r.status === 200) {
         groups = r.json.groups;
         status = "";
+        rememberFlags();
       } else if (r.status === 401) {
         groups = null;
         status = "L’accesso è scaduto: accedi di nuovo dalla pagina Account e app.";
@@ -70,6 +72,7 @@
       status = "unavailable";
     }
     render();
+    renderLive();
   }
 
   function render() {
@@ -105,7 +108,7 @@
           .sort((a, b) => b.minutes - a.minutes)
           .map(
             (m) =>
-              `<li class="${m.isMe ? "is-me" : ""}"><span>${esc(m.username)}${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato il gruppo</small>' : ""}</span><div class="goal-bar"><i style="width:${Math.round((m.minutes / top) * 100)}%"></i></div><b>${m.minutes} min · ${m.sessions} ${m.sessions === 1 ? "sessione" : "sessioni"}</b></li>`,
+              `<li class="${m.isMe ? "is-me" : ""}"><span>${m.studyingFor != null ? '<i class="live-dot" aria-hidden="true"></i>' : ""}${esc(m.username)}${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato il gruppo</small>' : ""}${m.studyingFor != null ? ` <small class="live-text">sta studiando da ${m.studyingFor} min</small>` : ""}</span><div class="goal-bar"><i style="width:${Math.round((m.minutes / top) * 100)}%"></i></div><b>${m.minutes} min · ${m.sessions} ${m.sessions === 1 ? "sessione" : "sessioni"}</b></li>`,
           )
           .join("")}</ul>
         <div class="group-actions">${
@@ -168,12 +171,63 @@
       act({ action: "leave", groupId: Number(leave) }, () => "Sei uscito dal gruppo.");
   });
 
+  // --- Chi sta studiando adesso -------------------------------------------
+  document
+    .querySelector(".right-column .daily")
+    .insertAdjacentHTML("afterend", '<section id="live-group" class="live-group" hidden><h2>Studiano adesso</h2><ul id="live-list"></ul></section>');
+  function others() {
+    const seen = new Map();
+    for (const g of groups || [])
+      for (const m of g.members)
+        if (!m.isMe && m.studyingFor != null && !seen.has(m.username)) seen.set(m.username, m.studyingFor);
+    return [...seen.entries()].sort((a, b) => b[1] - a[1]);
+  }
+  function renderLive() {
+    const box = byId("live-group");
+    if (!groups?.length) return (box.hidden = true);
+    box.hidden = false;
+    const list = others();
+    byId("live-list").innerHTML = list.length
+      ? list.map(([name, min]) => `<li><i class="live-dot" aria-hidden="true"></i><b>${esc(name)}</b> <span>da ${min} min</span></li>`).join("")
+      : '<li class="hint">Nessuno del tuo gruppo sta studiando in questo momento.</li>';
+  }
+  // Traguardi legati al gruppo (letti da goals.js tramite data.study.flags)
+  function rememberFlags() {
+    const S = data.study,
+      f = (S.flags ||= {});
+    let changed = false;
+    if (groups?.length && !f.group) changed = f.group = Date.now();
+    if (focusing() && others().length && !f.together) changed = f.together = Date.now();
+    if (changed) save();
+  }
+
+  // Invio "sto studiando": solo con il timer di studio in corso, mai la materia o l'obiettivo
+  const focusing = () => !!data.active && data.active.phase === "focus" && data.active.running;
+  let lastSent = null;
+  async function heartbeat(force) {
+    if (!token() || status === "unavailable") return;
+    const a = data.active,
+      remaining = focusing() ? Math.max(0, Math.round((a.end - Date.now()) / 1000)) : 0,
+      elapsed = focusing() ? Math.max(0, Math.round((a.total - (a.end - Date.now())) / 1000)) : 0,
+      key = remaining ? "on" : "off";
+    if (!force && key === lastSent && key === "off") return;
+    try {
+      const r = await api("POST", { action: "presence", remaining: Math.min(remaining, 21600), elapsed: Math.min(elapsed, 21600) });
+      if (r.status === 200) lastSent = key;
+    } catch {}
+  }
+
   function onPage() {
     clearInterval(timer);
-    if (location.hash !== "#goals") return;
+    const page = location.hash.slice(1) || "focus";
+    if (page !== "goals" && page !== "focus") return;
     load();
     timer = setInterval(load, 60000);
   }
   window.addEventListener("hashchange", onPage);
+  // Avvio, pausa e fine della sessione passano tutti da save()
+  window.addEventListener("studio:saved", () => heartbeat(false));
+  setInterval(() => heartbeat(focusing()), 60000);
+  heartbeat(false);
   onPage();
 })();

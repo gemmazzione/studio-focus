@@ -84,6 +84,7 @@ async function reconcile() {
     scheduled: state.scheduled,
     suspended: state.suspended,
     version: 2,
+    strict: (values.manualUntil || 0) > Date.now(),
     ...protection,
   };
 }
@@ -108,6 +109,9 @@ async function handle(message) {
     return reconcile();
   }
   if (message.type === "SUSPEND") {
+    // Blocco severo: durante una sessione di studio avviata dall’app non si sospende
+    const { manualUntil = 0 } = await chrome.storage.local.get(null);
+    if (manualUntil > Date.now()) throw Error("Durante una sessione di studio la sospensione non è disponibile.");
     await chrome.storage.local.set({
       manualUntil: 0,
       manualDomains: [],

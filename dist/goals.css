@@ -214,3 +214,45 @@
   background: var(--white);
   font-size: 14px;
 }
+
+/* Riepilogo della settimana scorsa */
+.recap-card {
+  margin: -8px 0 28px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  border-radius: var(--radius);
+  background: var(--white);
+  max-width: 760px;
+}
+.recap-card[hidden],
+.goals-recap[hidden] {
+  display: none;
+}
+.recap-card h2 {
+  margin: 0;
+}
+.recap-card .text-button {
+  padding: 0;
+}
+.recap-card ul,
+.goals-recap ul {
+  margin: 6px 0 0;
+}
+.recap-card li,
+.goals-recap li {
+  padding: 3px 0;
+  font-size: 14px;
+}
+.recap-card p,
+.goals-recap p {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+.goals-recap {
+  margin-bottom: 40px;
+  max-width: 900px;
+}
+.goals-recap .meta {
+  margin-top: -8px;
+}

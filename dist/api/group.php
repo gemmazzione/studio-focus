@@ -5,6 +5,7 @@
 // GET  ?week=<inizio settimana in ms> -> {groups: [...]}
 // POST {action: "create", name, goalMinutes} | {action: "join", code}
 //      {action: "leave", groupId} | {action: "goal", groupId, goalMinutes}
+//      {action: "presence", remaining, elapsed} (secondi; remaining 0 = non sto studiando)
 require __DIR__ . '/_lib.php';
 
 const MAX_MEMBERS = 20;
@@ -30,6 +31,13 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS $M (
     user_id INTEGER NOT NULL,
     joined_at VARCHAR(32) NOT NULL,
     PRIMARY KEY (group_id, user_id)
+)$suffix");
+// Chi sta studiando adesso: fine prevista della sessione (ms, ora del server)
+$P = table('presence');
+$pdo->exec("CREATE TABLE IF NOT EXISTS $P (
+    user_id INTEGER PRIMARY KEY,
+    until_at BIGINT NOT NULL,
+    started_at BIGINT NOT NULL
 )$suffix");
 
 function clean_name($value): string
@@ -77,6 +85,17 @@ function week_stats(PDO $pdo, int $userId, float $from): array
     return $cache[$userId] = ['minutes' => $minutes, 'sessions' => $sessions];
 }
 
+/** Minuti da cui l'utente sta studiando, oppure null se non è in sessione. */
+function studying_for(PDO $pdo, string $P, int $userId): ?int
+{
+    $s = $pdo->prepare("SELECT until_at, started_at FROM $P WHERE user_id = ?");
+    $s->execute([$userId]);
+    $row = $s->fetch();
+    $now = time() * 1000;
+    if (!$row || (int) $row['until_at'] <= $now) return null;
+    return max(0, (int) floor(($now - (int) $row['started_at']) / 60000));
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
@@ -92,7 +111,7 @@ if ($method === 'GET') {
         $members = [];
         foreach ($ms->fetchAll() as $u) {
             $members[] = ['username' => $u['username'], 'isMe' => (int) $u['id'] === $userId, 'isOwner' => (int) $u['id'] === (int) $g['owner_id']]
-                + week_stats($pdo, (int) $u['id'], $week);
+                + week_stats($pdo, (int) $u['id'], $week) + ['studyingFor' => studying_for($pdo, $P, (int) $u['id'])];
         }
         $groups[] = [
             'id' => (int) $g['id'],
@@ -151,6 +170,20 @@ if ($action === 'join') {
     if ((int) $n->fetch()['n'] >= MAX_MEMBERS) respond(400, ['error' => 'group_full']);
     $pdo->prepare("INSERT INTO $M (group_id, user_id, joined_at) VALUES (?, ?, ?)")->execute([$groupId, $userId, now_iso()]);
     respond(200, ['id' => $groupId]);
+}
+
+if ($action === 'presence') {
+    $remaining = $body['remaining'] ?? null;
+    $elapsed = $body['elapsed'] ?? 0;
+    if (!is_int($remaining) || $remaining < 0 || $remaining > 6 * 3600 || !is_int($elapsed) || $elapsed < 0 || $elapsed > 6 * 3600)
+        respond(400, ['error' => 'invalid_presence']);
+    $pdo->prepare("DELETE FROM $P WHERE user_id = ?")->execute([$userId]);
+    if ($remaining > 0) {
+        $now = time() * 1000;
+        $pdo->prepare("INSERT INTO $P (user_id, until_at, started_at) VALUES (?, ?, ?)")
+            ->execute([$userId, $now + $remaining * 1000, $now - $elapsed * 1000]);
+    }
+    respond(200, ['ok' => true]);
 }
 
 $groupId = isset($body['groupId']) && is_int($body['groupId']) ? $body['groupId'] : 0;

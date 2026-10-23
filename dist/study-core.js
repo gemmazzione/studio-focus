@@ -215,6 +215,13 @@
         }),
         500,
       ),
+      // Eventi per i traguardi che non si ricavano dai dati (es. entrare in un gruppo)
+      flags: Object.fromEntries(
+        Object.entries(s.flags || {}).map(([key, value]) => {
+          if (!/^[a-z0-9-]{1,40}$/.test(key)) fail();
+          return [key, num(value)];
+        }),
+      ),
       achievements: Object.fromEntries(
         Object.entries(s.achievements || {}).map(([key, value]) => {
           if (!/^[a-z0-9-]{1,40}$/.test(key)) fail();
@@ -403,6 +410,7 @@
     const runs = new Map((old.study.examRuns || []).map((x) => [x.id, x]));
     for (const x of incoming.study.examRuns || []) if (!runs.has(x.id)) runs.set(x.id, x);
     merged.study.examRuns = [...runs.values()];
+    merged.study.flags = { ...(incoming.study.flags || {}), ...(old.study.flags || {}) };
     // Traguardi: vale la data di sblocco più vecchia
     merged.study.achievements = { ...(incoming.study.achievements || {}) };
     for (const [key, at] of Object.entries(old.study.achievements || {}))

@@ -224,9 +224,7 @@ function renderLists() {
   $("total-sessions").textContent = data.sessions.filter(
     (s) => !s.reviewId,
   ).length;
-  $("total-reviews").textContent =
-    data.sessions.filter((s) => s.reviewId).length +
-    (data.study?.logs?.length || 0);
+  $("total-reviews").textContent = new Set(data.sessions.map((s) => dateKey(s.at))).size;
   $("thought-list").innerHTML = data.thoughts
     .map(
       (t) =>

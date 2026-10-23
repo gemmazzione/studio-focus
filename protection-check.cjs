@@ -112,7 +112,16 @@ const site = (message) =>
   s = await popup({ type: "ADS_SET", on: true });
   assert(s.ads && enabled.has("ads") && scripts.length === 2);
 
-  console.log("PASS: adult domains and patterns, SafeSearch, YouTube ads, popup-only toggles, one-minute delay.");
+  // Blocco severo: con una sessione di studio attiva la sospensione viene rifiutata
+  assert((await site({ type: "START", domains: ["instagram.com"], until: now + 600000 })).strict);
+  s = await popup({ type: "SUSPEND" });
+  assert(s.ok === false && /sessione di studio/.test(s.error));
+  assert(!(values.suspendUntil > now));
+  await site({ type: "STOP" });
+  s = await popup({ type: "SUSPEND" });
+  assert(s.ok && !s.strict);
+
+  console.log("PASS: strict mode during sessions; adult domains and patterns, SafeSearch, YouTube ads, popup-only toggles, one-minute delay.");
 })().catch((e) => {
   console.error(e);
   process.exit(1);
