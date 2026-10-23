@@ -52,7 +52,7 @@ Provare avvio, pausa/ripresa, ricarica, passaggio alla verifica, salvataggio, pa
 
 ## Pubblicazione
 
-Il sito è su GitHub Pages: https://gemmazzione.github.io/studio-focus/. Ogni push su `main` esegue `npm run check` e pubblica la cartella `dist` (`.github/workflows/pages.yml`). Se i test falliscono, il sito non viene aggiornato. L’estensione accetta messaggi da `https://gemmazzione.github.io`, dal vecchio dominio chatgpt.site e da localhost: se cambia dominio, aggiornare ALLOWED in `extension/background.js` e externally_connectable in `extension/manifest.json`, poi `npm run package:source`.
+Il sito principale è su AlterVista: https://samueleruggeri.altervista.org/studiofocus/ (FTP di `dist`, `.github/workflows/deploy.yml`, secrets FTP_SERVER/FTP_USERNAME/FTP_PASSWORD e variabile FTP_SERVER_DIR). Una copia è su GitHub Pages: https://gemmazzione.github.io/studio-focus/ (`.github/workflows/pages.yml`). Ogni push su `main` esegue `npm run check` e aggiorna entrambi; se i test falliscono, nessuno dei due viene aggiornato. L’estensione accetta messaggi da AlterVista, da `https://gemmazzione.github.io`, dal vecchio dominio chatgpt.site e da localhost: se cambia dominio, aggiornare ALLOWED in `extension/background.js` e externally_connectable in `extension/manifest.json`, poi `npm run package:source`.
 
 ## Design
 

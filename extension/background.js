@@ -1,5 +1,6 @@
 importScripts("scheduler.js");
 const ALLOWED = [
+  "https://samueleruggeri.altervista.org",
   "https://gemmazzione.github.io",
   "https://studio-focus-sam-221026.samurugge02.chatgpt.site",
 ];

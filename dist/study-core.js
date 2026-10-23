@@ -24,7 +24,8 @@
   const domain = (v) =>
     /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,63}$/.test(str(v, 253)) &&
     !v.endsWith("chatgpt.site") &&
-    !v.endsWith("github.io")
+    !v.endsWith("github.io") &&
+    !v.endsWith("samueleruggeri.altervista.org")
       ? v
       : fail();
   function validateSchedule(s) {

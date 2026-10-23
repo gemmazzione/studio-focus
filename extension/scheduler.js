@@ -8,7 +8,8 @@
           typeof s === "string" &&
           /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,63}$/.test(s) &&
           !s.endsWith("chatgpt.site") &&
-          !s.endsWith("github.io"),
+          !s.endsWith("github.io") &&
+          !s.endsWith("samueleruggeri.altervista.org"),
       )
     );
   }

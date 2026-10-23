@@ -1,0 +1,56 @@
+# Pubblicazione automatica via FTP su AlterVista.
+# A ogni push su main: test, poi caricamento dei soli file cambiati di dist/.
+#
+# Configurazione (una volta sola) in GitHub → Settings → Secrets and variables → Actions:
+#   Secrets:   FTP_SERVER     es. ftp.nomesito.altervista.org
+#              FTP_USERNAME   utente FTP
+#              FTP_PASSWORD   password FTP
+#   Variables: FTP_SERVER_DIR cartella di destinazione, con "/" finale (es. /studiofocus/)
+#              FTP_PROTOCOL   facoltativa: ftps (predefinita, cifrato) oppure ftp
+# Senza i dati FTP il workflow salta la pubblicazione.
+
+name: Pubblica sul sito
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scarica il codice
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Test
+        run: npm run check
+
+      - name: Pubblica via FTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+        if: env.FTP_SERVER != '' && env.FTP_SERVER_DIR != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./dist/
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+
+      - name: Pubblicazione non configurata
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+        if: env.FTP_SERVER == '' || env.FTP_SERVER_DIR == ''
+        run: echo "::notice::Pubblicazione saltata - imposta i secrets FTP_SERVER, FTP_USERNAME, FTP_PASSWORD e la variabile FTP_SERVER_DIR."
