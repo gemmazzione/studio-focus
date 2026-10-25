@@ -39,6 +39,7 @@ const files = [
   "dist/game.css",
   "dist/avatar.js",
   "dist/layout.js",
+  "dist/live.js",
   "dist/layout.css",
   "dist/.htaccess",
   "dist/pwa.css",

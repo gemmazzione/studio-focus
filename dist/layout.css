@@ -399,3 +399,169 @@
     grid-template-columns: auto auto minmax(0, 1fr);
   }
 }
+
+/* Icone del menu */
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+aside nav a {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Studiano adesso: azioni */
+.live-group li {
+  flex-wrap: wrap;
+}
+.live-who {
+  flex: 1;
+  min-width: 120px;
+}
+.live-actions {
+  display: flex;
+  gap: 6px;
+}
+.live-actions button {
+  min-height: 34px;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+.cheer-inline {
+  padding: 0 !important;
+  font-size: 13px;
+}
+#social-notify .checkbox {
+  margin: 8px 0;
+}
+
+/* Telefono: barra delle sezioni in basso, tasti grandi, campi che non fanno zoomare iPhone */
+@media (max-width: 800px) {
+  aside {
+    position: static;
+  }
+  aside nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin: 0;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    background: var(--white);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -6px 20px rgb(10 15 30 / 0.08);
+    overflow: visible;
+  }
+  aside nav a,
+  aside nav a.active {
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    min-height: 52px;
+    padding: 4px 2px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    background: none;
+    box-shadow: none;
+    border-radius: 12px;
+  }
+  aside nav a.active {
+    color: var(--green);
+    background: var(--raised);
+  }
+  .nav-icon {
+    width: 22px;
+    height: 22px;
+  }
+  main {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+  #toast {
+    bottom: calc(86px + env(safe-area-inset-bottom));
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .primary,
+  .secondary {
+    min-height: 48px;
+  }
+  #session .actions,
+  #recall .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  #timer {
+    text-align: center;
+  }
+  .xp-stake {
+    display: table;
+    margin: -8px auto 12px;
+  }
+  .live-actions {
+    width: 100%;
+  }
+  .live-actions button {
+    flex: 1;
+  }
+  .heading {
+    margin-bottom: 20px;
+  }
+  .heading p {
+    font-size: 14px;
+  }
+  .settings-jump {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .settings-jump a {
+    white-space: nowrap;
+  }
+}
+.immersive aside nav {
+  display: none;
+}
+
+aside nav a span {
+  color: inherit;
+  font-size: inherit;
+  padding: 0;
+}
+/* Studia su telefono: prima il timer, poi il riepilogo della settimana */
+@media (max-width: 800px) {
+  #page-focus:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+  }
+  #page-focus .workspace {
+    order: 1;
+  }
+  #page-focus .recap-card {
+    order: 2;
+    margin: 24px 0 0;
+  }
+  #page-focus .heading > p {
+    display: none;
+  }
+  #page-focus .heading {
+    margin-bottom: 16px;
+  }
+  .quote {
+    margin-top: 8px;
+  }
+}

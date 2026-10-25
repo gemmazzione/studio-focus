@@ -103,6 +103,16 @@ function studying_for(PDO $pdo, string $P, int $userId): ?int
     return max(0, (int) floor(($now - (int) $row['started_at']) / 60000));
 }
 
+/** Minuti che mancano alla fine della sessione in corso, oppure null. */
+function studying_left(PDO $pdo, string $P, int $userId): ?int
+{
+    $s = $pdo->prepare("SELECT until_at FROM $P WHERE user_id = ?");
+    $s->execute([$userId]);
+    $until = (int) ($s->fetch()['until_at'] ?? 0);
+    $now = time() * 1000;
+    return $until > $now ? (int) ceil(($until - $now) / 60000) : null;
+}
+
 /** Online se l'app ha dato segni di vita negli ultimi 3 minuti (api/social.php, action ping). */
 function is_online(PDO $pdo, string $O, int $userId): bool
 {
@@ -126,7 +136,7 @@ if ($method === 'GET') {
         $members = [];
         foreach ($ms->fetchAll() as $u) {
             $members[] = ['username' => $u['username'], 'isMe' => (int) $u['id'] === $userId, 'isOwner' => (int) $u['id'] === (int) $g['owner_id']]
-                + week_stats($pdo, (int) $u['id'], $week) + ['studyingFor' => studying_for($pdo, $P, (int) $u['id']), 'online' => is_online($pdo, $O, (int) $u['id'])];
+                + week_stats($pdo, (int) $u['id'], $week) + ['studyingFor' => studying_for($pdo, $P, (int) $u['id']), 'studyingLeft' => studying_left($pdo, $P, (int) $u['id']), 'online' => is_online($pdo, $O, (int) $u['id'])];
         }
         $groups[] = [
             'id' => (int) $g['id'],

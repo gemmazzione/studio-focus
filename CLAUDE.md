@@ -119,3 +119,10 @@ I "gruppi" sono diventati **lobby private** e stanno nella pagina Lobby (non pi�
 ## v13: niente lobby pubblica
 
 Tolta la lobby pubblica (richiesta dell'utente). La pagina Lobby ha due sezioni separate: "Le tue lobby" (`#group-body`, aggiornata ogni 30 s) e "Crea o entra in una lobby" (`#group-forms`, disegnata una volta sola perché l'aggiornamento non cancelli quello che si scrive). Profili visibili solo a chi è nella stessa lobby (`visible_ids` in social.php). Le azioni `lobby` e `visibility` di social.php restano solo per compatibilità e non sono più usate dall'app.
+
+## v14: avvisi dalle lobby, incoraggiamenti, studia insieme, telefono
+
+- `dist/live.js`: avvisi quando un compagno di lobby inizia a studiare (`studio:friend-studying`, da group.js che confronta chi studiava al controllo precedente) e quando qualcuno ti incoraggia (`studio:cheers`, dalla risposta di `ping` in lobby.js). Pagina davanti: messaggio in basso; in secondo piano: notifica di sistema via service worker se il permesso c'è. Arrivano solo con l'app aperta (anche in secondo piano): niente push dal server. Preferenze per dispositivo in `studio.social.v1` (Impostazioni › Account).
+- Incoraggia: `social.php` action `cheer` (solo compagni di lobby, max 1 al minuto verso la stessa persona, tabella `stf_cheers`, consegnati e cancellati al `ping` successivo del destinatario). Studia insieme: aggiunge a `#duration` un'opzione con i minuti che mancano all'amico (`studyingLeft` da group.php).
+- group.js controlla le lobby su tutte le pagine (30 s su Studia e Lobby, 60 s altrove); lobby.js manda `ping` ogni minuto anche in secondo piano.
+- Telefono: barra delle 5 sezioni fissa in basso con icone (layout.js), campi a 16px contro lo zoom di iPhone, pulsanti alti 48px, timer prima del riepilogo, `viewport-fit=cover` e margini `safe-area`. Wake Lock (schermo acceso durante la sessione, disattivabile) e vibrazione a fine timer.

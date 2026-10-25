@@ -54,6 +54,7 @@
         groups = r.json.groups;
         status = "";
         rememberFlags();
+        announce();
       } else if (r.status === 401) {
         groups = null;
         status = "L’accesso è scaduto: accedi di nuovo dalla pagina Account e app.";
@@ -103,7 +104,7 @@
           .sort((a, b) => STATE_ORDER(a) - STATE_ORDER(b) || b.minutes - a.minutes)
           .map(
             (m) =>
-              `<li class="${m.isMe ? "is-me" : ""}"><span><i class="live-dot ${m.studyingFor != null ? "" : m.online ? "is-online" : "is-offline"}" aria-hidden="true"></i>${StudioAvatar.svg(m.avatar, 30, m.username)}<a href="#lobby/${encodeURIComponent(m.username)}">${esc(m.username)}</a> <span class="lvl-chip">Lv ${StudyCore.levelFor(m.xp || 0).level}</span>${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato la lobby</small>' : ""}</span>${memberStatus(m)}<b>${m.minutes} min questa settimana</b></li>`,
+              `<li class="${m.isMe ? "is-me" : ""}"><span><i class="live-dot ${m.studyingFor != null ? "" : m.online ? "is-online" : "is-offline"}" aria-hidden="true"></i>${StudioAvatar.svg(m.avatar, 30, m.username)}<a href="#lobby/${encodeURIComponent(m.username)}">${esc(m.username)}</a> <span class="lvl-chip">Lv ${StudyCore.levelFor(m.xp || 0).level}</span>${m.isMe ? " (tu)" : ""}${m.isOwner ? ' <small>ha creato la lobby</small>' : ""}</span>${memberStatus(m)}${!m.isMe && m.studyingFor != null ? `<button type="button" class="text-button cheer-inline" data-cheer="${esc(m.username)}">Incoraggia</button>` : ""}<b>${m.minutes} min questa settimana</b></li>`,
           )
           .join("")}</ul>
         ${
@@ -183,12 +184,22 @@
   document
     .querySelector(".right-column .daily")
     .insertAdjacentHTML("afterend", '<section id="live-group" class="live-group" hidden><h2>Studiano adesso</h2><ul id="live-list"></ul></section>');
+  // Compagni di lobby in sessione adesso (senza doppioni tra lobby diverse)
   function others() {
     const seen = new Map();
     for (const g of groups || [])
       for (const m of g.members)
-        if (!m.isMe && m.studyingFor != null && !seen.has(m.username)) seen.set(m.username, m.studyingFor);
-    return [...seen.entries()].sort((a, b) => b[1] - a[1]);
+        if (!m.isMe && m.studyingFor != null && !seen.has(m.username)) seen.set(m.username, { name: m.username, since: m.studyingFor, left: m.studyingLeft, avatar: m.avatar });
+    return [...seen.values()].sort((a, b) => b.since - a.since);
+  }
+  // Chi ha appena iniziato a studiare dall'ultimo controllo: lo annuncia live.js (notifica)
+  let studyingBefore = null;
+  function announce() {
+    const now = new Set(others().map((o) => o.name));
+    if (studyingBefore)
+      for (const o of others())
+        if (!studyingBefore.has(o.name)) window.dispatchEvent(new CustomEvent("studio:friend-studying", { detail: o }));
+    studyingBefore = now;
   }
   function renderLive() {
     const box = byId("live-group");
@@ -196,7 +207,12 @@
     box.hidden = false;
     const list = others();
     byId("live-list").innerHTML = list.length
-      ? list.map(([name, min]) => `<li><i class="live-dot" aria-hidden="true"></i><a href="#lobby/${encodeURIComponent(name)}"><b>${esc(name)}</b></a> <span>da ${min} min</span></li>`).join("")
+      ? list
+          .map(
+            (o) =>
+              `<li><i class="live-dot" aria-hidden="true"></i>${StudioAvatar.svg(o.avatar, 28, o.name)}<span class="live-who"><a href="#lobby/${encodeURIComponent(o.name)}"><b>${esc(o.name)}</b></a> <span>da ${o.since} min${o.left ? ` · ancora ${o.left} min` : ""}</span></span><span class="live-actions"><button type="button" class="secondary" data-cheer="${esc(o.name)}">Incoraggia</button>${o.left >= 5 && !data.active ? `<button type="button" class="primary" data-join="${o.left}" data-join-name="${esc(o.name)}">Studia insieme</button>` : ""}</span></li>`,
+          )
+          .join("")
       : '<li class="hint">Nelle tue lobby nessuno sta studiando in questo momento.</li>';
   }
   // Traguardi legati alle lobby private (letti da goals.js tramite data.study.flags)
@@ -214,9 +230,9 @@
   function onPage() {
     clearInterval(timer);
     const [page, profile] = (location.hash.slice(1) || "focus").split("/");
-    if ((page !== "lobby" || profile) && page !== "focus") return;
     load();
-    timer = setInterval(load, 30000);
+    // Sulla Lobby e su Studia ogni 30 s; nelle altre pagine ogni minuto, per gli avvisi
+    timer = setInterval(load, (page === "lobby" && !profile) || page === "focus" ? 30000 : 60000);
   }
   window.addEventListener("hashchange", onPage);
   onPage();

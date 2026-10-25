@@ -152,14 +152,16 @@
       elapsed = focusing() ? Math.max(0, Math.round((a.total - (a.end - Date.now())) / 1000)) : 0;
     try {
       const r = await api("", { action: "ping", remaining: Math.min(remaining, 21600), elapsed: Math.min(elapsed, 21600) });
-      if (r.status === 200) lastState = state;
+      if (r.status === 200) {
+        lastState = state;
+        if (r.json.cheers?.length) window.dispatchEvent(new CustomEvent("studio:cheers", { detail: r.json.cheers }));
+      }
       else if (r.status === 404) status = "unavailable";
     } catch {}
   }
   window.addEventListener("studio:saved", () => ping(false));
-  setInterval(() => {
-    if (document.visibilityState === "visible" || focusing()) ping(true);
-  }, 60000);
+  // Anche con la scheda in secondo piano: così arrivano gli incoraggiamenti e risulti online
+  setInterval(() => ping(true), 60000);
   document.addEventListener("visibilitychange", () => document.visibilityState === "visible" && ping(true));
   ping(true);
 })();

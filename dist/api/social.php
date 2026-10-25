@@ -6,6 +6,7 @@
 // GET  ?action=profile&user=<nome>               -> {username, since, online, studyingFor, sessions, achievements}
 // POST {action: "ping", remaining, elapsed}      -> sono online (e sto studiando se remaining > 0)
 // POST {action: "visibility", public: true|false}
+// POST {action: "cheer", to: <nome>}            -> incoraggiamento a un compagno di lobby (arriva col suo ping)
 require __DIR__ . '/_lib.php';
 
 const ONLINE_MS = 180000;      // online se l'app ha dato segni di vita negli ultimi 3 minuti
@@ -22,6 +23,9 @@ $U = table('users');
 $pdo->exec("CREATE TABLE IF NOT EXISTS $O (user_id INTEGER PRIMARY KEY, last_seen BIGINT NOT NULL)$suffix");
 $pdo->exec("CREATE TABLE IF NOT EXISTS $P (user_id INTEGER PRIMARY KEY, until_at BIGINT NOT NULL, started_at BIGINT NOT NULL)$suffix");
 $pdo->exec("CREATE TABLE IF NOT EXISTS $V (user_id INTEGER PRIMARY KEY, is_public INTEGER NOT NULL)$suffix");
+$C = table('cheers');
+$autoId = is_mysql() ? 'INT AUTO_INCREMENT PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT';
+$pdo->exec("CREATE TABLE IF NOT EXISTS $C (id $autoId, from_id INTEGER NOT NULL, to_id INTEGER NOT NULL, created_at BIGINT NOT NULL)$suffix");
 $pdo->exec("CREATE TABLE IF NOT EXISTS $M (group_id INTEGER NOT NULL, user_id INTEGER NOT NULL, joined_at VARCHAR(32) NOT NULL, PRIMARY KEY (group_id, user_id))$suffix");
 
 $now = time() * 1000;
@@ -145,6 +149,28 @@ if ($action === 'ping') {
     if ($remaining > 0)
         $pdo->prepare("INSERT INTO $P (user_id, until_at, started_at) VALUES (?, ?, ?)")
             ->execute([$userId, $now + $remaining * 1000, $now - $elapsed * 1000]);
+    // Consegna gli incoraggiamenti ricevuti (e li cancella: arrivano una volta sola)
+    $s = $pdo->prepare("SELECT c.id, c.created_at, u.username FROM $C c JOIN $U u ON u.id = c.from_id WHERE c.to_id = ? ORDER BY c.id");
+    $s->execute([$userId]);
+    $cheers = [];
+    foreach ($s->fetchAll() as $r) $cheers[] = ['from' => $r['username'], 'at' => (int) $r['created_at']];
+    if ($cheers) $pdo->prepare("DELETE FROM $C WHERE to_id = ?")->execute([$userId]);
+    respond(200, ['ok' => true, 'cheers' => $cheers]);
+}
+
+if ($action === 'cheer') {
+    $s = $pdo->prepare("SELECT id FROM $U WHERE username = ?");
+    $s->execute([normalize_username($body['to'] ?? '')]);
+    $to = (int) ($s->fetch()['id'] ?? 0);
+    $mates = visible_ids($pdo, $V, $M, $userId);
+    if (!$to || $to === $userId || !isset($mates[$to])) respond(404, ['error' => 'not_in_lobby']);
+    // Al massimo un incoraggiamento al minuto verso la stessa persona
+    $s = $pdo->prepare("SELECT COUNT(*) AS n FROM $C WHERE from_id = ? AND to_id = ? AND created_at > ?");
+    $s->execute([$userId, $to, $now - 60000]);
+    if ((int) $s->fetch()['n'] > 0) respond(429, ['error' => 'too_soon']);
+    // Quelli mai consegnati dopo un giorno non servono più
+    $pdo->prepare("DELETE FROM $C WHERE created_at < ?")->execute([$now - 86400000]);
+    $pdo->prepare("INSERT INTO $C (from_id, to_id, created_at) VALUES (?, ?, ?)")->execute([$userId, $to, $now]);
     respond(200, ['ok' => true]);
 }
 
