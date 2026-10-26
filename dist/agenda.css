@@ -309,3 +309,119 @@ aside nav a {
     justify-content: space-between;
   }
 }
+
+/* Quanto hai studiato, giorno per giorno */
+.week-studied {
+  margin: 0 0 28px;
+  padding: 18px 20px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+}
+.week-studied h2 {
+  margin: 0;
+}
+.week-studied-facts {
+  margin: 4px 0 14px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.week-studied-facts b {
+  color: var(--ink);
+}
+.week-bars {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.week-bars li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.week-bar {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 54px;
+  height: 120px;
+  border-radius: 8px;
+  background: var(--raised);
+  overflow: hidden;
+}
+.week-bar i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: var(--green);
+  transition: height 0.5s ease;
+}
+.week-bar-value {
+  min-height: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.week-bar-day {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.week-bars .is-today .week-bar {
+  box-shadow: 0 0 0 2px var(--green);
+}
+.week-bars .is-today .week-bar-day {
+  color: var(--green);
+  font-weight: 700;
+}
+.week-bars .is-future .week-bar {
+  opacity: 0.45;
+}
+.week-day-studied {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--raised);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.week-day-studied b {
+  display: block;
+  color: var(--green);
+  font-size: 13px;
+}
+.week-day-studied span {
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--muted);
+}
+@media (max-width: 480px) {
+  .week-studied {
+    padding: 14px 12px;
+  }
+  .week-bars {
+    gap: 5px;
+  }
+  .week-bar {
+    height: 96px;
+  }
+  .week-bar-value {
+    font-size: 10px;
+  }
+  .week-bar-day {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .week-bar i {
+    transition: none;
+  }
+}

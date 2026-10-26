@@ -50,7 +50,7 @@
     "week",
     "Settimana",
     "Sessioni di studio e impegni, da lunedì a domenica.",
-    `<div class="week-controls"><div><button id="week-prev" class="secondary" aria-label="Settimana precedente">←</button><button id="week-current" class="secondary">Questa settimana</button><button id="week-next" class="secondary" aria-label="Settimana successiva">→</button></div><h2 id="week-label"></h2></div><p class="hint">Aggiungi sessioni di studio, pause e impegni ai giorni della settimana. Con “Inizia” parte il timer di una sessione in programma. Gli orari qui non attivano il blocco dei siti, che si imposta in Blocco siti.</p><div id="week-grid" class="week-grid"></div><p id="week-conflicts" class="notice" hidden></p><div class="week-edit-grid"><form id="week-event-form" class="feature-form"><h2 id="event-form-title">Aggiungi un impegno</h2><label for="event-title">Titolo dell’impegno</label><input id="event-title" required maxlength="220" placeholder="Es. Esercizi, lezione, allenamento"><label for="event-subject">Materia o categoria</label><input id="event-subject" maxlength="80" placeholder="Es. Matematica"><div class="duration-row"><label>Giorno<input id="event-date" type="date" required></label><label>Ora (facoltativa)<input id="event-time" type="time"></label></div><div class="duration-row"><label>Durata in minuti<input id="event-minutes" type="number" min="5" max="480" value="40" required></label><label>Tipo<select id="event-type"><option value="study">Studio</option><option value="commitment">Impegno</option><option value="break">Pausa</option></select></label></div><button class="primary wide" id="event-submit">Aggiungi al programma</button><button class="text-button" type="button" id="event-cancel" hidden>Annulla modifica</button><p id="event-message" role="status"></p></form><form id="move-form" class="feature-form" hidden><h2>Sposta il blocco</h2><p id="move-title"></p><label for="move-date">Nuovo giorno</label><input id="move-date" type="date" required><label for="move-time">Ora (facoltativa)</label><input id="move-time" type="time"><p class="hint">Lo spostamento cambia il programma personale.</p><button class="primary wide">Salva spostamento</button><button class="text-button" type="button" id="move-cancel">Annulla</button><p id="move-message" role="status"></p></form></div>`,
+    `<div class="week-controls"><div><button id="week-prev" class="secondary" aria-label="Settimana precedente">←</button><button id="week-current" class="secondary">Questa settimana</button><button id="week-next" class="secondary" aria-label="Settimana successiva">→</button></div><h2 id="week-label"></h2></div><p class="hint">Aggiungi sessioni di studio, pause e impegni ai giorni della settimana. Con “Inizia” parte il timer di una sessione in programma. Gli orari qui non attivano il blocco dei siti, che si imposta in Blocco siti.</p><section id="week-studied" class="week-studied" aria-labelledby="week-studied-title"></section><div id="week-grid" class="week-grid"></div><p id="week-conflicts" class="notice" hidden></p><div class="week-edit-grid"><form id="week-event-form" class="feature-form"><h2 id="event-form-title">Aggiungi un impegno</h2><label for="event-title">Titolo dell’impegno</label><input id="event-title" required maxlength="220" placeholder="Es. Esercizi, lezione, allenamento"><label for="event-subject">Materia o categoria</label><input id="event-subject" maxlength="80" placeholder="Es. Matematica"><div class="duration-row"><label>Giorno<input id="event-date" type="date" required></label><label>Ora (facoltativa)<input id="event-time" type="time"></label></div><div class="duration-row"><label>Durata in minuti<input id="event-minutes" type="number" min="5" max="480" value="40" required></label><label>Tipo<select id="event-type"><option value="study">Studio</option><option value="commitment">Impegno</option><option value="break">Pausa</option></select></label></div><button class="primary wide" id="event-submit">Aggiungi al programma</button><button class="text-button" type="button" id="event-cancel" hidden>Annulla modifica</button><p id="event-message" role="status"></p></form><form id="move-form" class="feature-form" hidden><h2>Sposta il blocco</h2><p id="move-title"></p><label for="move-date">Nuovo giorno</label><input id="move-date" type="date" required><label for="move-time">Ora (facoltativa)</label><input id="move-time" type="time"><p class="hint">Lo spostamento cambia il programma personale.</p><button class="primary wide">Salva spostamento</button><button class="text-button" type="button" id="move-cancel">Annulla</button><p id="move-message" role="status"></p></form></div>`,
   );
   addPage(
     "attempts",
@@ -265,13 +265,20 @@
       dates = Array.from({ length: 7 }, (_, i) => A.addDays(start, i));
     $("week-label").textContent =
       `${dateLabel(start)} — ${dateLabel(dates[6])}`;
+    const studied = studiedByDay(dates);
+    renderStudied(dates, studied, today);
     $("week-grid").innerHTML = dates
       .map((date) => {
         const entries = all.filter((e) => e.date === date),
           total = entries
             .filter((e) => !e.done)
-            .reduce((n, e) => n + e.minutes, 0);
-        return `<section class="week-day ${date === today ? "is-today" : ""}"><div class="week-day-heading"><h3>${dateLabel(date)}</h3><span>${total} min</span></div>${entries.map((e) => eventRow(e, true)).join("") || '<p class="week-free">Niente in programma.</p>'}<button class="text-button" data-add-on="${date}">Aggiungi qui</button></section>`;
+            .reduce((n, e) => n + e.minutes, 0),
+          day = studied.get(date);
+        return `<section class="week-day ${date === today ? "is-today" : ""}"><div class="week-day-heading"><h3>${dateLabel(date)}</h3><span>${total ? `${total} min in programma` : ""}</span></div>${
+          day.minutes
+            ? `<p class="week-day-studied"><b>Studiato ${fmtMinutes(day.minutes)}</b> ${day.subjects.map((x) => `<span>${E(x.name)} ${x.minutes} min</span>`).join("")}</p>`
+            : ""
+        }${entries.map((e) => eventRow(e, true)).join("") || '<p class="week-free">Niente in programma.</p>'}<button class="text-button" data-add-on="${date}">Aggiungi qui</button></section>`;
       })
       .join("");
     const conflicts = all.filter(
@@ -423,6 +430,58 @@
       "Piano aggiornato. Completamento e domande degli argomenti rimasti sono conservati.",
     );
   };
+  // --- Quanto hai studiato, giorno per giorno ------------------------------------
+  const fmtMinutes = (m) => (m >= 60 ? `${Math.floor(m / 60)} h${m % 60 ? ` ${m % 60} min` : ""}` : `${m} min`);
+  // Sotto le barre serve un formato corto: 45m, 1h, 1h45
+  const fmtShort = (m) => (m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? String(m % 60).padStart(2, "0") : ""}` : `${m}m`);
+  // Minuti, sessioni e materie di ogni giorno (data della fine della sessione, ora locale)
+  function studiedByDay(dates) {
+    const map = new Map(dates.map((d) => [d, { minutes: 0, sessions: 0, subjects: new Map() }]));
+    for (const x of data.sessions) {
+      const day = map.get(C.localDay(new Date(x.at)));
+      if (!day) continue;
+      const m = Math.round((x.seconds || 0) / 60),
+        key = (x.subject || "").trim().toLocaleLowerCase("it-IT") || "senza materia";
+      day.minutes += m;
+      day.sessions++;
+      const sub = day.subjects.get(key) || { name: (x.subject || "").trim() || "Senza materia", minutes: 0 };
+      sub.minutes += m;
+      day.subjects.set(key, sub);
+    }
+    for (const day of map.values()) day.subjects = [...day.subjects.values()].filter((x) => x.minutes).sort((a, b) => b.minutes - a.minutes);
+    return map;
+  }
+  function renderStudied(dates, studied, today) {
+    const days = dates.map((d) => ({ date: d, ...studied.get(d) })),
+      total = days.reduce((n, d) => n + d.minutes, 0),
+      sessions = days.reduce((n, d) => n + d.sessions, 0),
+      active = days.filter((d) => d.minutes).length,
+      isCurrent = dates.includes(today),
+      // Settimana in corso: confronto con gli stessi giorni della settimana prima (fino a oggi)
+      upTo = isCurrent ? dates.indexOf(today) + 1 : 7,
+      before = [...studiedByDay(Array.from({ length: upTo }, (_, i) => A.addDays(dates[0], i - 7))).values()].reduce((n, d) => n + d.minutes, 0),
+      top = Math.max(30, ...days.map((d) => d.minutes)),
+      goal = S.goals?.weekly?.minutes || 0,
+      diff = before ? Math.round(((total - before) / before) * 100) : null,
+      names = ["lun", "mar", "mer", "gio", "ven", "sab", "dom"];
+    const facts = [
+      `<b>${fmtMinutes(total)}</b> in ${sessions} ${sessions === 1 ? "sessione" : "sessioni"}`,
+      `${active} ${active === 1 ? "giorno" : "giorni"} di studio su 7`,
+      diff == null ? (total ? (isCurrent && upTo < 7 ? "stessi giorni della settimana scorsa: 0 min" : "la settimana prima: 0 min") : "") : `${diff >= 0 ? "+" : ""}${diff}% rispetto ${isCurrent && upTo < 7 ? `agli stessi giorni della settimana scorsa` : "alla settimana prima"} (${fmtMinutes(before)})`,
+      goal ? `obiettivo ${fmtMinutes(goal)}: ${Math.min(100, Math.round((total / goal) * 100))}%` : "",
+    ].filter(Boolean);
+    $("week-studied").innerHTML = `<div class="list-toolbar"><h2 id="week-studied-title">${isCurrent ? "Quanto hai studiato questa settimana" : "Quanto hai studiato"}</h2></div>
+      <p class="week-studied-facts">${facts.join(" · ")}</p>
+      <ol class="week-bars">${days
+        .map((d, i) => {
+          const future = d.date > today,
+            h = d.minutes ? Math.max(6, Math.round((d.minutes / top) * 100)) : 0;
+          return `<li class="${d.date === today ? "is-today" : ""} ${future ? "is-future" : ""}" title="${dateLabel(d.date)}: ${d.minutes ? `${fmtMinutes(d.minutes)}, ${d.subjects.map((x) => `${x.name} ${x.minutes} min`).join(", ")}` : future ? "deve ancora arrivare" : "nessuno studio"}"><span class="week-bar-value">${d.minutes ? fmtShort(d.minutes) : future ? "" : "0"}</span><span class="week-bar"><i style="height:${h}%"></i></span><span class="week-bar-day">${names[i]} ${Number(d.date.slice(8))}</span></li>`;
+        })
+        .join("")}</ol>
+      ${total ? "" : `<p class="hint">${isCurrent ? "Ancora nessuna sessione questa settimana. Le sessioni completate compaiono qui, giorno per giorno." : "Nessuna sessione in questa settimana."}</p>`}`;
+  }
+
   function openEvent(event) {
     editingEvent = event?.id || null;
     $("event-delete").hidden = !event;

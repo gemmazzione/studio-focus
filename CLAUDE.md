@@ -126,3 +126,7 @@ Tolta la lobby pubblica (richiesta dell'utente). La pagina Lobby ha due sezioni 
 - Incoraggia: `social.php` action `cheer` (solo compagni di lobby, max 1 al minuto verso la stessa persona, tabella `stf_cheers`, consegnati e cancellati al `ping` successivo del destinatario). Studia insieme: aggiunge a `#duration` un'opzione con i minuti che mancano all'amico (`studyingLeft` da group.php).
 - group.js controlla le lobby su tutte le pagine (30 s su Studia e Lobby, 60 s altrove); lobby.js manda `ping` ogni minuto anche in secondo piano.
 - Telefono: barra delle 5 sezioni fissa in basso con icone (layout.js), campi a 16px contro lo zoom di iPhone, pulsanti alti 48px, timer prima del riepilogo, `viewport-fit=cover` e margini `safe-area`. Wake Lock (schermo acceso durante la sessione, disattivabile) e vibrazione a fine timer.
+
+## v15: quanto hai studiato, giorno per giorno
+
+Pagina Settimana (`agenda.js`, `studiedByDay` e `renderStudied`): riquadro in cima con una barra per giorno (minuti delle sessioni completate, data della fine della sessione), totale, sessioni, giorni di studio, confronto con la settimana prima (per la settimana in corso, con gli stessi giorni fino a oggi) e percentuale dell'obiettivo settimanale. In ogni giorno del programma "Studiato X" con le materie. Segue la settimana mostrata dalle frecce. Formato corto sotto le barre (`45m`, `1h45`).
