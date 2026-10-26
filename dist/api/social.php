@@ -8,6 +8,7 @@
 // POST {action: "visibility", public: true|false}
 // POST {action: "cheer", to: <nome>}            -> incoraggiamento a un compagno di lobby (arriva col suo ping)
 require __DIR__ . '/_lib.php';
+require __DIR__ . '/_push.php';
 
 const ONLINE_MS = 180000;      // online se l'app ha dato segni di vita negli ultimi 3 minuti
 const PROFILE_SESSIONS = 3000; // sessioni più recenti mandate nel profilo
@@ -145,10 +146,27 @@ if ($action === 'ping') {
         respond(400, ['error' => 'invalid_presence']);
     $pdo->prepare("DELETE FROM $O WHERE user_id = ?")->execute([$userId]);
     $pdo->prepare("INSERT INTO $O (user_id, last_seen) VALUES (?, ?)")->execute([$userId, $now]);
+    $s = $pdo->prepare("SELECT until_at FROM $P WHERE user_id = ?");
+    $s->execute([$userId]);
+    $wasStudying = (int) ($s->fetch()['until_at'] ?? 0) > $now;
     $pdo->prepare("DELETE FROM $P WHERE user_id = ?")->execute([$userId]);
     if ($remaining > 0)
         $pdo->prepare("INSERT INTO $P (user_id, until_at, started_at) VALUES (?, ?, ?)")
             ->execute([$userId, $now + $remaining * 1000, $now - $elapsed * 1000]);
+    // Ha appena iniziato a studiare: notifica push ai compagni di lobby (al massimo una ogni 20 minuti)
+    if ($remaining > 0 && !$wasStudying) {
+        push_tables($pdo);
+        $L = table('push_last');
+        $s = $pdo->prepare("SELECT studying_at FROM $L WHERE user_id = ?");
+        $s->execute([$userId]);
+        if ($now - (int) ($s->fetch()['studying_at'] ?? 0) > 20 * 60000) {
+            $pdo->prepare("DELETE FROM $L WHERE user_id = ?")->execute([$userId]);
+            $pdo->prepare("INSERT INTO $L (user_id, studying_at) VALUES (?, ?)")->execute([$userId, $now]);
+            $mates = array_diff(array_keys(visible_ids($pdo, $V, $M, $userId)), [$userId]);
+            $left = (int) ceil($remaining / 60);
+            push_notify($pdo, $mates, 'studying', "$username ha iniziato a studiare", "Finisce tra $left minuti: apri Studio per studiare insieme.", './#focus', 'friend-' . $username, 1800);
+        }
+    }
     // Consegna gli incoraggiamenti ricevuti (e li cancella: arrivano una volta sola)
     $s = $pdo->prepare("SELECT c.id, c.created_at, u.username FROM $C c JOIN $U u ON u.id = c.from_id WHERE c.to_id = ? ORDER BY c.id");
     $s->execute([$userId]);
@@ -171,6 +189,7 @@ if ($action === 'cheer') {
     // Quelli mai consegnati dopo un giorno non servono più
     $pdo->prepare("DELETE FROM $C WHERE created_at < ?")->execute([$now - 86400000]);
     $pdo->prepare("INSERT INTO $C (from_id, to_id, created_at) VALUES (?, ?, ?)")->execute([$userId, $to, $now]);
+    push_notify($pdo, [$to], 'cheers', "$username ti incoraggia!", 'Forza, continua così.', './#focus', 'cheer', 3600);
     respond(200, ['ok' => true]);
 }
 

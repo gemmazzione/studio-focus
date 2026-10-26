@@ -12,10 +12,18 @@ fs.writeFileSync(
   cfg,
   "<?php return ['dsn' => 'sqlite:' . __DIR__ . '/studio.sqlite', 'invite' => '', 'prefix' => 'stf_'];\n",
 );
-const p = spawn("php", ["-d", "extension=pdo_sqlite", "-S", `localhost:${port}`, "-t", "dist"], {
+// Su Windows PHP non trova openssl.cnf da solo (serve per creare le chiavi delle notifiche push)
+function opensslConf() {
+  for (const dir of (process.env.PATH || "").split(path.delimiter)) {
+    const cnf = path.join(dir, "extras", "ssl", "openssl.cnf");
+    if (fs.existsSync(path.join(dir, "php.exe")) && fs.existsSync(cnf)) return cnf;
+  }
+  return "";
+}
+const p = spawn("php", ["-d", "extension=pdo_sqlite", "-d", "extension=openssl", "-d", "extension=mbstring", "-S", `localhost:${port}`, "-t", "dist"], {
   cwd: root,
   stdio: "inherit",
-  env: { ...process.env, STF_CONFIG: cfg },
+  env: { ...process.env, STF_CONFIG: cfg, OPENSSL_CONF: process.env.OPENSSL_CONF || opensslConf() },
 });
 console.log(`App + API: http://localhost:${port}/`);
 p.on("exit", (c) => process.exit(c ?? 0));

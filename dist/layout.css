@@ -565,3 +565,10 @@ aside nav a span {
     margin-top: 8px;
   }
 }
+
+.push-toggle span b {
+  font-weight: 700;
+}
+#sn-push-status {
+  margin: 0 0 10px 26px;
+}

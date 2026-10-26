@@ -1,7 +1,7 @@
 // Service worker: app usabile offline e promemoria dei ripassi.
 // Strategia "prima la rete": online si ricevono sempre i file aggiornati,
 // offline si usa l'ultima copia salvata. L'API (api/) non passa mai dalla cache.
-const CACHE = "studio-v16";
+const CACHE = "studio-v17";
 const SHELL = [
   "./",
   "index.html",
@@ -154,5 +154,41 @@ self.addEventListener("notificationclick", (event) => {
       }
       return self.clients.openWindow(target);
     }),
+  );
+});
+
+// --- Notifiche push dal server (anche ad app chiusa) --------------------------
+// La notifica arriva vuota: il testo si scarica da api/push.php con la chiave
+// dell'iscrizione di questo dispositivo, salvata dalla pagina (live.js) nella cache.
+const PUSH_STATE = "push-state.json";
+self.addEventListener("push", (event) => {
+  event.waitUntil(
+    (async () => {
+      let messages = [];
+      try {
+        const res = await (await caches.open(REMINDER_CACHE)).match(PUSH_STATE),
+          state = res ? await res.json() : null;
+        if (state?.key) {
+          const r = await fetch(new URL("api/push.php", self.registration.scope), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "inbox", key: state.key }),
+          });
+          if (r.ok) messages = (await r.json()).messages || [];
+        }
+      } catch {}
+      // Con l'app aperta davanti l'avviso compare già dentro la pagina
+      const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      if (windows.some((w) => w.visibilityState === "visible")) return;
+      if (!messages.length) messages = [{ title: "Studio", body: "Novità dalle tue lobby.", url: "./#lobby", tag: "studio" }];
+      for (const m of messages.slice(-3))
+        await self.registration.showNotification(m.title, {
+          body: m.body,
+          icon: "icons/icon-192.png",
+          badge: "icons/icon-192.png",
+          tag: m.tag,
+          data: { url: m.url },
+        });
+    })(),
   );
 });

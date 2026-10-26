@@ -234,6 +234,8 @@
     }
   }
   async function logout() {
+    // Prima di perdere il token: live.js toglie le notifiche push di questo dispositivo
+    window.dispatchEvent(new CustomEvent("studio:logout"));
     try {
       await api("logout.php", "POST");
     } catch {}
