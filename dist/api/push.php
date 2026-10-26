@@ -26,6 +26,17 @@ if ($method === 'GET' && $action === 'check') {
         $out[$k] = curl_errno($c) ? 'errore: ' . curl_error($c) : 'HTTP ' . curl_getinfo($c, CURLINFO_HTTP_CODE);
         curl_close($c);
     }
+    // Firma VAPID di questo server verso un'iscrizione inventata: 410 = firma accettata, 401/403 = firma rifiutata
+    if ($out['curl'] && $out['openssl']) {
+        [$public, $pem] = vapid_keys(db());
+        $fake = 'https://fcm.googleapis.com/fcm/send/studio-check:APA91bCheck';
+        $c = curl_init($fake);
+        curl_setopt_array($c, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => '', CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6,
+            CURLOPT_HTTPHEADER => ['Authorization: ' . vapid_header($fake, $public, $pem), 'TTL: 60', 'Content-Length: 0']]);
+        curl_exec($c);
+        $out['vapid'] = 'HTTP ' . curl_getinfo($c, CURLINFO_HTTP_CODE);
+        curl_close($c);
+    }
     respond(200, $out);
 }
 
