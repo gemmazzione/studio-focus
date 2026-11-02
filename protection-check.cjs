@@ -23,8 +23,10 @@ assert(!word.test("https://www.wikipedia.org/wiki/Pornografia"), "le pagine che 
 assert(regex(adult.find((r) => r.id === 10)).test("https://www.google.it/search?q=ciao"));
 assert(!regex(adult.find((r) => r.id === 10)).test("https://www.google.com/maps"));
 assert.strictEqual(adult.find((r) => r.id === 13).action.requestHeaders[0].header, "YouTube-Restrict");
-assert(ads.every((r) => r.action.type === "block"));
-assert.deepStrictEqual(ads[0].condition.initiatorDomains, ["youtube.com", "youtube-nocookie.com"]);
+// Nessun blocco di rete per la pubblicità: è ciò che fa scattare l'avviso di YouTube
+assert.strictEqual(ads.length, 0);
+const ytMain = fs.readFileSync("extension/youtube-main.js", "utf8");
+assert(/bkaEnforcementMessageViewModel/.test(ytMain) && /new Proxy\(JSON\.parse/.test(ytMain));
 assert.deepStrictEqual(
   manifest.declarative_net_request.rule_resources.map((r) => [r.id, r.enabled]),
   [["adult", true], ["ads", true]],

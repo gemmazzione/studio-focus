@@ -1,4 +1,4 @@
-STUDIO 2.2 — ESTENSIONE PER CHROME ED EDGE
+STUDIO 2.3 — ESTENSIONE PER CHROME ED EDGE
 
 INSTALLAZIONE
 1. Estrai lo ZIP in una cartella permanente.
@@ -16,7 +16,7 @@ SITI PER ADULTI (SEMPRE ATTIVO)
 Blocca un elenco di oltre cento siti per adulti, i domini .xxx .porn .sex .adult e gli indirizzi con "porn" o "hentai" nel nome del sito. Attiva SafeSearch su Google, Bing e DuckDuckGo e la modalità con restrizioni di YouTube. Si spegne dal pulsante dell'estensione, ma solo dopo un minuto di attesa, che si può annullare. Il sito Studio non può spegnerlo.
 
 PUBBLICITÀ DI YOUTUBE (SEMPRE ATTIVA)
-Toglie gli annunci prima dei video e durante, i riquadri pubblicitari e le richieste agli spazi pubblicitari di Google partite da YouTube. YouTube cambia spesso: qualche annuncio può passare lo stesso. Si spegne dal pulsante dell'estensione.
+Toglie gli annunci prima dei video e durante, i riquadri pubblicitari e l'avviso di YouTube sugli ad blocker, senza bloccare richieste di rete (è ciò che YouTube controlla). Se l'avviso compare lo stesso, lo chiude e fa ripartire il video. YouTube cambia spesso: qualche annuncio può passare lo stesso. Si spegne dal pulsante dell'estensione.
 
 LIMITI
 I blocchi valgono solo per questo browser: non bloccano app Windows o telefono. Si possono aggirare disattivando l'estensione, usando la navigazione in incognito (se l'estensione non è attiva lì) o cambiando browser. Nessun elenco di siti è completo. Le pagine già caricate possono mostrare contenuti finché non vengono ricaricate.

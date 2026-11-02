@@ -89,26 +89,10 @@ fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(path.join(out, "adult.json"), JSON.stringify(rules, null, 2) + "\n");
 console.log(`extension/rules/adult.json: ${DOMAINS.length} siti, ${rules.length} regole`);
 
-// Pubblicità di YouTube: solo richieste partite da YouTube, per non rompere altri siti.
-// Gli annunci dentro il video si tolgono con youtube-main.js e youtube-skip.js.
-const YT = ["youtube.com", "youtube-nocookie.com"];
-const ads = [
-  {
-    id: 1,
-    priority: 1,
-    action: { type: "block" },
-    condition: {
-      requestDomains: ["doubleclick.net", "googleadservices.com", "googlesyndication.com", "googletagservices.com", "adservice.google.com", "imasdk.googleapis.com"],
-      initiatorDomains: YT,
-    },
-  },
-  ...["||youtube.com/pagead/", "||youtube.com/api/stats/ads", "||youtube.com/get_midroll_", "||youtube.com/youtubei/v1/log_event?*adunit"].map((urlFilter, i) => ({
-    id: 2 + i,
-    priority: 1,
-    action: { type: "block" },
-    condition: { urlFilter, resourceTypes: ["xmlhttprequest", "image", "script", "sub_frame", "ping", "other"] },
-  })),
-];
+// Pubblicità di YouTube: nessuna regola di rete. Bloccare le richieste pubblicitarie è proprio
+// ciò che YouTube controlla per mostrare l'avviso sugli ad blocker (v2.3). Gli annunci si tolgono
+// dai dati del video con youtube-main.js; il ruleset resta vuoto solo per l'interruttore del popup.
+const ads = [];
 fs.writeFileSync(path.join(out, "ads.json"), JSON.stringify(ads, null, 2) + "\n");
 console.log(`extension/rules/ads.json: ${ads.length} regole`);
 module.exports = { DOMAINS };
